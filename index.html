@@ -207,131 +207,151 @@
             50% { box-shadow: 0 0 25px rgba(207, 107, 47, 0.8); }
         }
 
-        /* ===== QUAKE 1 AUTHENTIC HUD ===== */
-        /* Matching the original 1996 Quake status bar layout */
+        /* ===== QUAKE 1 HUD (Actor Arsenal style with Quake colors) ===== */
         .quake-hud {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 48px;
-            background-color: #906840;
-            background-image: url('images/quake-rust-metal.png');
-            background-repeat: repeat;
-            background-size: 64px 48px;
-            z-index: 1000;
+            height: 80px;
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    #5a4530 0px, #5a4530 2px,
+                    #6a5540 2px, #6a5540 4px,
+                    #4a3520 4px, #4a3520 6px,
+                    #554025 6px, #554025 8px
+                ),
+                linear-gradient(180deg, #6a5540 0%, #4a3520 50%, #3a2510 100%);
+            border-top: 4px solid #7a6550;
+            border-bottom: 4px solid #2a1a08;
+            box-shadow:
+                inset 0 2px 0 #8a7560,
+                inset 0 -2px 0 #2a1a08,
+                0 -4px 8px rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Press Start 2P', monospace;
-            image-rendering: pixelated;
+            z-index: 9999;
+            font-family: 'Press Start 2P', cursive;
+            padding: 0;
+            gap: 0;
         }
-
-        /* HUD Sections */
         .hud-section {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100%;
-            padding: 0 8px;
+            background: linear-gradient(180deg, #5a4530 0%, #3a2510 100%);
+            border-left: 3px solid #6a5540;
+            border-right: 3px solid #2a1a08;
+            border-top: 2px solid #7a6550;
+            border-bottom: 2px solid #1a0a00;
+            padding: 0 1.5rem;
+            position: relative;
         }
-
-        /* Ammo counts - small numbers on left (shells, nails, rockets, cells) */
-        .ammo-counts {
-            display: flex;
-            gap: 2px;
-            padding-right: 12px;
+        .hud-section::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: linear-gradient(180deg, #4a3520 0%, #2a1508 100%);
+            border: 2px solid #1a0a00;
+            border-radius: 2px;
+            z-index: -1;
         }
-        .ammo-count {
-            width: 36px;
-            height: 48px;
-            background: linear-gradient(180deg, #231a0f 0%, #1b130b 100%);
-            border: 2px solid #3b2b1b;
+        .hud-stat {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            box-shadow: inset 1px 1px 0 #4b3b23;
+            gap: 4px;
+            padding: 0 0.5rem;
         }
-        .ammo-value-small {
-            font-size: 0.75rem;
-            color: #efdf17;
+        .hud-value {
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+            letter-spacing: 2px;
+        }
+        .hud-label {
+            font-size: 0.5rem;
+            color: #8a7560;
             text-shadow: 1px 1px 0 #000;
+            text-transform: uppercase;
         }
-
-        /* Armor circle - red circular display */
-        .armor-circle {
-            width: 56px;
-            height: 56px;
-            background: radial-gradient(circle, #4b0000 0%, #2b0000 60%, #1b0000 100%);
-            border: 3px solid #8b0000;
-            border-radius: 50%;
+        .hud-face-container {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(180deg, #4a3520 0%, #2a1508 100%);
+            border: 3px solid #5a4530;
+            border-bottom-color: #1a0a00;
+            border-right-color: #1a0a00;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow:
-                inset 2px 2px 4px rgba(255,0,0,0.2),
-                inset -2px -2px 4px rgba(0,0,0,0.5),
-                0 0 10px rgba(139,0,0,0.5);
-            margin: 0 8px;
+            margin: 0 1rem;
         }
-        .armor-value-display {
-            font-size: 1.4rem;
-            color: #ff0000;
-            text-shadow: 2px 2px 0 #000, 0 0 8px rgba(255,0,0,0.5);
-        }
-
-        /* Ranger Face - center of HUD */
-        .face-section {
-            padding: 0 4px;
-        }
-        .ranger-face-box {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(180deg, #2b1f13 0%, #1b130b 100%);
-            border: 2px solid #4b3b23;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 1px 1px 0 #3b2b1b;
-            overflow: hidden;
-        }
-        /* Ranger Face Sprite from quake-faces.jpg (288x480, 3 cols x 5 rows of 96x96 faces) */
-        .sbar-face {
-            display: block;
-            width: 48px;
-            height: 48px;
-            background-image: url('images/quake-faces.jpg');
-            background-size: 144px 240px;
+        .hud-face {
+            width: 60px;
+            height: 60px;
             image-rendering: pixelated;
         }
-        .sbar-face.healthy {
-            background-position: -96px 0; /* Blue glowing eyes face - Row 0, Col 2 */
-        }
+        /* Quake colors */
+        .hud-ammo { color: #ffcc00; }
+        .hud-health { color: #ff4444; }
+        .hud-armor { color: #44ff88; }
+        .hud-zaps { color: #ff8800; }
 
-        /* Health section - shows number with skull decoration */
-        .health-section {
-            margin: 0 8px;
+        /* ===== DIFFICULTY SELECTOR ===== */
+        .difficulty-selector {
+            position: relative;
+            display: inline-block;
         }
-        .health-value-display {
-            font-size: 1.8rem;
-            color: #efdf17;
-            text-shadow:
-                2px 2px 0 #000,
-                0 0 10px rgba(239,223,23,0.5);
-            letter-spacing: -2px;
+        .difficulty-btn {
+            background: transparent;
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+            padding: 0.4rem 0.8rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-
-        /* Current ammo - large number on right */
-        .current-ammo {
-            padding-left: 12px;
+        .difficulty-btn:hover {
+            background: var(--accent-orange);
+            color: #000;
         }
-        .ammo-value-large {
-            font-size: 1.8rem;
-            color: #efdf17;
-            text-shadow:
-                2px 2px 0 #000,
-                0 0 10px rgba(239,223,23,0.5);
-            letter-spacing: -2px;
+        .difficulty-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #111;
+            border: 1px solid var(--accent-orange);
+            display: none;
+            flex-direction: column;
+            min-width: 200px;
+            z-index: 1002;
+        }
+        .difficulty-menu.show { display: flex; }
+        .difficulty-option {
+            padding: 0.8rem;
+            color: #888;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .difficulty-option:hover {
+            background: rgba(143, 75, 35, 0.2);
+            color: var(--accent-orange);
+        }
+        .difficulty-option.active {
+            color: var(--accent-orange);
+            background: rgba(143, 75, 35, 0.3);
         }
 
         /* Hidden Secrets (clickable areas) */
@@ -385,29 +405,25 @@
         /* Responsive HUD */
         @media (max-width: 768px) {
             .quake-hud {
-                height: 56px;
+                height: 60px;
             }
-            .ammo-counts {
-                display: none;
+            .hud-section {
+                padding: 0 0.8rem;
             }
-            .armor-circle {
+            .hud-face-container {
+                width: 50px;
+                height: 50px;
+                margin: 0 0.5rem;
+            }
+            .hud-face {
                 width: 44px;
                 height: 44px;
             }
-            .armor-value-display {
-                font-size: 1rem;
+            .hud-value {
+                font-size: 1.2rem;
             }
-            .ranger-face-box {
-                width: 44px;
-                height: 44px;
-            }
-            .face-sprite {
-                width: 40px;
-                height: 40px;
-                background-size: 120px 200px;
-            }
-            .health-value-display, .ammo-value-large {
-                font-size: 1.4rem;
+            .hud-label {
+                font-size: 0.4rem;
             }
         }
 
@@ -599,7 +615,7 @@
         /* ===== FOOTER ===== */
         footer {
             background: #0a0500;
-            padding: 30px 20px;
+            padding: 30px 20px 80px 20px;
             text-align: center;
             border-top: 2px solid var(--border);
         }
@@ -661,6 +677,15 @@
             <a href="#features" class="nav-link">FEATURES</a>
             <a href="about.html" class="nav-link">ABOUT</a>
             <a href="https://zapier.com" target="_blank" class="nav-link">ZAPIER</a>
+            <div class="difficulty-selector">
+                <button class="difficulty-btn" id="difficultyBtn">EASY</button>
+                <div class="difficulty-menu" id="difficultyMenu">
+                    <button class="difficulty-option active" data-difficulty="easy" data-armor="100">EASY - Full Armor</button>
+                    <button class="difficulty-option" data-difficulty="normal" data-armor="50">NORMAL - Half Armor</button>
+                    <button class="difficulty-option" data-difficulty="hard" data-armor="25">HARD - Quarter Armor</button>
+                    <button class="difficulty-option" data-difficulty="nightmare" data-armor="0">NIGHTMARE - No Armor</button>
+                </div>
+            </div>
             <a href="play-quake.html" class="nav-link play-btn">PLAY QUAKE</a>
         </div>
     </nav>
@@ -727,72 +752,42 @@
         </section>
     </main>
 
-    <!-- Quake 1 Authentic Status Bar - Using actual game sprites -->
-    <div class="quake-hud">
-        <div class="sbar-wrapper">
-            <!-- Top row: Ammo counts (shells, nails, rockets, cells) -->
-            <div class="sbar-ammo-row">
-                <div class="sbar-ammo-count" title="Shells">
-                    <span class="sbar-num-small y2"></span>
-                    <span class="sbar-num-small y5"></span>
-                </div>
-                <div class="sbar-ammo-count" title="Nails">
-                    <span class="sbar-num-small y0"></span>
-                    <span class="sbar-num-small y0"></span>
-                </div>
-                <div class="sbar-ammo-count" title="Rockets">
-                    <span class="sbar-num-small y0"></span>
-                    <span class="sbar-num-small y0"></span>
-                </div>
-                <div class="sbar-ammo-count" title="Cells">
-                    <span class="sbar-num-small y0"></span>
-                    <span class="sbar-num-small y0"></span>
-                </div>
-            </div>
-
-            <!-- Main status bar -->
-            <div class="sbar-main">
-                <div class="sbar-inner">
-                    <!-- Armor (red numbers in dark inset) -->
-                    <div class="sbar-section sbar-armor-section">
-                        <div class="sbar-inset">
-                            <div class="sbar-num-group">
-                                <span class="sbar-num r0"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ranger Face (center) -->
-                    <div class="sbar-face-section">
-                        <span class="sbar-face healthy" id="ranger-face"></span>
-                    </div>
-
-                    <!-- Health (yellow numbers) -->
-                    <div class="sbar-section sbar-health-section">
-                        <div class="sbar-num-group" id="health-display">
-                            <span class="sbar-num y1"></span>
-                            <span class="sbar-num y0"></span>
-                            <span class="sbar-num y0"></span>
-                        </div>
-                    </div>
-
-                    <!-- Current ammo (yellow numbers) -->
-                    <div class="sbar-section sbar-ammo-section">
-                        <div class="sbar-num-group" id="ammo-display">
-                            <span class="sbar-num y2"></span>
-                            <span class="sbar-num y5"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer>
         <p>Built with [ZAP] by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
         <p style="margin-top: 10px; font-size: 0.7rem;">Quake is a trademark of id Software. This site is a fan tribute.</p>
     </footer>
+
+    <!-- Quake 1 Status Bar HUD -->
+    <div class="quake-hud">
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-ammo" id="hudAmmo">25</div>
+                <div class="hud-label">AMMO</div>
+            </div>
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-health" id="hudHealth">100</div>
+                <div class="hud-label">HEALTH</div>
+            </div>
+        </div>
+        <div class="hud-face-container">
+            <img src="images/ranger-face.png" class="hud-face" alt="Ranger" id="rangerFace">
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-armor" id="hudArmor">100</div>
+                <div class="hud-label">ARMOR</div>
+            </div>
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-zaps" id="hudZaps">0</div>
+                <div class="hud-label">ZAPS</div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Splash screen dismissal
@@ -805,20 +800,66 @@
         document.addEventListener('keydown', dismissSplash, { once: true });
         document.addEventListener('click', dismissSplash, { once: true });
 
-        // Weapon switching with number keys (updates ammo display)
-        const ammoValues = [25, 0, 0, 0]; // shells, nails, rockets, cells
-        let currentWeapon = 0;
+        // Dynamic HUD values - update these to change the HUD
+        let hudStats = { ammo: 25, health: 100, armor: 100, zaps: 0 };
 
-        document.addEventListener('keydown', (e) => {
-            const weaponKeys = ['1', '2', '3', '4'];
-            const keyIndex = weaponKeys.indexOf(e.key);
-            if (keyIndex !== -1) {
+        function updateHUD() {
+            document.getElementById('hudAmmo').textContent = hudStats.ammo;
+            document.getElementById('hudHealth').textContent = hudStats.health;
+            document.getElementById('hudArmor').textContent = hudStats.armor;
+            document.getElementById('hudZaps').textContent = hudStats.zaps;
+        }
+
+        // Update HUD when clicking on zap cards
+        document.querySelectorAll('.card').forEach((card, i) => {
+            card.addEventListener('click', () => {
+                hudStats.zaps += 1;
+                hudStats.ammo += 5;
+                updateHUD();
                 if (typeof playMenuSound === 'function') playMenuSound();
-                currentWeapon = keyIndex;
-                document.getElementById('current-ammo').textContent = ammoValues[keyIndex];
+            });
+        });
+
+        // Difficulty selector
+        const difficultyBtn = document.getElementById('difficultyBtn');
+        const difficultyMenu = document.getElementById('difficultyMenu');
+        const difficultyOptions = document.querySelectorAll('.difficulty-option');
+
+        difficultyBtn.addEventListener('click', () => {
+            difficultyMenu.classList.toggle('show');
+            if (typeof playMenuSound === 'function') playMenuSound();
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.difficulty-selector')) {
+                difficultyMenu.classList.remove('show');
             }
         });
+
+        // Handle difficulty selection
+        difficultyOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const difficulty = option.dataset.difficulty;
+                const armor = parseInt(option.dataset.armor);
+
+                // Update button text
+                difficultyBtn.textContent = difficulty.toUpperCase();
+
+                // Update armor in HUD
+                hudStats.armor = armor;
+                updateHUD();
+
+                // Update active state
+                difficultyOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                // Close menu
+                difficultyMenu.classList.remove('show');
+
+                if (typeof playSelectSound === 'function') playSelectSound();
+            });
+        });
     </script>
-    <script src="js/quake-hud.js"></script>
 </body>
 </html>

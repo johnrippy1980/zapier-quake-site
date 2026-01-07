@@ -169,6 +169,68 @@
             pointer-events: none;
             z-index: 9997;
             background: radial-gradient(ellipse at center, transparent 40%, rgba(31, 23, 11, 0.5) 100%);
+            transition: background 0.3s, opacity 0.3s;
+        }
+
+        /* ===== PAIN FLASH (for damage/nightmare effects) ===== */
+        .pain-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9996;
+            background: rgba(139, 0, 0, 0);
+            transition: background 0.1s;
+        }
+        .pain-flash.active {
+            background: rgba(139, 0, 0, 0.4);
+        }
+
+        /* ===== SCREEN SHAKE ===== */
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-3px, -2px); }
+            20% { transform: translate(3px, 2px); }
+            30% { transform: translate(-2px, 3px); }
+            40% { transform: translate(2px, -3px); }
+            50% { transform: translate(-3px, 2px); }
+            60% { transform: translate(3px, -2px); }
+            70% { transform: translate(-2px, -3px); }
+            80% { transform: translate(2px, 3px); }
+            90% { transform: translate(-3px, -2px); }
+        }
+        .shake {
+            animation: screenShake 0.4s ease-in-out;
+        }
+
+        /* ===== NIGHTMARE PULSING BLOOD VIGNETTE ===== */
+        @keyframes nightmarePulse {
+            0%, 100% {
+                background: radial-gradient(ellipse at center, transparent 15%, rgba(139, 0, 0, 0.5) 100%);
+            }
+            50% {
+                background: radial-gradient(ellipse at center, transparent 10%, rgba(180, 0, 0, 0.6) 100%);
+            }
+        }
+        .vignette.nightmare {
+            animation: nightmarePulse 2s ease-in-out infinite;
+        }
+
+        /* Increase scanlines on higher difficulties */
+        .crt-overlay.hard {
+            opacity: 0.7;
+        }
+        .crt-overlay.nightmare {
+            opacity: 0.85;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.4),
+                rgba(0, 0, 0, 0.4) 1px,
+                transparent 1px,
+                transparent 2px
+            );
         }
 
         /* ===== MUSIC PLAYER ===== */
@@ -480,6 +542,7 @@
     <!-- CRT Effects -->
     <div class="crt-overlay"></div>
     <div class="vignette"></div>
+    <div class="pain-flash"></div>
 
     <!-- Secret Found Popup -->
     <div class="secret-popup" id="secret-popup">
@@ -666,6 +729,10 @@
         });
 
         // Handle difficulty selection
+        const vignette = document.querySelector('.vignette');
+        const crtOverlay = document.querySelector('.crt-overlay');
+        const painFlash = document.querySelector('.pain-flash');
+
         difficultyOptions.forEach(option => {
             option.addEventListener('click', () => {
                 const difficulty = option.dataset.difficulty;
@@ -684,6 +751,45 @@
 
                 // Close menu
                 difficultyMenu.classList.remove('show');
+
+                // Reset all difficulty classes
+                vignette.classList.remove('nightmare');
+                crtOverlay.classList.remove('hard', 'nightmare');
+                vignette.style.opacity = '1';
+                vignette.style.background = '';
+
+                // Apply difficulty-specific visual effects
+                if (difficulty === 'easy') {
+                    // Easy mode - minimal effects, safe feeling
+                    vignette.style.opacity = '0.3';
+                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 50%, rgba(31, 23, 11, 0.3) 100%)';
+                    crtOverlay.style.opacity = '0.3';
+                } else if (difficulty === 'normal') {
+                    // Normal - standard brown vignette
+                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 40%, rgba(31, 23, 11, 0.5) 100%)';
+                    crtOverlay.style.opacity = '0.5';
+                } else if (difficulty === 'hard') {
+                    // Hard - add blood tinge to vignette, more scanlines
+                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 30%, rgba(100, 20, 10, 0.45) 100%)';
+                    crtOverlay.classList.add('hard');
+                    crtOverlay.style.opacity = '';
+                    // Pain flash on selection
+                    painFlash.classList.add('active');
+                    setTimeout(() => painFlash.classList.remove('active'), 150);
+                } else if (difficulty === 'nightmare') {
+                    // NIGHTMARE - heavy blood vignette, pulsing, screen shake, intense scanlines
+                    vignette.classList.add('nightmare');
+                    crtOverlay.classList.add('nightmare');
+                    crtOverlay.style.opacity = '';
+
+                    // Screen shake effect
+                    document.body.classList.add('shake');
+                    setTimeout(() => document.body.classList.remove('shake'), 400);
+
+                    // Pain flash
+                    painFlash.classList.add('active');
+                    setTimeout(() => painFlash.classList.remove('active'), 200);
+                }
 
                 if (typeof playSelectSound === 'function') playSelectSound();
             });

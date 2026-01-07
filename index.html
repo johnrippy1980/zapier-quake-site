@@ -207,152 +207,7 @@
             50% { box-shadow: 0 0 25px rgba(207, 107, 47, 0.8); }
         }
 
-        /* ===== QUAKE 1 HUD (Actor Arsenal style with Quake colors) ===== */
-        .quake-hud {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 80px;
-            background:
-                repeating-linear-gradient(
-                    90deg,
-                    #5a4530 0px, #5a4530 2px,
-                    #6a5540 2px, #6a5540 4px,
-                    #4a3520 4px, #4a3520 6px,
-                    #554025 6px, #554025 8px
-                ),
-                linear-gradient(180deg, #6a5540 0%, #4a3520 50%, #3a2510 100%);
-            border-top: 4px solid #7a6550;
-            border-bottom: 4px solid #2a1a08;
-            box-shadow:
-                inset 0 2px 0 #8a7560,
-                inset 0 -2px 0 #2a1a08,
-                0 -4px 8px rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            font-family: 'Press Start 2P', cursive;
-            padding: 0;
-            gap: 0;
-        }
-        .hud-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            background: linear-gradient(180deg, #5a4530 0%, #3a2510 100%);
-            border-left: 3px solid #6a5540;
-            border-right: 3px solid #2a1a08;
-            border-top: 2px solid #7a6550;
-            border-bottom: 2px solid #1a0a00;
-            padding: 0 1.5rem;
-            position: relative;
-        }
-        .hud-section::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            background: linear-gradient(180deg, #4a3520 0%, #2a1508 100%);
-            border: 2px solid #1a0a00;
-            border-radius: 2px;
-            z-index: -1;
-        }
-        .hud-stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 0 0.5rem;
-        }
-        .hud-value {
-            font-size: 1.8rem;
-            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
-            letter-spacing: 2px;
-        }
-        .hud-label {
-            font-size: 0.5rem;
-            color: #8a7560;
-            text-shadow: 1px 1px 0 #000;
-            text-transform: uppercase;
-        }
-        .hud-face-container {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(180deg, #4a3520 0%, #2a1508 100%);
-            border: 3px solid #5a4530;
-            border-bottom-color: #1a0a00;
-            border-right-color: #1a0a00;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 1rem;
-        }
-        .hud-face {
-            width: 60px;
-            height: 60px;
-            image-rendering: pixelated;
-        }
-        /* Quake colors */
-        .hud-ammo { color: #ffcc00; }
-        .hud-health { color: #ff4444; }
-        .hud-armor { color: #44ff88; }
-        .hud-zaps { color: #ff8800; }
-
-        /* ===== DIFFICULTY SELECTOR ===== */
-        .difficulty-selector {
-            position: relative;
-            display: inline-block;
-        }
-        .difficulty-btn {
-            background: transparent;
-            border: 1px solid var(--accent-orange);
-            color: var(--accent-orange);
-            padding: 0.4rem 0.8rem;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .difficulty-btn:hover {
-            background: var(--accent-orange);
-            color: #000;
-        }
-        .difficulty-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: #111;
-            border: 1px solid var(--accent-orange);
-            display: none;
-            flex-direction: column;
-            min-width: 200px;
-            z-index: 1002;
-        }
-        .difficulty-menu.show { display: flex; }
-        .difficulty-option {
-            padding: 0.8rem;
-            color: #888;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.5rem;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            text-align: left;
-            transition: all 0.2s;
-        }
-        .difficulty-option:hover {
-            background: rgba(143, 75, 35, 0.2);
-            color: var(--accent-orange);
-        }
-        .difficulty-option.active {
-            color: var(--accent-orange);
-            background: rgba(143, 75, 35, 0.3);
-        }
+        /* HUD and Difficulty styles are in css/quake-hud.css */
 
         /* Hidden Secrets (clickable areas) */
         .secret-area {
@@ -400,31 +255,6 @@
             font-family: 'Press Start 2P', cursive;
             font-size: 0.6rem;
             color: #efdf17;
-        }
-
-        /* Responsive HUD */
-        @media (max-width: 768px) {
-            .quake-hud {
-                height: 60px;
-            }
-            .hud-section {
-                padding: 0 0.8rem;
-            }
-            .hud-face-container {
-                width: 50px;
-                height: 50px;
-                margin: 0 0.5rem;
-            }
-            .hud-face {
-                width: 44px;
-                height: 44px;
-            }
-            .hud-value {
-                font-size: 1.2rem;
-            }
-            .hud-label {
-                font-size: 0.4rem;
-            }
         }
 
         /* ===== NAVIGATION ===== */
@@ -636,8 +466,6 @@
             .splash-title { font-size: 1.5rem; }
             .nav-links { display: none; }
             .hero h1 { font-size: 1.2rem; }
-            .quake-hud { height: 60px; }
-            .hud-value { font-size: 0.9rem; }
         }
     </style>
 </head>

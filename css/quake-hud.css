@@ -1,278 +1,168 @@
-/* ===== AUTHENTIC QUAKE 1 STATUS BAR ===== */
-/* Rusty brown metal texture like the original game */
+/* ===== QUAKE 1 HUD - Actor Arsenal Style with Real Quake Texture ===== */
+/* Uses actual extracted texture from Quake 1 status bar */
 
-/* Main HUD container - full width rusty metal bar */
+/* Main HUD container - full width with authentic Quake metal texture */
 .quake-hud {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 72px;
-    /* Rusty metal texture background */
-    background-image: url('../images/quake-rust-metal.png');
-    background-repeat: repeat;
-    background-size: 64px 64px;
+    height: 80px;
+    /* Real Quake metal texture extracted from game */
+    background-image: url('../images/quake-hud-texture.png');
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-position: center;
     border-top: 4px solid #7b6b4b;
+    border-bottom: 4px solid #2a1a08;
     box-shadow:
-        inset 0 3px 0 rgba(120,100,70,0.6),
-        inset 0 -4px 8px rgba(0,0,0,0.7),
-        0 -4px 16px rgba(0,0,0,0.9);
-    z-index: 1000;
+        inset 0 2px 0 #8a7a5a,
+        inset 0 -2px 0 #1a0a00,
+        0 -4px 8px rgba(0,0,0,0.5);
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Press Start 2P', monospace;
-    image-rendering: pixelated;
-}
-
-/* Wrapper for status bar content */
-.sbar-wrapper {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-}
-
-/* ===== TOP AMMO ROW ===== */
-.sbar-ammo-row {
-    width: 100%;
-    height: 20px;
-    display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 40px;
-    background: rgba(0,0,0,0.5);
-    border-bottom: 2px solid #4b3b23;
-    padding: 2px 0;
-}
-
-.sbar-ammo-count {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-}
-
-/* Small numbers for ammo counts */
-.sbar-num-small {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: #d4c462;
-    text-shadow: 1px 1px 0 #000;
-    min-width: 8px;
-    text-align: center;
-}
-
-/* ===== MAIN STATUS BAR ===== */
-.sbar-main {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 32px;
-}
-
-.sbar-inner {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-}
-
-/* ===== HUD SECTIONS ===== */
-.sbar-section {
-    display: flex;
-    align-items: center;
-}
-
-/* Armor section - left side with dark inset box */
-.sbar-armor-section {
-    min-width: 90px;
-}
-
-.sbar-inset {
-    background: #080604;
-    border: 3px solid #3b2b17;
-    box-shadow:
-        inset 4px 4px 8px rgba(0,0,0,0.95),
-        inset -2px -2px 4px rgba(40,30,15,0.3),
-        2px 2px 4px rgba(0,0,0,0.5);
-    padding: 8px 16px;
-    min-width: 60px;
-    text-align: center;
-}
-
-/* Number group container */
-.sbar-num-group {
-    display: flex;
-    align-items: center;
+    z-index: 9999;
+    font-family: 'Press Start 2P', cursive;
+    padding: 0;
     gap: 0;
-}
-
-/* Red numbers - for armor */
-.sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
-.sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 22px;
-    color: #dd0000;
-    text-shadow: 2px 2px 0 #000, 0 0 10px rgba(220,0,0,0.6);
-}
-
-/* Yellow numbers - for health and ammo */
-.sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
-.sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 22px;
-    color: #d4c462;
-    text-shadow: 2px 2px 0 #000, 0 0 10px rgba(212,196,98,0.5);
-}
-
-/* Number values - display actual digits via CSS content */
-.sbar-num.y0::after { content: '0'; }
-.sbar-num.y1::after { content: '1'; }
-.sbar-num.y2::after { content: '2'; }
-.sbar-num.y3::after { content: '3'; }
-.sbar-num.y4::after { content: '4'; }
-.sbar-num.y5::after { content: '5'; }
-.sbar-num.y6::after { content: '6'; }
-.sbar-num.y7::after { content: '7'; }
-.sbar-num.y8::after { content: '8'; }
-.sbar-num.y9::after { content: '9'; }
-
-.sbar-num.r0::after { content: '0'; }
-.sbar-num.r1::after { content: '1'; }
-.sbar-num.r2::after { content: '2'; }
-.sbar-num.r3::after { content: '3'; }
-.sbar-num.r4::after { content: '4'; }
-.sbar-num.r5::after { content: '5'; }
-.sbar-num.r6::after { content: '6'; }
-.sbar-num.r7::after { content: '7'; }
-.sbar-num.r8::after { content: '8'; }
-.sbar-num.r9::after { content: '9'; }
-
-/* ===== RANGER FACE - CENTER ===== */
-/* quake-faces.jpg is 288x480 = 3 cols x 5 rows of 96x96 faces */
-/* Row 0: Normal (left, center, right-blue-eyes) */
-/* Row 1-3: Increasing damage */
-/* Row 4: Dead/gib */
-
-.sbar-face-section {
-    flex: 0 0 auto;
-}
-
-.sbar-face {
-    width: 48px;
-    height: 48px;
-    background-color: #100c08;
-    border: 3px solid #5b4b33;
-    box-shadow:
-        inset 3px 3px 6px rgba(0,0,0,0.9),
-        2px 2px 6px rgba(0,0,0,0.6);
-    background-image: url('../images/quake-faces.jpg');
-    background-repeat: no-repeat;
     image-rendering: pixelated;
-    /* Original is 288x480. For 48px display, scale to 144x240 */
-    background-size: 144px 240px;
 }
 
-/* Blue glowing eyes face - Row 0, Column 2 (rightmost on first row) */
-/* At 48px scale: x = -96px, y = 0 */
-.sbar-face,
-.sbar-face.healthy {
-    background-position: -96px 0;
-}
-
-/* Normal face variants */
-.sbar-face.look-left { background-position: 0 0; }
-.sbar-face.look-center { background-position: -48px 0; }
-.sbar-face.look-right { background-position: -96px 0; }
-
-/* Hurt faces - Row 1 */
-.sbar-face.hurt1 { background-position: -48px -48px; }
-.sbar-face.hurt1-left { background-position: 0 -48px; }
-.sbar-face.hurt1-right { background-position: -96px -48px; }
-
-/* More hurt - Row 2 */
-.sbar-face.hurt2 { background-position: -48px -96px; }
-
-/* Very hurt - Row 3 */
-.sbar-face.hurt3 { background-position: -48px -144px; }
-
-/* Dead/Gib - Row 4 */
-.sbar-face.dead,
-.sbar-face.gib { background-position: -48px -192px; }
-
-/* Health section */
-.sbar-health-section {
-    min-width: 110px;
+/* HUD Sections - recessed metal panels */
+.hud-section {
+    display: flex;
+    align-items: center;
     justify-content: center;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+    border-left: 3px solid #6a5540;
+    border-right: 3px solid #2a1a08;
+    border-top: 2px solid #7a6550;
+    border-bottom: 2px solid #1a0a00;
+    padding: 0 1.5rem;
+    position: relative;
 }
 
-/* Ammo section */
-.sbar-ammo-section {
-    min-width: 90px;
-    justify-content: flex-end;
+.hud-section::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    background: linear-gradient(180deg, rgba(40,30,15,0.8) 0%, rgba(20,15,5,0.9) 100%);
+    border: 2px solid #1a0a00;
+    border-radius: 2px;
+    z-index: -1;
 }
+
+/* Stat container */
+.hud-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* HUD values - big numbers */
+.hud-value {
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    letter-spacing: 2px;
+}
+
+/* HUD labels - small text below numbers */
+.hud-label {
+    font-size: 0.5rem;
+    color: #8a7560;
+    text-shadow: 1px 1px 0 #000;
+    text-transform: uppercase;
+}
+
+/* Ranger face container - center */
+.hud-face-container {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(180deg, #3a2510 0%, #1a0a00 100%);
+    border: 3px solid #5a4530;
+    border-bottom-color: #1a0a00;
+    border-right-color: #1a0a00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1rem;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.hud-face {
+    width: 60px;
+    height: 60px;
+    image-rendering: pixelated;
+}
+
+/* Quake-style colors for each stat */
+.hud-ammo { color: #ffcc00; }
+.hud-health { color: #ff4444; }
+.hud-armor { color: #44ff88; }
+.hud-zaps { color: #ff8800; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .quake-hud {
         height: 60px;
     }
-    .sbar-ammo-row {
-        display: none;
+    .hud-section {
+        padding: 0 0.8rem;
     }
-    .sbar-main {
-        padding: 4px 16px;
+    .hud-face-container {
+        width: 50px;
+        height: 50px;
+        margin: 0 0.5rem;
     }
-    .sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
-    .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9,
-    .sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
-    .sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
-        font-size: 18px;
+    .hud-face {
+        width: 44px;
+        height: 44px;
     }
-    .sbar-face {
-        width: 42px;
-        height: 42px;
-        background-size: 126px 210px;
+    .hud-value {
+        font-size: 1.2rem;
     }
-    .sbar-face.healthy { background-position: -84px 0; }
+    .hud-label {
+        font-size: 0.4rem;
+    }
 }
 
 @media (max-width: 480px) {
     .quake-hud {
         height: 52px;
     }
-    .sbar-main {
-        padding: 4px 8px;
+    .hud-section {
+        padding: 0 0.5rem;
     }
-    .sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
-    .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9,
-    .sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
-    .sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
-        font-size: 14px;
+    .hud-value {
+        font-size: 1rem;
     }
-    .sbar-inset {
-        padding: 4px 10px;
+    .hud-face-container {
+        width: 44px;
+        height: 44px;
+        margin: 0 0.3rem;
     }
-    .sbar-face {
-        width: 36px;
-        height: 36px;
-        background-size: 108px 180px;
+    .hud-face {
+        width: 38px;
+        height: 38px;
     }
-    .sbar-face.healthy { background-position: -72px 0; }
 }
 
 /* ===== MUSIC PLAYER ===== */
 .music-player {
     position: fixed;
-    bottom: 82px;
+    bottom: 90px;
     right: 12px;
-    z-index: 1001;
+    z-index: 10000;
 }
 
 .music-btn {
@@ -310,57 +200,62 @@
     50% { box-shadow: inset 1px 1px 0 #6b5b3b, 2px 2px 0 #000, 0 0 12px #efdf17; }
 }
 
-/* ===== SECRET AREAS ===== */
-.secret-area {
-    cursor: pointer;
-    transition: all 0.2s;
+/* ===== DIFFICULTY SELECTOR ===== */
+.difficulty-selector {
+    position: relative;
+    display: inline-block;
 }
 
-.secret-area:hover {
-    filter: brightness(1.1);
-}
-
-.secret-area.found {
-    animation: secretFound 0.5s ease-out;
-}
-
-@keyframes secretFound {
-    0% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.05); filter: brightness(1.5) sepia(0.5); }
-    100% { transform: scale(1); filter: brightness(1); }
-}
-
-/* Secret Popup */
-.secret-popup {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    background: linear-gradient(to bottom, #3f3013, #1f170b);
-    border: 3px solid #9f7f33;
-    padding: 20px 40px;
-    z-index: 10000;
-    text-align: center;
-    opacity: 0;
-    transition: all 0.2s;
-    box-shadow: inset 2px 2px 0 #5b4b2b, 4px 4px 0 #000;
-}
-
-.secret-popup.show {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-}
-
-.secret-popup h3 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.8rem;
-    color: #efdf17;
-    text-shadow: 2px 2px 0 #000;
-    margin-bottom: 8px;
-}
-
-.secret-popup p {
-    font-family: 'Press Start 2P', monospace;
+.difficulty-btn {
+    background: transparent;
+    border: 1px solid #cf6b2f;
+    color: #cf6b2f;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Press Start 2P', cursive;
     font-size: 0.5rem;
-    color: #b79b4b;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.difficulty-btn:hover {
+    background: #cf6b2f;
+    color: #000;
+}
+
+.difficulty-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #111;
+    border: 1px solid #cf6b2f;
+    display: none;
+    flex-direction: column;
+    min-width: 200px;
+    z-index: 1002;
+}
+
+.difficulty-menu.show {
+    display: flex;
+}
+
+.difficulty-option {
+    padding: 0.8rem;
+    color: #888;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.5rem;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.difficulty-option:hover {
+    background: rgba(143, 75, 35, 0.2);
+    color: #cf6b2f;
+}
+
+.difficulty-option.active {
+    color: #cf6b2f;
+    background: rgba(143, 75, 35, 0.3);
 }

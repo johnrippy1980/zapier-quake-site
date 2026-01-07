@@ -648,11 +648,201 @@
             text-decoration: underline;
         }
 
+        /* ===== NAILGUN DIVIDER ===== */
+        .nailgun-divider {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(15, 11, 7, 0.8) 20%, rgba(15, 11, 7, 0.8) 80%, transparent 100%);
+            overflow: visible;
+            cursor: pointer;
+        }
+
+        .nailgun-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nailgun-img {
+            width: 350px;
+            height: auto;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 20px rgba(143, 75, 35, 0.4));
+            transition: filter 0.3s, transform 0.3s;
+        }
+
+        .nailgun-divider:hover .nailgun-img {
+            filter: drop-shadow(0 0 40px rgba(207, 107, 47, 0.8)) brightness(1.2);
+            transform: scale(1.05);
+        }
+
+        /* Nail projectiles that shoot out */
+        .nail-stream {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 60px;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .nail {
+            position: absolute;
+            width: 20px;
+            height: 8px;
+            background: linear-gradient(90deg, #8B7355 0%, #5D4E37 50%, #3D3225 100%);
+            border-radius: 0 2px 2px 0;
+            opacity: 0;
+            transform: translateX(0);
+            box-shadow: 0 0 8px rgba(207, 107, 47, 0.6), 2px 0 4px rgba(255, 200, 100, 0.4);
+        }
+
+        .nail::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-right: 6px solid #8B7355;
+        }
+
+        .nail::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 3px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #FFD700;
+        }
+
+        /* Individual nail animations with staggered timing */
+        .nailgun-divider:hover .nail-1 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0s;
+        }
+        .nailgun-divider:hover .nail-2 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.05s;
+        }
+        .nailgun-divider:hover .nail-3 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.1s;
+        }
+        .nailgun-divider:hover .nail-4 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.15s;
+        }
+        .nailgun-divider:hover .nail-5 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.2s;
+        }
+        .nailgun-divider:hover .nail-6 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.25s;
+        }
+        .nailgun-divider:hover .nail-7 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.3s;
+        }
+        .nailgun-divider:hover .nail-8 {
+            animation: shootNail 0.3s linear forwards;
+            animation-delay: 0.35s;
+        }
+
+        .nail-1 { top: 20%; }
+        .nail-2 { top: 35%; }
+        .nail-3 { top: 50%; }
+        .nail-4 { top: 65%; }
+        .nail-5 { top: 25%; }
+        .nail-6 { top: 45%; }
+        .nail-7 { top: 55%; }
+        .nail-8 { top: 75%; }
+
+        @keyframes shootNail {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(300px);
+            }
+        }
+
+        /* Left-side nail stream (reverse) */
+        .nail-stream-left {
+            position: absolute;
+            top: 50%;
+            right: 100%;
+            transform: translateY(-50%) scaleX(-1);
+            width: 300px;
+            height: 60px;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        /* Muzzle flash effect */
+        .muzzle-flash {
+            position: absolute;
+            top: 50%;
+            left: calc(100% - 30px);
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(255, 200, 100, 0.9) 0%, rgba(207, 107, 47, 0.6) 40%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nailgun-divider:hover .muzzle-flash {
+            animation: flashPulse 0.1s ease-out infinite;
+        }
+
+        @keyframes flashPulse {
+            0%, 100% { opacity: 0.8; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.4; transform: translateY(-50%) scale(0.8); }
+        }
+
+        /* Nailgun text label */
+        .nailgun-label {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #8f4b23;
+            text-shadow: 1px 1px 0 #000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nailgun-divider:hover .nailgun-label {
+            opacity: 1;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .splash-title { font-size: 1.5rem; }
             .nav-links { display: none; }
             .hero h1 { font-size: 1.2rem; }
+            .nailgun-img { width: 200px; }
+            .nail-stream, .nail-stream-left { width: 150px; }
         }
     </style>
 </head>
@@ -721,6 +911,41 @@
                 <a href="#features" class="cta-button">ENTER THE SLIPGATE</a>
             </div>
         </section>
+
+        <!-- Nailgun Divider -->
+        <div class="nailgun-divider" id="nailgunDivider">
+            <div class="nailgun-container">
+                <!-- Left nail stream -->
+                <div class="nail-stream-left">
+                    <div class="nail nail-1"></div>
+                    <div class="nail nail-2"></div>
+                    <div class="nail nail-3"></div>
+                    <div class="nail nail-4"></div>
+                    <div class="nail nail-5"></div>
+                    <div class="nail nail-6"></div>
+                    <div class="nail nail-7"></div>
+                    <div class="nail nail-8"></div>
+                </div>
+                <div class="muzzle-flash" style="left: auto; right: calc(100% - 30px);"></div>
+
+                <!-- Nailgun Image -->
+                <img src="images/nailgun.png" alt="Quake Nailgun" class="nailgun-img">
+
+                <!-- Right nail stream -->
+                <div class="nail-stream">
+                    <div class="nail nail-1"></div>
+                    <div class="nail nail-2"></div>
+                    <div class="nail nail-3"></div>
+                    <div class="nail nail-4"></div>
+                    <div class="nail nail-5"></div>
+                    <div class="nail nail-6"></div>
+                    <div class="nail nail-7"></div>
+                    <div class="nail nail-8"></div>
+                </div>
+                <div class="muzzle-flash"></div>
+            </div>
+            <span class="nailgun-label">PERFORATOR</span>
+        </div>
 
         <section class="features" id="features">
             <h2>POWER-UPS</h2>
@@ -926,6 +1151,51 @@
 
                 if (typeof playSelectSound === 'function') playSelectSound();
             });
+        });
+
+        // Music player
+        const musicBtn = document.getElementById('music-btn');
+        const musicText = document.getElementById('music-text');
+        const quakeTheme = document.getElementById('quake-theme');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent splash dismissal
+            if (isPlaying) {
+                quakeTheme.pause();
+                musicBtn.classList.remove('playing');
+                musicText.textContent = 'PLAY THEME';
+                isPlaying = false;
+            } else {
+                quakeTheme.play().then(() => {
+                    musicBtn.classList.add('playing');
+                    musicText.textContent = 'STOP THEME';
+                    isPlaying = true;
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                    musicText.textContent = 'CLICK AGAIN';
+                });
+            }
+        });
+
+        // Nailgun divider sound effect
+        const nailgunDivider = document.getElementById('nailgunDivider');
+        const nailgunSound = new Audio('audio/nailgun.wav');
+        nailgunSound.volume = 0.5;
+        let nailgunPlaying = false;
+
+        nailgunDivider.addEventListener('mouseenter', () => {
+            if (!nailgunPlaying) {
+                nailgunPlaying = true;
+                nailgunSound.currentTime = 0;
+                nailgunSound.play().catch(e => console.log('Audio play failed:', e));
+            }
+        });
+
+        nailgunDivider.addEventListener('mouseleave', () => {
+            nailgunPlaying = false;
+            nailgunSound.pause();
+            nailgunSound.currentTime = 0;
         });
     </script>
 </body>

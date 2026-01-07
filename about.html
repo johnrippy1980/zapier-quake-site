@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/quake-hud.css">
     <style>
         :root {
             --bg-dark: #1a0f0a;
@@ -296,6 +297,17 @@
     </style>
 </head>
 <body>
+    <!-- Music Player -->
+    <audio id="quake-theme" loop>
+        <source src="audio/quake-theme.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Secret Popup -->
+    <div class="secret-popup" id="secret-popup">
+        <h3>SECRET FOUND!</h3>
+        <p id="secret-message">You found a secret area!</p>
+    </div>
+
     <!-- CRT Effect -->
     <div class="crt-overlay"></div>
 
@@ -398,7 +410,7 @@
                     <span>&#128101;</span>
                     <div class="link-text">LINKEDIN</div>
                 </a>
-                <a href="https://github.com/johnrippy1980" target="_blank" class="link-card">
+                <a href="https://github.com/johnrippy1980" target="_blank" class="link-card secret-area" data-secret="about-github" data-secret-msg="You found the code repository!">
                     <span>&#128187;</span>
                     <div class="link-text">GITHUB</div>
                 </a>
@@ -414,41 +426,68 @@
         </section>
     </main>
 
+    <!-- Music Player Button -->
+    <div class="music-player">
+        <button class="music-btn" id="music-btn">
+            <span class="music-icon">&#127925;</span>
+            <span id="music-text">PLAY THEME</span>
+        </button>
+    </div>
+
+    <!-- Quake HUD -->
+    <div class="quake-hud">
+        <div class="hud-section hud-face-section">
+            <div class="ranger-face">
+                <span class="face-emoji">&#129489;</span>
+            </div>
+            <div class="health-display">
+                <div class="health-value" id="health-value">100</div>
+                <div class="health-label">Health</div>
+            </div>
+        </div>
+        <div class="hud-section ammo-section">
+            <div class="ammo-box active" title="Shells">
+                <span class="ammo-icon">&#128165;</span>
+                <span class="ammo-value" id="shells">25</span>
+                <span class="ammo-label">Shells</span>
+            </div>
+            <div class="ammo-box" title="Nails">
+                <span class="ammo-icon">&#128204;</span>
+                <span class="ammo-value" id="nails">100</span>
+                <span class="ammo-label">Nails</span>
+            </div>
+            <div class="ammo-box" title="Rockets">
+                <span class="ammo-icon">&#128640;</span>
+                <span class="ammo-value" id="rockets">10</span>
+                <span class="ammo-label">Rockets</span>
+            </div>
+            <div class="ammo-box" title="Cells">
+                <span class="ammo-icon">&#9889;</span>
+                <span class="ammo-value" id="cells">50</span>
+                <span class="ammo-label">Cells</span>
+            </div>
+        </div>
+        <div class="hud-section secrets-section">
+            <div class="secrets-display">
+                <div class="secrets-value"><span id="secrets-found">0</span>/<span id="secrets-total">3</span></div>
+                <div class="secrets-label">Secrets</div>
+            </div>
+            <div class="secrets-icon">&#128270;</div>
+        </div>
+        <div class="hud-section armor-section">
+            <div class="armor-display">
+                <div class="armor-value" id="armor-value">150</div>
+                <div class="armor-label">Armor</div>
+            </div>
+            <div class="armor-icon">&#128737;</div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <p>Built with &#9889; by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
     </footer>
 
-    <script>
-        // Sound system
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new AudioContext();
-            }
-        }
-
-        function playMenuSound() {
-            initAudio();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.1);
-        }
-
-        // Add hover sounds
-        document.querySelectorAll('.nav-link, .link-card, .stat-card, .project-card').forEach(el => {
-            el.addEventListener('mouseenter', playMenuSound);
-        });
-    </script>
+    <script src="js/quake-hud.js"></script>
 </body>
 </html>

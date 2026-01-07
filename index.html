@@ -30,6 +30,7 @@
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/quake-hud.css">
     <style>
         :root {
             /* Quake-inspired color palette - browns, oranges, dark tones */
@@ -202,68 +203,314 @@
             50% { box-shadow: 0 0 25px rgba(255, 102, 0, 0.8); }
         }
 
-        /* ===== QUAKE HUD (Metallic Brown Style) ===== */
+        /* ===== QUAKE 1 AUTHENTIC HUD ===== */
         .quake-hud {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 70px;
-            background: linear-gradient(180deg, #3a2a1a 0%, #2a1a0a 50%, #1a0a00 100%);
-            border-top: 3px solid #5a4a3a;
+            height: 80px;
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    #3d2817 0px,
+                    #4a3020 2px,
+                    #3d2817 4px
+                ),
+                linear-gradient(180deg, #4a3525 0%, #2d1a0f 50%, #1a0f08 100%);
+            border-top: 4px solid #6a5040;
+            box-shadow:
+                inset 0 2px 4px rgba(255,165,0,0.1),
+                0 -4px 20px rgba(0,0,0,0.9);
             z-index: 1000;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
+            gap: 0;
         }
-        .quake-hud::before {
+
+        /* HUD Sections */
+        .hud-section {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 8px 12px;
+            border-left: 2px solid #5a4a3a;
+            border-right: 2px solid #2a1a0a;
+        }
+        .hud-section:first-child {
+            border-left: none;
+        }
+        .hud-section:last-child {
+            border-right: none;
+        }
+
+        /* Face Section (Left) */
+        .hud-face-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+        }
+        .ranger-face {
+            width: 56px;
+            height: 56px;
+            background:
+                linear-gradient(135deg, #5a4a3a 0%, #3a2a1a 50%, #2a1a0a 100%);
+            border: 3px solid #6a5a4a;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow:
+                inset 2px 2px 4px rgba(255,165,0,0.2),
+                inset -2px -2px 4px rgba(0,0,0,0.5),
+                2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .ranger-face::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ff6600, transparent);
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(0,0,0,0.1) 2px,
+                rgba(0,0,0,0.1) 4px
+            );
+        }
+        .face-emoji {
+            animation: faceBob 2s ease-in-out infinite;
+            filter: drop-shadow(1px 1px 1px #000);
+        }
+        @keyframes faceBob {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-1px) scale(1.02); }
+            50% { transform: translateY(0) scale(1); }
+            75% { transform: translateY(1px) scale(0.98); }
         }
 
-        .hud-stat {
+        /* Health Display */
+        .health-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .health-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            color: #ff3333;
+            text-shadow:
+                2px 2px 0 #000,
+                -1px -1px 0 #800000,
+                0 0 10px rgba(255,51,51,0.5);
+            line-height: 1;
+        }
+        .health-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            color: #aa6644;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Ammo Boxes (Center) */
+        .ammo-section {
+            display: flex;
+            gap: 4px;
+        }
+        .ammo-box {
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(180deg, #3a2a1a 0%, #2a1a0a 100%);
+            border: 2px solid #5a4a3a;
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                inset 1px 1px 2px rgba(255,165,0,0.1),
+                inset -1px -1px 2px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+        .ammo-box.active {
+            border-color: #ff6600;
+            box-shadow:
+                0 0 10px rgba(255,102,0,0.5),
+                inset 1px 1px 2px rgba(255,165,0,0.2);
+        }
+        .ammo-icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        .ammo-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #ffcc00;
+            text-shadow: 1px 1px 0 #000;
+        }
+        .ammo-box.active .ammo-value {
+            color: #ffffff;
+            text-shadow: 0 0 5px #ffcc00, 1px 1px 0 #000;
+        }
+        .ammo-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.25rem;
+            color: #886644;
+            text-transform: uppercase;
+        }
+
+        /* Armor Section (Right) */
+        .armor-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: flex-end;
+        }
+        .armor-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .armor-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            color: #00ff88;
+            text-shadow:
+                2px 2px 0 #000,
+                -1px -1px 0 #006633,
+                0 0 10px rgba(0,255,136,0.5);
+            line-height: 1;
+        }
+        .armor-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            color: #aa6644;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .armor-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4a6a4a 0%, #2a4a2a 100%);
+            border: 2px solid #5a7a5a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow:
+                inset 2px 2px 4px rgba(100,255,100,0.2),
+                2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Secrets Section */
+        .secrets-section {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .hud-icon {
-            font-size: 24px;
+        .secrets-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .hud-value {
+        .secrets-value {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.2rem;
-            color: var(--accent-orange);
-            text-shadow: 2px 2px 0 #000;
+            color: #ff6600;
+            text-shadow:
+                2px 2px 0 #000,
+                0 0 10px rgba(255,102,0,0.5);
+            line-height: 1;
         }
-        .hud-label {
+        .secrets-label {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.5rem;
-            color: var(--text-secondary);
+            font-size: 0.4rem;
+            color: #aa6644;
+            text-transform: uppercase;
+        }
+        .secrets-icon {
+            font-size: 24px;
+            filter: drop-shadow(1px 1px 1px #000);
         }
 
-        /* Animated Ranger Face */
-        .ranger-face {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #4a3a2a, #2a1a0a);
-            border: 2px solid #5a4a3a;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            animation: rangerBob 0.5s ease-in-out infinite;
+        /* Hidden Secrets (clickable areas) */
+        .secret-area {
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        @keyframes rangerBob {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-2px); }
+        .secret-area:hover {
+            filter: brightness(1.2);
+        }
+        .secret-area.found {
+            animation: secretFound 0.5s ease-out;
+        }
+        @keyframes secretFound {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(2) sepia(1) hue-rotate(-30deg); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        /* Secret Found Popup */
+        .secret-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(180deg, #4a3525, #2d1a0f);
+            border: 4px solid #ff6600;
+            padding: 30px 50px;
+            z-index: 10000;
+            text-align: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .secret-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        .secret-popup h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #ff6600;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 10px;
+        }
+        .secret-popup p {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #ffcc00;
+        }
+
+        /* Responsive HUD */
+        @media (max-width: 768px) {
+            .quake-hud {
+                height: 70px;
+            }
+            .ammo-box {
+                width: 40px;
+                height: 50px;
+            }
+            .health-value, .armor-value {
+                font-size: 1.4rem;
+            }
+            .ranger-face {
+                width: 46px;
+                height: 46px;
+                font-size: 26px;
+            }
+            .hud-face-section, .armor-section {
+                min-width: 100px;
+            }
         }
 
         /* ===== NAVIGATION ===== */
@@ -490,6 +737,12 @@
     <div class="crt-overlay"></div>
     <div class="vignette"></div>
 
+    <!-- Secret Found Popup -->
+    <div class="secret-popup" id="secret-popup">
+        <h3>SECRET FOUND!</h3>
+        <p id="secret-message">You found a hidden area!</p>
+    </div>
+
     <!-- Music Player -->
     <div class="music-player">
         <button class="music-btn" id="music-btn">
@@ -523,7 +776,7 @@
         <section class="features" id="features">
             <h2>POWER-UPS</h2>
             <div class="feature-grid">
-                <div class="feature-card">
+                <div class="feature-card secret-area" data-secret="1" data-secret-msg="You found the Lightning Secret!">
                     <div class="feature-icon">&#9889;</div>
                     <h3>INSTANT ZAPS</h3>
                     <p>Lightning-fast automation triggers that fire instantly when events occur in your connected apps.</p>
@@ -574,22 +827,59 @@
         </section>
     </main>
 
-    <!-- Quake HUD -->
+    <!-- Quake 1 Authentic HUD -->
     <div class="quake-hud">
-        <div class="hud-stat">
-            <div class="hud-icon">&#9889;</div>
-            <div>
-                <div class="hud-value" id="zaps-hud">500</div>
-                <div class="hud-label">ZAPS</div>
+        <!-- Face + Health Section -->
+        <div class="hud-section hud-face-section">
+            <div class="ranger-face">
+                <span class="face-emoji">&#129489;</span>
+            </div>
+            <div class="health-display">
+                <div class="health-value" id="health-value">100</div>
+                <div class="health-label">Health</div>
             </div>
         </div>
-        <div class="ranger-face">&#129489;</div>
-        <div class="hud-stat">
-            <div>
-                <div class="hud-value" id="tasks-hud">100</div>
-                <div class="hud-label">TASKS/HR</div>
+
+        <!-- Ammo Boxes Section -->
+        <div class="hud-section ammo-section">
+            <div class="ammo-box active" title="Shells">
+                <span class="ammo-icon">&#128163;</span>
+                <span class="ammo-value" id="shells">25</span>
+                <span class="ammo-label">Shells</span>
             </div>
-            <div class="hud-icon">&#128736;</div>
+            <div class="ammo-box" title="Nails">
+                <span class="ammo-icon">&#128204;</span>
+                <span class="ammo-value" id="nails">100</span>
+                <span class="ammo-label">Nails</span>
+            </div>
+            <div class="ammo-box" title="Rockets">
+                <span class="ammo-icon">&#128640;</span>
+                <span class="ammo-value" id="rockets">10</span>
+                <span class="ammo-label">Rockets</span>
+            </div>
+            <div class="ammo-box" title="Cells">
+                <span class="ammo-icon">&#9889;</span>
+                <span class="ammo-value" id="cells">50</span>
+                <span class="ammo-label">Cells</span>
+            </div>
+        </div>
+
+        <!-- Secrets Section -->
+        <div class="hud-section secrets-section">
+            <div class="secrets-display">
+                <div class="secrets-value"><span id="secrets-found">0</span>/<span id="secrets-total">3</span></div>
+                <div class="secrets-label">Secrets</div>
+            </div>
+            <div class="secrets-icon">&#128270;</div>
+        </div>
+
+        <!-- Armor Section -->
+        <div class="hud-section armor-section">
+            <div class="armor-display">
+                <div class="armor-value" id="armor-value">150</div>
+                <div class="armor-label">Armor</div>
+            </div>
+            <div class="armor-icon">&#128737;</div>
         </div>
     </div>
 
@@ -687,15 +977,147 @@
 
         // Start HUD animation after splash
         setTimeout(() => {
-            animateValue(document.getElementById('zaps-hud'), 0, 500, 2000);
-            animateValue(document.getElementById('tasks-hud'), 0, 100, 2000);
+            animateValue(document.getElementById('health-value'), 0, 100, 1500);
+            animateValue(document.getElementById('armor-value'), 0, 150, 1500);
+            animateValue(document.getElementById('shells'), 0, 25, 1000);
+            animateValue(document.getElementById('nails'), 0, 100, 1200);
+            animateValue(document.getElementById('rockets'), 0, 10, 800);
+            animateValue(document.getElementById('cells'), 0, 50, 1100);
         }, 1000);
 
-        // Music Player
+        // Weapon switching with number keys
+        const ammoBoxes = document.querySelectorAll('.ammo-box');
+        document.addEventListener('keydown', (e) => {
+            const weaponKeys = ['1', '2', '3', '4'];
+            const keyIndex = weaponKeys.indexOf(e.key);
+            if (keyIndex !== -1) {
+                playMenuSound();
+                ammoBoxes.forEach((box, i) => {
+                    box.classList.toggle('active', i === keyIndex);
+                });
+            }
+        });
+
+        // Add click to switch weapons
+        ammoBoxes.forEach((box, i) => {
+            box.addEventListener('click', () => {
+                playMenuSound();
+                ammoBoxes.forEach(b => b.classList.remove('active'));
+                box.classList.add('active');
+            });
+        });
+
+        // ===== SECRETS SYSTEM (persisted across pages) =====
+        const TOTAL_SECRETS = 3;
+        let foundSecrets = JSON.parse(localStorage.getItem('quake_secrets') || '[]');
+
+        function updateSecretsDisplay() {
+            const secretsFound = document.getElementById('secrets-found');
+            if (secretsFound) {
+                secretsFound.textContent = foundSecrets.length;
+            }
+        }
+
+        function playSecretSound() {
+            initAudio();
+            // Play ascending arpeggio for secret found
+            const notes = [220, 330, 440, 550];
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                }, i * 80);
+            });
+        }
+
+        function showSecretPopup(message) {
+            const popup = document.getElementById('secret-popup');
+            const msgEl = document.getElementById('secret-message');
+            if (popup && msgEl) {
+                msgEl.textContent = message;
+                popup.classList.add('show');
+                setTimeout(() => popup.classList.remove('show'), 2000);
+            }
+        }
+
+        function findSecret(secretId, message) {
+            if (foundSecrets.includes(secretId)) return false;
+            foundSecrets.push(secretId);
+            localStorage.setItem('quake_secrets', JSON.stringify(foundSecrets));
+            updateSecretsDisplay();
+            playSecretSound();
+            showSecretPopup(message);
+            return true;
+        }
+
+        // Initialize secrets display
+        updateSecretsDisplay();
+
+        // Setup secret areas
+        document.querySelectorAll('.secret-area').forEach(area => {
+            const secretId = area.dataset.secret;
+            const message = area.dataset.secretMsg || 'You found a secret!';
+
+            // Mark already found secrets
+            if (foundSecrets.includes(secretId)) {
+                area.style.opacity = '0.7';
+            }
+
+            area.addEventListener('click', (e) => {
+                if (!foundSecrets.includes(secretId)) {
+                    e.preventDefault();
+                    findSecret(secretId, message);
+                    area.classList.add('found');
+                    setTimeout(() => {
+                        area.style.opacity = '0.7';
+                    }, 500);
+                }
+            });
+        });
+
+        // ===== MUSIC PLAYER (persisted across pages) =====
         const musicBtn = document.getElementById('music-btn');
         const musicText = document.getElementById('music-text');
         const quakeTheme = document.getElementById('quake-theme');
-        let isPlaying = false;
+        let isPlaying = localStorage.getItem('quake_music_playing') === 'true';
+        let musicTime = parseFloat(localStorage.getItem('quake_music_time') || '0');
+
+        // Restore music state on page load
+        if (isPlaying && quakeTheme) {
+            quakeTheme.currentTime = musicTime;
+            quakeTheme.play().then(() => {
+                musicBtn.classList.add('playing');
+                musicText.textContent = 'STOP THEME';
+            }).catch(e => {
+                console.log('Auto-play blocked, user interaction required');
+                isPlaying = false;
+                localStorage.setItem('quake_music_playing', 'false');
+            });
+        }
+
+        // Save music position periodically
+        if (quakeTheme) {
+            setInterval(() => {
+                if (isPlaying && !quakeTheme.paused) {
+                    localStorage.setItem('quake_music_time', quakeTheme.currentTime.toString());
+                }
+            }, 1000);
+        }
+
+        // Save state before navigating away
+        window.addEventListener('beforeunload', () => {
+            if (quakeTheme && isPlaying) {
+                localStorage.setItem('quake_music_time', quakeTheme.currentTime.toString());
+            }
+        });
 
         musicBtn.addEventListener('click', () => {
             playMenuSound();
@@ -703,10 +1125,12 @@
                 quakeTheme.pause();
                 musicBtn.classList.remove('playing');
                 musicText.textContent = 'PLAY THEME';
+                localStorage.setItem('quake_music_playing', 'false');
             } else {
                 quakeTheme.play().catch(e => console.log('Audio play failed:', e));
                 musicBtn.classList.add('playing');
                 musicText.textContent = 'STOP THEME';
+                localStorage.setItem('quake_music_playing', 'true');
             }
             isPlaying = !isPlaying;
         });
@@ -714,5 +1138,6 @@
         // Add hover sound to music button
         musicBtn.addEventListener('mouseenter', playMenuSound);
     </script>
+    <script src="js/quake-hud.js"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/quake-hud.css">
     <style>
         :root {
             --bg-dark: #1a0f0a;
@@ -254,6 +255,17 @@
     </style>
 </head>
 <body>
+    <!-- Music Player -->
+    <audio id="quake-theme" loop>
+        <source src="audio/quake-theme.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Secret Popup -->
+    <div class="secret-popup" id="secret-popup">
+        <h3>SECRET FOUND!</h3>
+        <p id="secret-message">You found a secret area!</p>
+    </div>
+
     <!-- Navigation -->
     <nav class="nav">
         <a href="index.html" class="nav-logo">ZAP ARSENAL</a>
@@ -275,7 +287,7 @@
                     <div class="loading-bar" id="loading-bar"></div>
                 </div>
                 <div class="loading-text" id="loading-text">Initializing...</div>
-                <button class="start-button" id="start-button">CLICK TO START</button>
+                <button class="start-button secret-area" id="start-button" data-secret="play-start" data-secret-msg="You found the start button! Time to frag!">CLICK TO START</button>
             </div>
 
             <!-- Fullscreen Button -->
@@ -289,6 +301,14 @@
                 ESC = Menu | Click to capture mouse
             </div>
         </div>
+    </div>
+
+    <!-- Music Player Button -->
+    <div class="music-player" style="bottom: 70px;">
+        <button class="music-btn" id="music-btn">
+            <span class="music-icon">&#127925;</span>
+            <span id="music-text">PLAY THEME</span>
+        </button>
     </div>
 
     <!-- Controls HUD -->
@@ -398,5 +418,6 @@
             }
         });
     </script>
+    <script src="js/quake-hud.js"></script>
 </body>
 </html>

@@ -262,6 +262,114 @@
     50% { box-shadow: inset 1px 1px 0 #533b1b, 2px 2px 0 #000, 0 0 8px #efdf17; }
 }
 
+/* ===== QUAKE SPRITE ELEMENTS ===== */
+/* Using quake-hud-elements.png sprite sheet */
+
+/* Ranger face sprite - center face at full health */
+.face-sprite {
+    width: 24px;
+    height: 24px;
+    background-image: url('../images/quake-hud-elements.png');
+    background-position: 0 -48px;
+    background-size: auto;
+    image-rendering: pixelated;
+    display: inline-block;
+}
+
+/* Ammo type sprites */
+.ammo-sprite {
+    width: 24px;
+    height: 24px;
+    background-image: url('../images/quake-hud-elements.png');
+    image-rendering: pixelated;
+    display: inline-block;
+}
+
+/* Shells icon - yellow/orange box */
+.ammo-sprite.shells {
+    background-position: 0 -168px;
+}
+
+/* Nails icon - silver nails */
+.ammo-sprite.nails {
+    background-position: -24px -168px;
+}
+
+/* Rockets icon - red rocket */
+.ammo-sprite.rockets {
+    background-position: -48px -168px;
+}
+
+/* Cells icon - blue energy */
+.ammo-sprite.cells {
+    background-position: -72px -168px;
+}
+
+/* Armor sprite */
+.armor-sprite {
+    width: 24px;
+    height: 24px;
+    background-image: url('../images/quake-hud-elements.png');
+    background-position: -96px -144px;
+    image-rendering: pixelated;
+    display: inline-block;
+}
+
+/* Key sprites */
+.key-sprite {
+    width: 16px;
+    height: 16px;
+    background-image: url('../images/quake-hud-elements.png');
+    image-rendering: pixelated;
+    display: inline-block;
+}
+
+.key-sprite.silver {
+    background-position: -144px -96px;
+}
+
+.key-sprite.gold {
+    background-position: -160px -96px;
+}
+
+/* Weapon icon sprites */
+.weapon-sprite {
+    width: 48px;
+    height: 48px;
+    background-image: url('../images/quake-hud-elements.png');
+    background-size: 650px auto;
+    image-rendering: pixelated;
+    display: inline-block;
+}
+
+.weapon-sprite.shotgun {
+    background-position: 0 -432px;
+}
+
+.weapon-sprite.sshotgun {
+    background-position: -48px -432px;
+}
+
+.weapon-sprite.nailgun {
+    background-position: -96px -432px;
+}
+
+.weapon-sprite.snailgun {
+    background-position: -144px -432px;
+}
+
+.weapon-sprite.grenade {
+    background-position: -192px -432px;
+}
+
+.weapon-sprite.rocket {
+    background-position: -240px -432px;
+}
+
+.weapon-sprite.lightning {
+    background-position: -288px -432px;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .quake-hud {

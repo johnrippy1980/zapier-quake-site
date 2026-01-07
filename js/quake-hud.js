@@ -1,97 +1,76 @@
 // ===== AUTHENTIC QUAKE 1 SOUND & HUD SYSTEM =====
-// Recreating the original 1996 id Software sounds with Web Audio API
+// Using actual Quake 1 sound files from Mindgrid Audio pack
 
-// Use existing AudioContext if already defined (avoids conflict with inline scripts)
-const QuakeAudioContext = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
+// Preload audio files for instant playback
+const quakeSounds = {
+    menu1: null,
+    menu2: null,
+    menu3: null,
+    pickup: null,
+    nailgun: null,
+    jump: null
+};
 
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new QuakeAudioContext();
-    }
-}
+let soundsLoaded = false;
 
-// Authentic Quake menu tick sound (menu1.wav recreation)
-function playMenuSound() {
-    initAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+// Preload all sound files
+function preloadSounds() {
+    if (soundsLoaded) return;
 
-    // Quake menu tick - short sharp click
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.02);
+    const soundFiles = {
+        menu1: 'audio/menu1.wav',
+        menu2: 'audio/menu2.wav',
+        menu3: 'audio/menu3.wav',
+        pickup: 'audio/pickup.wav',
+        nailgun: 'audio/nailgun.wav',
+        jump: 'audio/jump.wav'
+    };
 
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.05);
-}
-
-// Quake select/confirm sound (menu2.wav recreation)
-function playSelectSound() {
-    initAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.03);
-    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
-
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.1);
-}
-
-// Quake secret found sound (authentic rising chime)
-function playSecretSound() {
-    initAudio();
-    // Play a rising arpeggio like the actual Quake secret sound
-    const notes = [330, 392, 494, 587, 659];
-    notes.forEach((freq, i) => {
-        setTimeout(() => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.2);
-        }, i * 60);
+    Object.entries(soundFiles).forEach(([name, path]) => {
+        const audio = new Audio(path);
+        audio.preload = 'auto';
+        audio.volume = 0.4;
+        quakeSounds[name] = audio;
     });
+
+    soundsLoaded = true;
+}
+
+// Play a sound (with clone to allow overlapping)
+function playSound(soundName) {
+    if (!quakeSounds[soundName]) return;
+
+    // Clone audio to allow overlapping sounds
+    const sound = quakeSounds[soundName].cloneNode();
+    sound.volume = 0.4;
+    sound.play().catch(e => console.log('Sound play blocked:', e));
+}
+
+// Authentic Quake menu tick sound (menu1.wav)
+function playMenuSound() {
+    playSound('menu1');
+}
+
+// Quake select/confirm sound (menu2.wav)
+function playSelectSound() {
+    playSound('menu2');
+}
+
+// Quake secret found sound (using pickup with nailgun combo)
+function playSecretSound() {
+    playSound('pickup');
+    // Layer the nailgun for dramatic effect
+    setTimeout(() => playSound('nailgun'), 100);
 }
 
 // Quake item pickup sound
 function playPickupSound() {
-    initAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+    playSound('pickup');
+}
 
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
-
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
-
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.12);
+// Quake jump sound
+function playJumpSound() {
+    playSound('jump');
 }
 
 // ===== SECRETS SYSTEM =====
@@ -227,10 +206,16 @@ function initHoverSounds() {
     document.querySelectorAll('.nav-link, .cta-button, .feature-card, .link-card, .stat-card, .project-card, .quake-btn').forEach(el => {
         el.addEventListener('mouseenter', playMenuSound);
     });
+
+    // Add click sounds to buttons
+    document.querySelectorAll('.cta-button, .quake-btn, button').forEach(el => {
+        el.addEventListener('click', playSelectSound);
+    });
 }
 
 // ===== INITIALIZE ALL =====
 document.addEventListener('DOMContentLoaded', () => {
+    preloadSounds();
     initSecrets();
     initMusic();
     initHudAnimations();

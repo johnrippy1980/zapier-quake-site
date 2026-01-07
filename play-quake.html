@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Play Quake | Zap Arsenal</title>
     <meta name="description" content="Play Quake in your browser! A tribute to the classic 1996 FPS by id Software.">
-    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="icon" type="image/jpeg" href="images/quake-box-art.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/quake-hud.css">
@@ -48,11 +48,13 @@
             padding: 0 20px;
         }
         .nav-logo {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem;
-            color: var(--accent-orange);
+            display: flex;
+            align-items: center;
             text-decoration: none;
-            text-shadow: 2px 2px 0 #000;
+        }
+        .nav-logo img {
+            height: 35px;
+            width: auto;
         }
         .nav-links {
             display: flex;
@@ -270,7 +272,7 @@
 
     <!-- Navigation -->
     <nav class="nav">
-        <a href="index.html" class="nav-logo">ZAP ARSENAL</a>
+        <a href="index.html" class="nav-logo"><img src="images/quake-logo.png" alt="Zap Arsenal"></a>
         <div class="nav-links">
             <a href="index.html" class="nav-link">HOME</a>
             <a href="about.html" class="nav-link">ABOUT</a>
@@ -308,7 +310,7 @@
     <!-- Music Player Button -->
     <div class="music-player" style="bottom: 70px;">
         <button class="music-btn" id="music-btn">
-            <span class="music-icon">&#127925;</span>
+            <span class="music-icon">[M]</span>
             <span id="music-text">PLAY THEME</span>
         </button>
     </div>

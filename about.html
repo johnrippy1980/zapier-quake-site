@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About John Rippy | Zap Arsenal</title>
     <meta name="description" content="John Rippy - CTO at Drive Social Media and 2025 Zapier Automation Hero of the Year. Creator of Project Phoenix, a 95-step AI automation pipeline.">
-    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="icon" type="image/jpeg" href="images/quake-box-art.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/quake-hud.css">
@@ -50,11 +50,13 @@
             padding: 0 30px;
         }
         .nav-logo {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1rem;
-            color: var(--accent-orange);
+            display: flex;
+            align-items: center;
             text-decoration: none;
-            text-shadow: 2px 2px 0 #000;
+        }
+        .nav-logo img {
+            height: 40px;
+            width: auto;
         }
         .nav-links {
             display: flex;
@@ -315,7 +317,7 @@
 
     <!-- Navigation -->
     <nav class="nav">
-        <a href="index.html" class="nav-logo">ZAP ARSENAL</a>
+        <a href="index.html" class="nav-logo"><img src="images/quake-logo.png" alt="Zap Arsenal"></a>
         <div class="nav-links">
             <a href="index.html" class="nav-link">HOME</a>
             <a href="index.html#features" class="nav-link">FEATURES</a>
@@ -409,19 +411,19 @@
             <h2>CONNECT</h2>
             <div class="links-grid">
                 <a href="https://www.linkedin.com/in/johnrippy/" target="_blank" class="link-card">
-                    <span>&#128101;</span>
+                    <span>[LI]</span>
                     <div class="link-text">LINKEDIN</div>
                 </a>
                 <a href="https://github.com/johnrippy1980" target="_blank" class="link-card secret-area" data-secret="about-github" data-secret-msg="You found the code repository!">
-                    <span>&#128187;</span>
+                    <span>[GH]</span>
                     <div class="link-text">GITHUB</div>
                 </a>
                 <a href="https://zapier.com/blog/drive-social-media-scaling-sales-and-marketing/" target="_blank" class="link-card">
-                    <span>&#9889;</span>
+                    <span>[ZAP]</span>
                     <div class="link-text">ZAPIER FEATURE</div>
                 </a>
                 <a href="https://zapier.com/blog/zappy-awards-winners-2025/" target="_blank" class="link-card">
-                    <span>&#127942;</span>
+                    <span>[TROPHY]</span>
                     <div class="link-text">ZAPPY AWARDS</div>
                 </a>
             </div>
@@ -431,7 +433,7 @@
     <!-- Music Player Button -->
     <div class="music-player">
         <button class="music-btn" id="music-btn">
-            <span class="music-icon">&#127925;</span>
+            <span class="music-icon">[M]</span>
             <span id="music-text">PLAY THEME</span>
         </button>
     </div>
@@ -440,7 +442,7 @@
     <div class="quake-hud">
         <div class="hud-section hud-face-section">
             <div class="ranger-face">
-                <span class="face-emoji">&#129489;</span>
+                <span class="face-sprite"></span>
             </div>
             <div class="health-display">
                 <div class="health-value" id="health-value">100</div>
@@ -449,22 +451,22 @@
         </div>
         <div class="hud-section ammo-section">
             <div class="ammo-box active" title="Shells">
-                <span class="ammo-icon">&#128165;</span>
+                <span class="ammo-sprite shells"></span>
                 <span class="ammo-value" id="shells">25</span>
                 <span class="ammo-label">Shells</span>
             </div>
             <div class="ammo-box" title="Nails">
-                <span class="ammo-icon">&#128204;</span>
+                <span class="ammo-sprite nails"></span>
                 <span class="ammo-value" id="nails">100</span>
                 <span class="ammo-label">Nails</span>
             </div>
             <div class="ammo-box" title="Rockets">
-                <span class="ammo-icon">&#128640;</span>
+                <span class="ammo-sprite rockets"></span>
                 <span class="ammo-value" id="rockets">10</span>
                 <span class="ammo-label">Rockets</span>
             </div>
             <div class="ammo-box" title="Cells">
-                <span class="ammo-icon">&#9889;</span>
+                <span class="ammo-sprite cells"></span>
                 <span class="ammo-value" id="cells">50</span>
                 <span class="ammo-label">Cells</span>
             </div>
@@ -474,20 +476,20 @@
                 <div class="secrets-value"><span id="secrets-found">0</span>/<span id="secrets-total">3</span></div>
                 <div class="secrets-label">Secrets</div>
             </div>
-            <div class="secrets-icon">&#128270;</div>
+            <div class="key-sprite silver"></div>
         </div>
         <div class="hud-section armor-section">
             <div class="armor-display">
                 <div class="armor-value" id="armor-value">150</div>
                 <div class="armor-label">Armor</div>
             </div>
-            <div class="armor-icon">&#128737;</div>
+            <div class="armor-sprite"></div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer>
-        <p>Built with &#9889; by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
+        <p>Built with [ZAP] by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
     </footer>
 
     <script src="js/quake-hud.js"></script>

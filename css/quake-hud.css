@@ -1,206 +1,268 @@
-/* ===== AUTHENTIC QUAKE 1 HUD ===== */
-/* Based on the actual 1996 Quake status bar */
+/* ===== AUTHENTIC QUAKE 1 STATUS BAR ===== */
+/* Recreating the original 1996 Quake HUD with sprites */
+/* Sprite sheet: quake-hud-sprites.png (325x642) */
 
+/* Reset and base styles */
+.quake-hud * {
+    box-sizing: border-box;
+}
+
+/* Main HUD container - fixed at bottom */
 .quake-hud {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 64px;
-    background: #2b1f13;
-    background-image: linear-gradient(180deg, #3b2b1b 0%, #2b1f13 20%, #1b130b 100%);
-    border-top: 3px solid #4b3b23;
-    box-shadow: inset 0 2px 0 #5b4b33, 0 -2px 10px rgba(0,0,0,0.8);
+    background: #1b1510;
     z-index: 1000;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    font-family: 'Press Start 2P', monospace;
+    padding: 0;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+/* ===== STATUS BAR WRAPPER ===== */
+/* The main sbar is 320x24 scaled 2x to 640x48 */
+.sbar-wrapper {
+    width: 640px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: center bottom;
+}
+
+/* ===== TOP AMMO ROW ===== */
+/* Shows shells/nails/rockets/cells counts */
+.sbar-ammo-row {
+    width: 640px;
+    height: 24px;
+    background: #1b1510;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 2px 0;
+}
+
+.sbar-ammo-count {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Small yellow numbers for ammo counts (scaled) */
+.sbar-num-small {
+    width: 16px;
+    height: 16px;
+    background-image: url('../images/quake-hud-sprites.png');
+    background-repeat: no-repeat;
+    background-size: 487px auto; /* Scale sprite sheet for 16px numbers (original 24px * 0.67) */
+    display: inline-block;
     image-rendering: pixelated;
 }
 
-/* HUD Sections */
-.hud-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 0 8px;
-}
+/* Small yellow number positions */
+.sbar-num-small.y0 { background-position: 0 0; }
+.sbar-num-small.y1 { background-position: -16px 0; }
+.sbar-num-small.y2 { background-position: -32px 0; }
+.sbar-num-small.y3 { background-position: -48px 0; }
+.sbar-num-small.y4 { background-position: -64px 0; }
+.sbar-num-small.y5 { background-position: -80px 0; }
+.sbar-num-small.y6 { background-position: -96px 0; }
+.sbar-num-small.y7 { background-position: -112px 0; }
+.sbar-num-small.y8 { background-position: -128px 0; }
+.sbar-num-small.y9 { background-position: -144px 0; }
 
-/* Ammo counts - small numbers on left (shells, nails, rockets, cells) */
-.ammo-counts {
-    display: flex;
-    gap: 2px;
-    padding-right: 12px;
-}
-.ammo-count {
-    width: 36px;
+/* ===== MAIN STATUS BAR ===== */
+.sbar-main {
+    width: 640px;
     height: 48px;
-    background: linear-gradient(180deg, #231a0f 0%, #1b130b 100%);
-    border: 2px solid #3b2b1b;
+    background: linear-gradient(180deg, #3b2b1b 0%, #2b1f13 50%, #1b130b 100%);
+    border-top: 2px solid #4b3b23;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 1px 1px 0 #4b3b23;
-}
-.ammo-value-small {
-    font-size: 0.75rem;
-    color: #efdf17;
-    text-shadow: 1px 1px 0 #000;
+    position: relative;
 }
 
-/* Armor circle - red circular display */
-.armor-circle {
-    width: 56px;
-    height: 56px;
-    background: radial-gradient(circle, #4b0000 0%, #2b0000 60%, #1b0000 100%);
-    border: 3px solid #8b0000;
-    border-radius: 50%;
+/* Inner container matching Quake layout */
+.sbar-inner {
+    width: 640px;
+    height: 48px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow:
-        inset 2px 2px 4px rgba(255,0,0,0.2),
-        inset -2px -2px 4px rgba(0,0,0,0.5),
-        0 0 10px rgba(139,0,0,0.5);
-    margin: 0 8px;
-    padding: 0;
-}
-.armor-value-display {
-    font-size: 1.4rem;
-    color: #ff0000;
-    text-shadow: 2px 2px 0 #000, 0 0 8px rgba(255,0,0,0.5);
+    justify-content: space-between;
+    padding: 0 20px;
 }
 
-/* Ranger Face - center of HUD */
-.face-section {
-    padding: 0 4px;
-}
-.ranger-face-box {
-    width: 52px;
-    height: 52px;
-    background: linear-gradient(180deg, #2b1f13 0%, #1b130b 100%);
-    border: 2px solid #4b3b23;
+/* ===== HUD SECTIONS ===== */
+.sbar-section {
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: inset 1px 1px 0 #3b2b1b;
-    overflow: hidden;
+    height: 100%;
 }
 
-/* Health section - shows number with skull decoration */
-.health-section {
-    margin: 0 8px;
-}
-.health-value-display {
-    font-size: 1.8rem;
-    color: #efdf17;
-    text-shadow:
-        2px 2px 0 #000,
-        0 0 10px rgba(239,223,23,0.5);
-    letter-spacing: -2px;
+/* Armor section - left side */
+.sbar-armor-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Current ammo - large number on right */
-.current-ammo {
-    padding-left: 12px;
-}
-.ammo-value-large {
-    font-size: 1.8rem;
-    color: #efdf17;
-    text-shadow:
-        2px 2px 0 #000,
-        0 0 10px rgba(239,223,23,0.5);
-    letter-spacing: -2px;
+/* Face section - center */
+.sbar-face-section {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-/* Responsive HUD */
+/* Health section - center-right */
+.sbar-health-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 80px;
+}
+
+/* Ammo section - right side */
+.sbar-ammo-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== SPRITE-BASED NUMBERS (24px) ===== */
+.sbar-num {
+    width: 24px;
+    height: 24px;
+    background-image: url('../images/quake-hud-sprites.png');
+    background-repeat: no-repeat;
+    display: inline-block;
+    image-rendering: pixelated;
+}
+
+/* Yellow/brown numbers (row 0, y=0) - for health/ammo */
+.sbar-num.y0 { background-position: 0 0; }
+.sbar-num.y1 { background-position: -24px 0; }
+.sbar-num.y2 { background-position: -48px 0; }
+.sbar-num.y3 { background-position: -72px 0; }
+.sbar-num.y4 { background-position: -96px 0; }
+.sbar-num.y5 { background-position: -120px 0; }
+.sbar-num.y6 { background-position: -144px 0; }
+.sbar-num.y7 { background-position: -168px 0; }
+.sbar-num.y8 { background-position: -192px 0; }
+.sbar-num.y9 { background-position: -216px 0; }
+
+/* Red numbers (row 1, y=-24) - for armor/low health */
+.sbar-num.r0 { background-position: 0 -24px; }
+.sbar-num.r1 { background-position: -24px -24px; }
+.sbar-num.r2 { background-position: -48px -24px; }
+.sbar-num.r3 { background-position: -72px -24px; }
+.sbar-num.r4 { background-position: -96px -24px; }
+.sbar-num.r5 { background-position: -120px -24px; }
+.sbar-num.r6 { background-position: -144px -24px; }
+.sbar-num.r7 { background-position: -168px -24px; }
+.sbar-num.r8 { background-position: -192px -24px; }
+.sbar-num.r9 { background-position: -216px -24px; }
+
+/* Number display groups (3 digits) */
+.sbar-num-group {
+    display: flex;
+    gap: 0;
+}
+
+/* ===== RANGER FACE ===== */
+/* Using quake-faces.jpg sprite sheet (288x480) */
+.sbar-face {
+    width: 48px;
+    height: 48px;
+    background-image: url('../images/quake-faces.jpg');
+    background-size: 144px 240px; /* Scale 2x for display */
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    border: 2px solid #3b2b17;
+    box-shadow: inset 2px 2px 0 #000;
+}
+
+/* Face states - sprite sheet is 3 cols x 5 rows */
+/* Row 0: Normal faces */
+.sbar-face.look-left { background-position: 0 0; }
+.sbar-face.look-center { background-position: -48px 0; }
+.sbar-face.look-right, .sbar-face.healthy { background-position: -96px 0; } /* Blue eyes default */
+
+/* Row 1: Slightly hurt */
+.sbar-face.hurt1-left { background-position: 0 -48px; }
+.sbar-face.hurt1 { background-position: -48px -48px; }
+.sbar-face.hurt1-right { background-position: -96px -48px; }
+
+/* Row 2: More hurt */
+.sbar-face.hurt2-left { background-position: 0 -96px; }
+.sbar-face.hurt2 { background-position: -48px -96px; }
+.sbar-face.hurt2-right { background-position: -96px -96px; }
+
+/* Row 3: Very hurt */
+.sbar-face.hurt3-left { background-position: 0 -144px; }
+.sbar-face.hurt3 { background-position: -48px -144px; }
+.sbar-face.robot { background-position: -96px -144px; }
+
+/* Row 4: Nearly dead/gib */
+.sbar-face.dying { background-position: 0 -192px; }
+.sbar-face.dead, .sbar-face.gib { background-position: -48px -192px; }
+.sbar-face.demon { background-position: -96px -192px; }
+
+/* ===== ARMOR/ITEM ICONS ===== */
+.sbar-icon {
+    width: 24px;
+    height: 24px;
+    background-image: url('../images/quake-hud-sprites.png');
+    background-repeat: no-repeat;
+    display: inline-block;
+    image-rendering: pixelated;
+}
+
+/* Armor types - approximate positions from sprite sheet */
+.sbar-icon.armor-green { background-position: -216px -72px; }
+.sbar-icon.armor-yellow { background-position: -240px -72px; }
+.sbar-icon.armor-red { background-position: -264px -72px; }
+
+/* Ammo icons */
+.sbar-icon.shells { background-position: 0 -168px; }
+.sbar-icon.nails { background-position: -24px -168px; }
+.sbar-icon.rockets { background-position: -48px -168px; }
+.sbar-icon.cells { background-position: -72px -168px; }
+
+/* ===== DARK INSET BOX (for armor value) ===== */
+.sbar-inset {
+    background: #0b0705;
+    border: 2px solid #2b1f13;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+
+/* ===== RESPONSIVE SCALING ===== */
 @media (max-width: 768px) {
-    .quake-hud {
-        height: 56px;
+    .sbar-wrapper {
+        transform: scale(0.75);
     }
-    .ammo-counts {
+    .sbar-ammo-row {
         display: none;
     }
-    .armor-circle {
-        width: 44px;
-        height: 44px;
-    }
-    .armor-value-display {
-        font-size: 1rem;
-    }
-    .ranger-face-box {
-        width: 44px;
-        height: 44px;
-    }
-    .health-value-display, .ammo-value-large {
-        font-size: 1.4rem;
+}
+
+@media (max-width: 480px) {
+    .sbar-wrapper {
+        transform: scale(0.5);
     }
 }
 
-/* Secret Areas */
-.secret-area {
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.secret-area:hover {
-    filter: brightness(1.1);
-}
-
-.secret-area.found {
-    animation: secretFound 0.5s ease-out;
-}
-
-@keyframes secretFound {
-    0% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.05); filter: brightness(1.5) sepia(0.5); }
-    100% { transform: scale(1); filter: brightness(1); }
-}
-
-/* Secret Popup - Quake style */
-.secret-popup {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    background: linear-gradient(to bottom, #2f2313, #170f0b);
-    border: 3px solid #8f6f23;
-    padding: 20px 40px;
-    z-index: 10000;
-    text-align: center;
-    opacity: 0;
-    transition: all 0.2s;
-    box-shadow:
-        inset 2px 2px 0 #4b371b,
-        4px 4px 0 #000;
-}
-
-.secret-popup.show {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-}
-
-.secret-popup h3 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.8rem;
-    color: #efdf17;
-    text-shadow: 2px 2px 0 #000;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-}
-
-.secret-popup p {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.5rem;
-    color: #a77b3b;
-}
-
-/* Music Player - Quake style */
+/* ===== MUSIC PLAYER ===== */
 .music-player {
     position: fixed;
-    bottom: 56px;
+    bottom: 80px;
     right: 12px;
     z-index: 1001;
 }
@@ -217,9 +279,7 @@
     border: 2px solid #4b371b;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow:
-        inset 1px 1px 0 #533b1b,
-        2px 2px 0 #000;
+    box-shadow: inset 1px 1px 0 #533b1b, 2px 2px 0 #000;
 }
 
 .music-btn:hover {
@@ -242,208 +302,57 @@
     50% { box-shadow: inset 1px 1px 0 #533b1b, 2px 2px 0 #000, 0 0 8px #efdf17; }
 }
 
-/* ===== QUAKE SPRITE ELEMENTS ===== */
-/* Using quake-hud-elements.png sprite sheet */
-
-/* Ranger face sprites - from quake-faces.jpg sprite sheet */
-/* Sheet is 288x480 (3 cols x 5 rows = 96x96 each face) */
-.face-sprite {
-    width: 48px;
-    height: 48px;
-    background-image: url('../images/quake-faces.jpg');
-    background-size: 144px 240px; /* Scale down 2x for 48px display */
-    image-rendering: pixelated;
-    display: inline-block;
+/* ===== SECRET AREAS ===== */
+.secret-area {
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* Blue glowing eyes - default state (row 0, col 2) */
-.face-sprite,
-.face-sprite.healthy {
-    background-position: -96px 0;
+.secret-area:hover {
+    filter: brightness(1.1);
 }
 
-/* Normal face looking left (row 0, col 0) */
-.face-sprite.left {
-    background-position: 0 0;
+.secret-area.found {
+    animation: secretFound 0.5s ease-out;
 }
 
-/* Normal face center (row 0, col 1) */
-.face-sprite.center {
-    background-position: -48px 0;
+@keyframes secretFound {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.05); filter: brightness(1.5) sepia(0.5); }
+    100% { transform: scale(1); filter: brightness(1); }
 }
 
-/* Slightly hurt faces (row 1) */
-.face-sprite.hurt-1 {
-    background-position: 0 -48px;
-}
-.face-sprite.hurt-1-center {
-    background-position: -48px -48px;
-}
-.face-sprite.hurt-1-right {
-    background-position: -96px -48px;
-}
-
-/* More hurt / bloody faces (row 2) */
-.face-sprite.hurt-2 {
-    background-position: 0 -96px;
-}
-.face-sprite.hurt-2-center {
-    background-position: -48px -96px;
-}
-.face-sprite.hurt-2-right {
-    background-position: -96px -96px;
+/* Secret Popup */
+.secret-popup {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: linear-gradient(to bottom, #2f2313, #170f0b);
+    border: 3px solid #8f6f23;
+    padding: 20px 40px;
+    z-index: 10000;
+    text-align: center;
+    opacity: 0;
+    transition: all 0.2s;
+    box-shadow: inset 2px 2px 0 #4b371b, 4px 4px 0 #000;
 }
 
-/* Very hurt / lots of blood (row 3) */
-.face-sprite.hurt-3 {
-    background-position: 0 -144px;
-}
-.face-sprite.hurt-3-center {
-    background-position: -48px -144px;
-}
-/* Robot eyes (row 3, col 2) */
-.face-sprite.robot {
-    background-position: -96px -144px;
+.secret-popup.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
 }
 
-/* Almost dead / gibbed - bloodiest (row 4) - USE FOR 404 */
-.face-sprite.dying {
-    background-position: 0 -192px;
-}
-.face-sprite.dead,
-.face-sprite.gib {
-    background-position: -48px -192px;
-}
-/* Fire/demon eyes (row 4, col 2) */
-.face-sprite.demon {
-    background-position: -96px -192px;
+.secret-popup h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    color: #efdf17;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 8px;
 }
 
-/* Ammo type sprites */
-.ammo-sprite {
-    width: 24px;
-    height: 24px;
-    background-image: url('../images/quake-hud-elements.png');
-    image-rendering: pixelated;
-    display: inline-block;
-}
-
-/* Shells icon - yellow/orange box */
-.ammo-sprite.shells {
-    background-position: 0 -168px;
-}
-
-/* Nails icon - silver nails */
-.ammo-sprite.nails {
-    background-position: -24px -168px;
-}
-
-/* Rockets icon - red rocket */
-.ammo-sprite.rockets {
-    background-position: -48px -168px;
-}
-
-/* Cells icon - blue energy */
-.ammo-sprite.cells {
-    background-position: -72px -168px;
-}
-
-/* Armor sprite */
-.armor-sprite {
-    width: 24px;
-    height: 24px;
-    background-image: url('../images/quake-hud-elements.png');
-    background-position: -96px -144px;
-    image-rendering: pixelated;
-    display: inline-block;
-}
-
-/* Key sprites */
-.key-sprite {
-    width: 16px;
-    height: 16px;
-    background-image: url('../images/quake-hud-elements.png');
-    image-rendering: pixelated;
-    display: inline-block;
-}
-
-.key-sprite.silver {
-    background-position: -144px -96px;
-}
-
-.key-sprite.gold {
-    background-position: -160px -96px;
-}
-
-/* Weapon icon sprites */
-.weapon-sprite {
-    width: 48px;
-    height: 48px;
-    background-image: url('../images/quake-hud-elements.png');
-    background-size: 650px auto;
-    image-rendering: pixelated;
-    display: inline-block;
-}
-
-.weapon-sprite.shotgun {
-    background-position: 0 -432px;
-}
-
-.weapon-sprite.sshotgun {
-    background-position: -48px -432px;
-}
-
-.weapon-sprite.nailgun {
-    background-position: -96px -432px;
-}
-
-.weapon-sprite.snailgun {
-    background-position: -144px -432px;
-}
-
-.weapon-sprite.grenade {
-    background-position: -192px -432px;
-}
-
-.weapon-sprite.rocket {
-    background-position: -240px -432px;
-}
-
-.weapon-sprite.lightning {
-    background-position: -288px -432px;
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-    .quake-hud {
-        height: 40px;
-    }
-
-    .hud-segment {
-        height: 32px;
-    }
-
-    .health-value, .armor-value {
-        font-size: 1rem;
-    }
-
-    .hud-health, .hud-armor {
-        width: 70px;
-    }
-
-    .hud-face {
-        width: 36px;
-    }
-
-    .face-display {
-        font-size: 18px;
-    }
-
-    .hud-secrets {
-        display: none;
-    }
-
-    .music-player {
-        bottom: 48px;
-    }
+.secret-popup p {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: #a77b3b;
 }

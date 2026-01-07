@@ -438,44 +438,64 @@
         </button>
     </div>
 
-    <!-- Quake 1 Authentic HUD - Matching original layout -->
+    <!-- Quake 1 Authentic Status Bar - Using actual game sprites -->
     <div class="quake-hud">
-        <!-- Ammo counts (left side - shells, nails, rockets, cells) -->
-        <div class="hud-section ammo-counts">
-            <div class="ammo-count" title="Shells">
-                <span class="ammo-value-small" id="shells">25</span>
+        <div class="sbar-wrapper">
+            <!-- Top row: Ammo counts (shells, nails, rockets, cells) -->
+            <div class="sbar-ammo-row">
+                <div class="sbar-ammo-count" title="Shells">
+                    <span class="sbar-num-small y2"></span>
+                    <span class="sbar-num-small y5"></span>
+                </div>
+                <div class="sbar-ammo-count" title="Nails">
+                    <span class="sbar-num-small y0"></span>
+                    <span class="sbar-num-small y0"></span>
+                </div>
+                <div class="sbar-ammo-count" title="Rockets">
+                    <span class="sbar-num-small y0"></span>
+                    <span class="sbar-num-small y0"></span>
+                </div>
+                <div class="sbar-ammo-count" title="Cells">
+                    <span class="sbar-num-small y0"></span>
+                    <span class="sbar-num-small y0"></span>
+                </div>
             </div>
-            <div class="ammo-count" title="Nails">
-                <span class="ammo-value-small" id="nails">0</span>
-            </div>
-            <div class="ammo-count" title="Rockets">
-                <span class="ammo-value-small" id="rockets">0</span>
-            </div>
-            <div class="ammo-count" title="Cells">
-                <span class="ammo-value-small" id="cells">0</span>
-            </div>
-        </div>
 
-        <!-- Armor value (red circle style) -->
-        <div class="hud-section armor-circle">
-            <div class="armor-value-display" id="armor-value">0</div>
-        </div>
+            <!-- Main status bar -->
+            <div class="sbar-main">
+                <div class="sbar-inner">
+                    <!-- Armor (red numbers in dark inset) -->
+                    <div class="sbar-section sbar-armor-section">
+                        <div class="sbar-inset">
+                            <div class="sbar-num-group">
+                                <span class="sbar-num r0"></span>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Ranger Face (center) - Blue eyes default -->
-        <div class="hud-section face-section">
-            <div class="ranger-face-box">
-                <span class="face-sprite healthy" id="ranger-face"></span>
+                    <!-- Ranger Face (center) -->
+                    <div class="sbar-face-section">
+                        <span class="sbar-face healthy" id="ranger-face"></span>
+                    </div>
+
+                    <!-- Health (yellow numbers) -->
+                    <div class="sbar-section sbar-health-section">
+                        <div class="sbar-num-group" id="health-display">
+                            <span class="sbar-num y1"></span>
+                            <span class="sbar-num y0"></span>
+                            <span class="sbar-num y0"></span>
+                        </div>
+                    </div>
+
+                    <!-- Current ammo (yellow numbers) -->
+                    <div class="sbar-section sbar-ammo-section">
+                        <div class="sbar-num-group" id="ammo-display">
+                            <span class="sbar-num y2"></span>
+                            <span class="sbar-num y5"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Health value (with small skull icon) -->
-        <div class="hud-section health-section">
-            <div class="health-value-display" id="health-value">100</div>
-        </div>
-
-        <!-- Armor type icon + current ammo -->
-        <div class="hud-section current-ammo">
-            <div class="ammo-value-large" id="current-ammo">25</div>
         </div>
     </div>
 

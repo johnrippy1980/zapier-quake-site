@@ -215,13 +215,12 @@
             left: 0;
             width: 100%;
             height: 64px;
-            background: #2b1f13;
-            background-image:
-                url('images/quake-hud-bg.png'),
-                linear-gradient(180deg, #3b2b1b 0%, #2b1f13 20%, #1b130b 100%);
-            background-size: auto, cover;
-            border-top: 3px solid #4b3b23;
-            box-shadow: inset 0 2px 0 #5b4b33, 0 -2px 10px rgba(0,0,0,0.8);
+            background-color: #3b2b1b;
+            background-image: url('images/quake-rust-metal.png');
+            background-repeat: repeat;
+            background-size: 64px 64px;
+            border-top: 3px solid #5b4b33;
+            box-shadow: inset 0 2px 0 #6b5b43, 0 -2px 10px rgba(0,0,0,0.8);
             z-index: 1000;
             display: flex;
             justify-content: center;
@@ -297,6 +296,18 @@
             justify-content: center;
             box-shadow: inset 1px 1px 0 #3b2b1b;
             overflow: hidden;
+        }
+        /* Ranger Face Sprite from quake-faces.jpg (288x480, 3 cols x 5 rows of 96x96 faces) */
+        .sbar-face {
+            display: block;
+            width: 48px;
+            height: 48px;
+            background-image: url('images/quake-faces.jpg');
+            background-size: 144px 240px;
+            image-rendering: pixelated;
+        }
+        .sbar-face.healthy {
+            background-position: -96px 0; /* Blue glowing eyes face - Row 0, Col 2 */
         }
 
         /* Health section - shows number with skull decoration */

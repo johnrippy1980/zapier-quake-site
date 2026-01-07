@@ -1,48 +1,59 @@
 /* ===== AUTHENTIC QUAKE 1 STATUS BAR ===== */
-/* Recreating the original 1996 Quake HUD with sprites */
-/* Sprite sheet: quake-hud-sprites.png (325x642) */
+/* Brown rusted metal texture with sprite-based elements */
 
-/* Reset and base styles */
-.quake-hud * {
-    box-sizing: border-box;
-}
-
-/* Main HUD container - fixed at bottom */
+/* Main HUD container - full width rusted metal bar */
 .quake-hud {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #1b1510;
+    height: 72px;
+    /* Rusted metal texture using CSS */
+    background:
+        /* Noise/grain overlay */
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>'),
+        /* Base metal gradient */
+        linear-gradient(180deg,
+            #5b4b33 0%,
+            #4b3b23 15%,
+            #3b2b17 40%,
+            #2b1f13 70%,
+            #1b130b 100%
+        );
+    background-size: 200px 200px, 100% 100%;
+    border-top: 4px solid #6b5b3b;
+    box-shadow:
+        inset 0 2px 0 #7b6b4b,
+        inset 0 -2px 4px rgba(0,0,0,0.5),
+        0 -4px 12px rgba(0,0,0,0.8);
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0;
+    font-family: 'Press Start 2P', monospace;
     image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
 }
 
-/* ===== STATUS BAR WRAPPER ===== */
-/* The main sbar is 320x24 scaled 2x to 640x48 */
+/* Wrapper for status bar content */
 .sbar-wrapper {
-    width: 640px;
+    width: 100%;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform-origin: center bottom;
+    height: 100%;
 }
 
 /* ===== TOP AMMO ROW ===== */
-/* Shows shells/nails/rockets/cells counts */
 .sbar-ammo-row {
-    width: 640px;
-    height: 24px;
-    background: #1b1510;
+    width: 100%;
+    height: 20px;
     display: flex;
     justify-content: center;
-    gap: 40px;
+    align-items: center;
+    gap: 32px;
+    background: rgba(0,0,0,0.4);
+    border-bottom: 2px solid #3b2b17;
     padding: 2px 0;
 }
 
@@ -52,211 +63,212 @@
     gap: 2px;
 }
 
-/* Small yellow numbers for ammo counts (scaled) */
+/* Small numbers for ammo counts - text based for clarity */
 .sbar-num-small {
-    width: 16px;
-    height: 16px;
-    background-image: url('../images/quake-hud-sprites.png');
-    background-repeat: no-repeat;
-    background-size: 487px auto; /* Scale sprite sheet for 16px numbers (original 24px * 0.67) */
-    display: inline-block;
-    image-rendering: pixelated;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #b5a642;
+    text-shadow: 1px 1px 0 #000;
+    min-width: 8px;
+    text-align: center;
 }
-
-/* Small yellow number positions */
-.sbar-num-small.y0 { background-position: 0 0; }
-.sbar-num-small.y1 { background-position: -16px 0; }
-.sbar-num-small.y2 { background-position: -32px 0; }
-.sbar-num-small.y3 { background-position: -48px 0; }
-.sbar-num-small.y4 { background-position: -64px 0; }
-.sbar-num-small.y5 { background-position: -80px 0; }
-.sbar-num-small.y6 { background-position: -96px 0; }
-.sbar-num-small.y7 { background-position: -112px 0; }
-.sbar-num-small.y8 { background-position: -128px 0; }
-.sbar-num-small.y9 { background-position: -144px 0; }
 
 /* ===== MAIN STATUS BAR ===== */
 .sbar-main {
-    width: 640px;
-    height: 48px;
-    background: linear-gradient(180deg, #3b2b1b 0%, #2b1f13 50%, #1b130b 100%);
-    border-top: 2px solid #4b3b23;
+    width: 100%;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    padding: 4px 24px;
 }
 
-/* Inner container matching Quake layout */
 .sbar-inner {
-    width: 640px;
-    height: 48px;
+    width: 100%;
+    max-width: 700px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    gap: 16px;
 }
 
 /* ===== HUD SECTIONS ===== */
 .sbar-section {
     display: flex;
     align-items: center;
-    height: 100%;
 }
 
-/* Armor section - left side */
+/* Armor section - left side with dark inset box */
 .sbar-armor-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    min-width: 80px;
 }
 
-/* Face section - center */
-.sbar-face-section {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.sbar-inset {
+    background: #0a0806;
+    border: 3px solid #2b1f13;
+    box-shadow:
+        inset 3px 3px 6px rgba(0,0,0,0.9),
+        inset -1px -1px 2px rgba(60,45,25,0.3);
+    padding: 8px 14px;
+    min-width: 50px;
+    text-align: center;
 }
 
-/* Health section - center-right */
-.sbar-health-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 80px;
+/* Red armor value */
+.sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
+.sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 20px;
+    color: #cc0000;
+    text-shadow: 2px 2px 0 #000, 0 0 8px rgba(200,0,0,0.5);
 }
 
-/* Ammo section - right side */
-.sbar-ammo-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* ===== SPRITE-BASED NUMBERS (24px) ===== */
-.sbar-num {
-    width: 24px;
-    height: 24px;
-    background-image: url('../images/quake-hud-sprites.png');
-    background-repeat: no-repeat;
-    display: inline-block;
-    image-rendering: pixelated;
-}
-
-/* Yellow/brown numbers (row 0, y=0) - for health/ammo */
-.sbar-num.y0 { background-position: 0 0; }
-.sbar-num.y1 { background-position: -24px 0; }
-.sbar-num.y2 { background-position: -48px 0; }
-.sbar-num.y3 { background-position: -72px 0; }
-.sbar-num.y4 { background-position: -96px 0; }
-.sbar-num.y5 { background-position: -120px 0; }
-.sbar-num.y6 { background-position: -144px 0; }
-.sbar-num.y7 { background-position: -168px 0; }
-.sbar-num.y8 { background-position: -192px 0; }
-.sbar-num.y9 { background-position: -216px 0; }
-
-/* Red numbers (row 1, y=-24) - for armor/low health */
-.sbar-num.r0 { background-position: 0 -24px; }
-.sbar-num.r1 { background-position: -24px -24px; }
-.sbar-num.r2 { background-position: -48px -24px; }
-.sbar-num.r3 { background-position: -72px -24px; }
-.sbar-num.r4 { background-position: -96px -24px; }
-.sbar-num.r5 { background-position: -120px -24px; }
-.sbar-num.r6 { background-position: -144px -24px; }
-.sbar-num.r7 { background-position: -168px -24px; }
-.sbar-num.r8 { background-position: -192px -24px; }
-.sbar-num.r9 { background-position: -216px -24px; }
-
-/* Number display groups (3 digits) */
+/* Number display - using font since sprites need more work */
 .sbar-num-group {
     display: flex;
+    align-items: center;
     gap: 0;
 }
 
-/* ===== RANGER FACE ===== */
-/* Using quake-faces.jpg sprite sheet (288x480) */
+/* Yellow number styling */
+.sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
+.sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 20px;
+    color: #b5a642;
+    text-shadow: 2px 2px 0 #000, 0 0 8px rgba(181,166,66,0.4);
+}
+
+/* Number values - display actual digits */
+.sbar-num.y0::after { content: '0'; }
+.sbar-num.y1::after { content: '1'; }
+.sbar-num.y2::after { content: '2'; }
+.sbar-num.y3::after { content: '3'; }
+.sbar-num.y4::after { content: '4'; }
+.sbar-num.y5::after { content: '5'; }
+.sbar-num.y6::after { content: '6'; }
+.sbar-num.y7::after { content: '7'; }
+.sbar-num.y8::after { content: '8'; }
+.sbar-num.y9::after { content: '9'; }
+
+.sbar-num.r0::after { content: '0'; }
+.sbar-num.r1::after { content: '1'; }
+.sbar-num.r2::after { content: '2'; }
+.sbar-num.r3::after { content: '3'; }
+.sbar-num.r4::after { content: '4'; }
+.sbar-num.r5::after { content: '5'; }
+.sbar-num.r6::after { content: '6'; }
+.sbar-num.r7::after { content: '7'; }
+.sbar-num.r8::after { content: '8'; }
+.sbar-num.r9::after { content: '9'; }
+
+/* ===== RANGER FACE - CENTER ===== */
+.sbar-face-section {
+    flex: 0 0 auto;
+}
+
 .sbar-face {
     width: 48px;
     height: 48px;
+    background-color: #1a1208;
+    border: 3px solid #4b3b23;
+    box-shadow:
+        inset 3px 3px 6px rgba(0,0,0,0.8),
+        2px 2px 4px rgba(0,0,0,0.5);
     background-image: url('../images/quake-faces.jpg');
-    background-size: 144px 240px; /* Scale 2x for display */
     background-repeat: no-repeat;
     image-rendering: pixelated;
-    border: 2px solid #3b2b17;
-    box-shadow: inset 2px 2px 0 #000;
+    /* Scale: original is 288x480 (3x5 grid of 96x96 faces) */
+    /* We want 48x48 display, so scale to 144x240 */
+    background-size: 144px 240px;
 }
 
-/* Face states - sprite sheet is 3 cols x 5 rows */
-/* Row 0: Normal faces */
+/* Face states - 3 columns x 5 rows, each 48px after scaling */
+/* Default: Blue glowing eyes (row 0, col 2) */
+.sbar-face,
+.sbar-face.healthy {
+    background-position: -96px 0;
+}
+
+/* Normal looking faces */
 .sbar-face.look-left { background-position: 0 0; }
 .sbar-face.look-center { background-position: -48px 0; }
-.sbar-face.look-right, .sbar-face.healthy { background-position: -96px 0; } /* Blue eyes default */
+.sbar-face.look-right { background-position: -96px 0; }
 
-/* Row 1: Slightly hurt */
-.sbar-face.hurt1-left { background-position: 0 -48px; }
+/* Slightly hurt (row 1) */
 .sbar-face.hurt1 { background-position: -48px -48px; }
+.sbar-face.hurt1-left { background-position: 0 -48px; }
 .sbar-face.hurt1-right { background-position: -96px -48px; }
 
-/* Row 2: More hurt */
-.sbar-face.hurt2-left { background-position: 0 -96px; }
+/* More hurt (row 2) */
 .sbar-face.hurt2 { background-position: -48px -96px; }
-.sbar-face.hurt2-right { background-position: -96px -96px; }
 
-/* Row 3: Very hurt */
-.sbar-face.hurt3-left { background-position: 0 -144px; }
+/* Very hurt (row 3) */
 .sbar-face.hurt3 { background-position: -48px -144px; }
-.sbar-face.robot { background-position: -96px -144px; }
 
-/* Row 4: Nearly dead/gib */
-.sbar-face.dying { background-position: 0 -192px; }
-.sbar-face.dead, .sbar-face.gib { background-position: -48px -192px; }
-.sbar-face.demon { background-position: -96px -192px; }
+/* Dead/Gib (row 4) */
+.sbar-face.dead,
+.sbar-face.gib { background-position: -48px -192px; }
 
-/* ===== ARMOR/ITEM ICONS ===== */
-.sbar-icon {
-    width: 24px;
-    height: 24px;
-    background-image: url('../images/quake-hud-sprites.png');
-    background-repeat: no-repeat;
-    display: inline-block;
-    image-rendering: pixelated;
+/* Health section - yellow numbers */
+.sbar-health-section {
+    min-width: 100px;
+    justify-content: center;
 }
 
-/* Armor types - approximate positions from sprite sheet */
-.sbar-icon.armor-green { background-position: -216px -72px; }
-.sbar-icon.armor-yellow { background-position: -240px -72px; }
-.sbar-icon.armor-red { background-position: -264px -72px; }
-
-/* Ammo icons */
-.sbar-icon.shells { background-position: 0 -168px; }
-.sbar-icon.nails { background-position: -24px -168px; }
-.sbar-icon.rockets { background-position: -48px -168px; }
-.sbar-icon.cells { background-position: -72px -168px; }
-
-/* ===== DARK INSET BOX (for armor value) ===== */
-.sbar-inset {
-    background: #0b0705;
-    border: 2px solid #2b1f13;
-    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8);
-    padding: 4px;
-    display: flex;
-    align-items: center;
+/* Ammo section - right side yellow numbers */
+.sbar-ammo-section {
+    min-width: 80px;
+    justify-content: flex-end;
 }
 
-/* ===== RESPONSIVE SCALING ===== */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    .sbar-wrapper {
-        transform: scale(0.75);
+    .quake-hud {
+        height: 60px;
     }
     .sbar-ammo-row {
         display: none;
     }
+    .sbar-main {
+        padding: 4px 12px;
+    }
+    .sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
+    .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9,
+    .sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
+    .sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
+        font-size: 16px;
+    }
+    .sbar-face {
+        width: 40px;
+        height: 40px;
+        background-size: 120px 200px;
+    }
+    .sbar-face.healthy { background-position: -80px 0; }
 }
 
 @media (max-width: 480px) {
-    .sbar-wrapper {
-        transform: scale(0.5);
+    .quake-hud {
+        height: 50px;
     }
+    .sbar-main {
+        padding: 4px 8px;
+    }
+    .sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
+    .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9,
+    .sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
+    .sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
+        font-size: 12px;
+    }
+    .sbar-inset {
+        padding: 4px 8px;
+    }
+    .sbar-face {
+        width: 36px;
+        height: 36px;
+        background-size: 108px 180px;
+    }
+    .sbar-face.healthy { background-position: -72px 0; }
 }
 
 /* ===== MUSIC PLAYER ===== */

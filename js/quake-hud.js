@@ -1,12 +1,13 @@
 // ===== AUTHENTIC QUAKE 1 SOUND & HUD SYSTEM =====
 // Recreating the original 1996 id Software sounds with Web Audio API
 
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+// Use existing AudioContext if already defined (avoids conflict with inline scripts)
+const QuakeAudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
 function initAudio() {
     if (!audioCtx) {
-        audioCtx = new AudioContext();
+        audioCtx = new QuakeAudioContext();
     }
 }
 

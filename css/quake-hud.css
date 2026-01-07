@@ -1,31 +1,22 @@
 /* ===== AUTHENTIC QUAKE 1 STATUS BAR ===== */
-/* Brown rusted metal texture with sprite-based elements */
+/* Rusty brown metal texture like the original game */
 
-/* Main HUD container - full width rusted metal bar */
+/* Main HUD container - full width rusty metal bar */
 .quake-hud {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 72px;
-    /* Rusted metal texture using CSS */
-    background:
-        /* Noise/grain overlay */
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>'),
-        /* Base metal gradient */
-        linear-gradient(180deg,
-            #5b4b33 0%,
-            #4b3b23 15%,
-            #3b2b17 40%,
-            #2b1f13 70%,
-            #1b130b 100%
-        );
-    background-size: 200px 200px, 100% 100%;
-    border-top: 4px solid #6b5b3b;
+    /* Rusty metal texture background */
+    background-image: url('../images/quake-rust-metal.png');
+    background-repeat: repeat;
+    background-size: 64px 64px;
+    border-top: 4px solid #7b6b4b;
     box-shadow:
-        inset 0 2px 0 #7b6b4b,
-        inset 0 -2px 4px rgba(0,0,0,0.5),
-        0 -4px 12px rgba(0,0,0,0.8);
+        inset 0 3px 0 rgba(120,100,70,0.6),
+        inset 0 -4px 8px rgba(0,0,0,0.7),
+        0 -4px 16px rgba(0,0,0,0.9);
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -37,7 +28,7 @@
 /* Wrapper for status bar content */
 .sbar-wrapper {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -51,9 +42,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 32px;
-    background: rgba(0,0,0,0.4);
-    border-bottom: 2px solid #3b2b17;
+    gap: 40px;
+    background: rgba(0,0,0,0.5);
+    border-bottom: 2px solid #4b3b23;
     padding: 2px 0;
 }
 
@@ -63,11 +54,11 @@
     gap: 2px;
 }
 
-/* Small numbers for ammo counts - text based for clarity */
+/* Small numbers for ammo counts */
 .sbar-num-small {
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
-    color: #b5a642;
+    color: #d4c462;
     text-shadow: 1px 1px 0 #000;
     min-width: 8px;
     text-align: center;
@@ -80,16 +71,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 24px;
+    padding: 4px 32px;
 }
 
 .sbar-inner {
     width: 100%;
-    max-width: 700px;
+    max-width: 800px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 24px;
 }
 
 /* ===== HUD SECTIONS ===== */
@@ -100,46 +91,47 @@
 
 /* Armor section - left side with dark inset box */
 .sbar-armor-section {
-    min-width: 80px;
+    min-width: 90px;
 }
 
 .sbar-inset {
-    background: #0a0806;
-    border: 3px solid #2b1f13;
+    background: #080604;
+    border: 3px solid #3b2b17;
     box-shadow:
-        inset 3px 3px 6px rgba(0,0,0,0.9),
-        inset -1px -1px 2px rgba(60,45,25,0.3);
-    padding: 8px 14px;
-    min-width: 50px;
+        inset 4px 4px 8px rgba(0,0,0,0.95),
+        inset -2px -2px 4px rgba(40,30,15,0.3),
+        2px 2px 4px rgba(0,0,0,0.5);
+    padding: 8px 16px;
+    min-width: 60px;
     text-align: center;
 }
 
-/* Red armor value */
-.sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
-.sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 20px;
-    color: #cc0000;
-    text-shadow: 2px 2px 0 #000, 0 0 8px rgba(200,0,0,0.5);
-}
-
-/* Number display - using font since sprites need more work */
+/* Number group container */
 .sbar-num-group {
     display: flex;
     align-items: center;
     gap: 0;
 }
 
-/* Yellow number styling */
+/* Red numbers - for armor */
+.sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
+.sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    color: #dd0000;
+    text-shadow: 2px 2px 0 #000, 0 0 10px rgba(220,0,0,0.6);
+}
+
+/* Yellow numbers - for health and ammo */
 .sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
 .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9 {
     font-family: 'Press Start 2P', monospace;
-    font-size: 20px;
-    color: #b5a642;
-    text-shadow: 2px 2px 0 #000, 0 0 8px rgba(181,166,66,0.4);
+    font-size: 22px;
+    color: #d4c462;
+    text-shadow: 2px 2px 0 #000, 0 0 10px rgba(212,196,98,0.5);
 }
 
-/* Number values - display actual digits */
+/* Number values - display actual digits via CSS content */
 .sbar-num.y0::after { content: '0'; }
 .sbar-num.y1::after { content: '1'; }
 .sbar-num.y2::after { content: '2'; }
@@ -163,6 +155,11 @@
 .sbar-num.r9::after { content: '9'; }
 
 /* ===== RANGER FACE - CENTER ===== */
+/* quake-faces.jpg is 288x480 = 3 cols x 5 rows of 96x96 faces */
+/* Row 0: Normal (left, center, right-blue-eyes) */
+/* Row 1-3: Increasing damage */
+/* Row 4: Dead/gib */
+
 .sbar-face-section {
     flex: 0 0 auto;
 }
@@ -170,55 +167,54 @@
 .sbar-face {
     width: 48px;
     height: 48px;
-    background-color: #1a1208;
-    border: 3px solid #4b3b23;
+    background-color: #100c08;
+    border: 3px solid #5b4b33;
     box-shadow:
-        inset 3px 3px 6px rgba(0,0,0,0.8),
-        2px 2px 4px rgba(0,0,0,0.5);
+        inset 3px 3px 6px rgba(0,0,0,0.9),
+        2px 2px 6px rgba(0,0,0,0.6);
     background-image: url('../images/quake-faces.jpg');
     background-repeat: no-repeat;
     image-rendering: pixelated;
-    /* Scale: original is 288x480 (3x5 grid of 96x96 faces) */
-    /* We want 48x48 display, so scale to 144x240 */
+    /* Original is 288x480. For 48px display, scale to 144x240 */
     background-size: 144px 240px;
 }
 
-/* Face states - 3 columns x 5 rows, each 48px after scaling */
-/* Default: Blue glowing eyes (row 0, col 2) */
+/* Blue glowing eyes face - Row 0, Column 2 (rightmost on first row) */
+/* At 48px scale: x = -96px, y = 0 */
 .sbar-face,
 .sbar-face.healthy {
     background-position: -96px 0;
 }
 
-/* Normal looking faces */
+/* Normal face variants */
 .sbar-face.look-left { background-position: 0 0; }
 .sbar-face.look-center { background-position: -48px 0; }
 .sbar-face.look-right { background-position: -96px 0; }
 
-/* Slightly hurt (row 1) */
+/* Hurt faces - Row 1 */
 .sbar-face.hurt1 { background-position: -48px -48px; }
 .sbar-face.hurt1-left { background-position: 0 -48px; }
 .sbar-face.hurt1-right { background-position: -96px -48px; }
 
-/* More hurt (row 2) */
+/* More hurt - Row 2 */
 .sbar-face.hurt2 { background-position: -48px -96px; }
 
-/* Very hurt (row 3) */
+/* Very hurt - Row 3 */
 .sbar-face.hurt3 { background-position: -48px -144px; }
 
-/* Dead/Gib (row 4) */
+/* Dead/Gib - Row 4 */
 .sbar-face.dead,
 .sbar-face.gib { background-position: -48px -192px; }
 
-/* Health section - yellow numbers */
+/* Health section */
 .sbar-health-section {
-    min-width: 100px;
+    min-width: 110px;
     justify-content: center;
 }
 
-/* Ammo section - right side yellow numbers */
+/* Ammo section */
 .sbar-ammo-section {
-    min-width: 80px;
+    min-width: 90px;
     justify-content: flex-end;
 }
 
@@ -231,25 +227,25 @@
         display: none;
     }
     .sbar-main {
-        padding: 4px 12px;
+        padding: 4px 16px;
     }
     .sbar-num.y0, .sbar-num.y1, .sbar-num.y2, .sbar-num.y3, .sbar-num.y4,
     .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9,
     .sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
     .sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
-        font-size: 16px;
+        font-size: 18px;
     }
     .sbar-face {
-        width: 40px;
-        height: 40px;
-        background-size: 120px 200px;
+        width: 42px;
+        height: 42px;
+        background-size: 126px 210px;
     }
-    .sbar-face.healthy { background-position: -80px 0; }
+    .sbar-face.healthy { background-position: -84px 0; }
 }
 
 @media (max-width: 480px) {
     .quake-hud {
-        height: 50px;
+        height: 52px;
     }
     .sbar-main {
         padding: 4px 8px;
@@ -258,10 +254,10 @@
     .sbar-num.y5, .sbar-num.y6, .sbar-num.y7, .sbar-num.y8, .sbar-num.y9,
     .sbar-num.r0, .sbar-num.r1, .sbar-num.r2, .sbar-num.r3, .sbar-num.r4,
     .sbar-num.r5, .sbar-num.r6, .sbar-num.r7, .sbar-num.r8, .sbar-num.r9 {
-        font-size: 12px;
+        font-size: 14px;
     }
     .sbar-inset {
-        padding: 4px 8px;
+        padding: 4px 10px;
     }
     .sbar-face {
         width: 36px;
@@ -274,7 +270,7 @@
 /* ===== MUSIC PLAYER ===== */
 .music-player {
     position: fixed;
-    bottom: 80px;
+    bottom: 82px;
     right: 12px;
     z-index: 1001;
 }
@@ -286,16 +282,16 @@
     font-family: 'Press Start 2P', monospace;
     font-size: 0.4rem;
     padding: 8px 12px;
-    background: linear-gradient(to bottom, #2f2313, #170f0b);
-    color: #8f6f23;
-    border: 2px solid #4b371b;
+    background: linear-gradient(to bottom, #3f3013, #1f170b);
+    color: #9f7f33;
+    border: 2px solid #5b4b2b;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: inset 1px 1px 0 #533b1b, 2px 2px 0 #000;
+    box-shadow: inset 1px 1px 0 #6b5b3b, 2px 2px 0 #000;
 }
 
 .music-btn:hover {
-    border-color: #8f6f23;
+    border-color: #9f7f33;
     color: #efdf17;
 }
 
@@ -310,8 +306,8 @@
 }
 
 @keyframes musicGlow {
-    0%, 100% { box-shadow: inset 1px 1px 0 #533b1b, 2px 2px 0 #000; }
-    50% { box-shadow: inset 1px 1px 0 #533b1b, 2px 2px 0 #000, 0 0 8px #efdf17; }
+    0%, 100% { box-shadow: inset 1px 1px 0 #6b5b3b, 2px 2px 0 #000; }
+    50% { box-shadow: inset 1px 1px 0 #6b5b3b, 2px 2px 0 #000, 0 0 12px #efdf17; }
 }
 
 /* ===== SECRET AREAS ===== */
@@ -340,14 +336,14 @@
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    background: linear-gradient(to bottom, #2f2313, #170f0b);
-    border: 3px solid #8f6f23;
+    background: linear-gradient(to bottom, #3f3013, #1f170b);
+    border: 3px solid #9f7f33;
     padding: 20px 40px;
     z-index: 10000;
     text-align: center;
     opacity: 0;
     transition: all 0.2s;
-    box-shadow: inset 2px 2px 0 #4b371b, 4px 4px 0 #000;
+    box-shadow: inset 2px 2px 0 #5b4b2b, 4px 4px 0 #000;
 }
 
 .secret-popup.show {
@@ -366,5 +362,5 @@
 .secret-popup p {
     font-family: 'Press Start 2P', monospace;
     font-size: 0.5rem;
-    color: #a77b3b;
+    color: #b79b4b;
 }

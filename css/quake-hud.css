@@ -6,12 +6,11 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 48px;
-    background: #1f170b;
-    background-image:
-        linear-gradient(to bottom, #2f2313 0%, #1f170b 20%, #0f0b07 100%);
-    border-top: 2px solid #4b371b;
-    box-shadow: inset 0 1px 0 #533b1b;
+    height: 64px;
+    background: #2b1f13;
+    background-image: linear-gradient(180deg, #3b2b1b 0%, #2b1f13 20%, #1b130b 100%);
+    border-top: 3px solid #4b3b23;
+    box-shadow: inset 0 2px 0 #5b4b33, 0 -2px 10px rgba(0,0,0,0.8);
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -20,143 +19,124 @@
     image-rendering: pixelated;
 }
 
-/* Main HUD container */
-.hud-container {
+/* HUD Sections */
+.hud-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0;
     height: 100%;
-    max-width: 640px;
-}
-
-/* HUD Segment boxes */
-.hud-segment {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    background: linear-gradient(to bottom, #271b0f 0%, #170f0b 50%, #0f0b07 100%);
-    border: 2px solid #4b371b;
-    border-radius: 2px;
-    margin: 0 2px;
-    box-shadow:
-        inset 1px 1px 0 #533b1b,
-        inset -1px -1px 0 #0f0b07;
-}
-
-/* Health segment - LEFT */
-.hud-health {
-    width: 100px;
     padding: 0 8px;
 }
 
-.health-value {
-    font-size: 1.4rem;
-    color: #d70000;
-    text-shadow:
-        1px 1px 0 #000,
-        2px 2px 0 #000;
-    letter-spacing: -1px;
+/* Ammo counts - small numbers on left (shells, nails, rockets, cells) */
+.ammo-counts {
+    display: flex;
+    gap: 2px;
+    padding-right: 12px;
+}
+.ammo-count {
+    width: 36px;
+    height: 48px;
+    background: linear-gradient(180deg, #231a0f 0%, #1b130b 100%);
+    border: 2px solid #3b2b1b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 1px 1px 0 #4b3b23;
+}
+.ammo-value-small {
+    font-size: 0.75rem;
+    color: #efdf17;
+    text-shadow: 1px 1px 0 #000;
 }
 
-/* Face segment - CENTER */
-.hud-face {
-    width: 48px;
-    height: 40px;
+/* Armor circle - red circular display */
+.armor-circle {
+    width: 56px;
+    height: 56px;
+    background: radial-gradient(circle, #4b0000 0%, #2b0000 60%, #1b0000 100%);
+    border: 3px solid #8b0000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        inset 2px 2px 4px rgba(255,0,0,0.2),
+        inset -2px -2px 4px rgba(0,0,0,0.5),
+        0 0 10px rgba(139,0,0,0.5);
+    margin: 0 8px;
     padding: 0;
+}
+.armor-value-display {
+    font-size: 1.4rem;
+    color: #ff0000;
+    text-shadow: 2px 2px 0 #000, 0 0 8px rgba(255,0,0,0.5);
+}
+
+/* Ranger Face - center of HUD */
+.face-section {
+    padding: 0 4px;
+}
+.ranger-face-box {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(180deg, #2b1f13 0%, #1b130b 100%);
+    border: 2px solid #4b3b23;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 1px 1px 0 #3b2b1b;
     overflow: hidden;
 }
 
-.face-display {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #170f0b;
-    font-size: 24px;
+/* Health section - shows number with skull decoration */
+.health-section {
+    margin: 0 8px;
 }
-
-/* Armor segment - RIGHT */
-.hud-armor {
-    width: 100px;
-    padding: 0 8px;
-}
-
-.armor-value {
-    font-size: 1.4rem;
-    color: #00b300;
+.health-value-display {
+    font-size: 1.8rem;
+    color: #efdf17;
     text-shadow:
-        1px 1px 0 #000,
-        2px 2px 0 #000;
-    letter-spacing: -1px;
+        2px 2px 0 #000,
+        0 0 10px rgba(239,223,23,0.5);
+    letter-spacing: -2px;
 }
 
-/* Ammo segment */
-.hud-ammo {
-    width: 60px;
-    padding: 0 8px;
-    flex-direction: column;
-    gap: 2px;
+/* Current ammo - large number on right */
+.current-ammo {
+    padding-left: 12px;
 }
-
-.ammo-value {
-    font-size: 1rem;
+.ammo-value-large {
+    font-size: 1.8rem;
     color: #efdf17;
-    text-shadow: 1px 1px 0 #000;
+    text-shadow:
+        2px 2px 0 #000,
+        0 0 10px rgba(239,223,23,0.5);
+    letter-spacing: -2px;
 }
 
-.ammo-label {
-    font-size: 0.35rem;
-    color: #8f6f23;
-    text-transform: uppercase;
-}
-
-/* Current weapon ammo */
-.hud-current-ammo {
-    width: 80px;
-}
-
-.current-ammo-value {
-    font-size: 1.2rem;
-    color: #efdf17;
-    text-shadow: 1px 1px 0 #000;
-}
-
-/* Keys display */
-.hud-keys {
-    width: 48px;
-    gap: 4px;
-}
-
-.key-icon {
-    width: 16px;
-    height: 16px;
-    font-size: 12px;
-    opacity: 0.3;
-}
-
-.key-icon.active {
-    opacity: 1;
-}
-
-/* Secrets display */
-.hud-secrets {
-    padding: 0 12px;
-    flex-direction: column;
-}
-
-.secrets-value {
-    font-size: 0.8rem;
-    color: #efdf17;
-    text-shadow: 1px 1px 0 #000;
-}
-
-.secrets-label {
-    font-size: 0.3rem;
-    color: #8f6f23;
-    text-transform: uppercase;
+/* Responsive HUD */
+@media (max-width: 768px) {
+    .quake-hud {
+        height: 56px;
+    }
+    .ammo-counts {
+        display: none;
+    }
+    .armor-circle {
+        width: 44px;
+        height: 44px;
+    }
+    .armor-value-display {
+        font-size: 1rem;
+    }
+    .ranger-face-box {
+        width: 44px;
+        height: 44px;
+    }
+    .health-value-display, .ammo-value-large {
+        font-size: 1.4rem;
+    }
 }
 
 /* Secret Areas */
@@ -265,15 +245,78 @@
 /* ===== QUAKE SPRITE ELEMENTS ===== */
 /* Using quake-hud-elements.png sprite sheet */
 
-/* Ranger face sprite - center face at full health */
+/* Ranger face sprites - from quake-faces.jpg sprite sheet */
+/* Sheet is 288x480 (3 cols x 5 rows = 96x96 each face) */
 .face-sprite {
-    width: 24px;
-    height: 24px;
-    background-image: url('../images/quake-hud-elements.png');
-    background-position: 0 -48px;
-    background-size: auto;
+    width: 48px;
+    height: 48px;
+    background-image: url('../images/quake-faces.jpg');
+    background-size: 144px 240px; /* Scale down 2x for 48px display */
     image-rendering: pixelated;
     display: inline-block;
+}
+
+/* Blue glowing eyes - default state (row 0, col 2) */
+.face-sprite,
+.face-sprite.healthy {
+    background-position: -96px 0;
+}
+
+/* Normal face looking left (row 0, col 0) */
+.face-sprite.left {
+    background-position: 0 0;
+}
+
+/* Normal face center (row 0, col 1) */
+.face-sprite.center {
+    background-position: -48px 0;
+}
+
+/* Slightly hurt faces (row 1) */
+.face-sprite.hurt-1 {
+    background-position: 0 -48px;
+}
+.face-sprite.hurt-1-center {
+    background-position: -48px -48px;
+}
+.face-sprite.hurt-1-right {
+    background-position: -96px -48px;
+}
+
+/* More hurt / bloody faces (row 2) */
+.face-sprite.hurt-2 {
+    background-position: 0 -96px;
+}
+.face-sprite.hurt-2-center {
+    background-position: -48px -96px;
+}
+.face-sprite.hurt-2-right {
+    background-position: -96px -96px;
+}
+
+/* Very hurt / lots of blood (row 3) */
+.face-sprite.hurt-3 {
+    background-position: 0 -144px;
+}
+.face-sprite.hurt-3-center {
+    background-position: -48px -144px;
+}
+/* Robot eyes (row 3, col 2) */
+.face-sprite.robot {
+    background-position: -96px -144px;
+}
+
+/* Almost dead / gibbed - bloodiest (row 4) - USE FOR 404 */
+.face-sprite.dying {
+    background-position: 0 -192px;
+}
+.face-sprite.dead,
+.face-sprite.gib {
+    background-position: -48px -192px;
+}
+/* Fire/demon eyes (row 4, col 2) */
+.face-sprite.demon {
+    background-position: -96px -192px;
 }
 
 /* Ammo type sprites */

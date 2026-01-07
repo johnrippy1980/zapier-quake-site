@@ -438,52 +438,44 @@
         </button>
     </div>
 
-    <!-- Quake HUD -->
+    <!-- Quake 1 Authentic HUD - Matching original layout -->
     <div class="quake-hud">
-        <div class="hud-section hud-face-section">
-            <div class="ranger-face">
-                <span class="face-sprite"></span>
+        <!-- Ammo counts (left side - shells, nails, rockets, cells) -->
+        <div class="hud-section ammo-counts">
+            <div class="ammo-count" title="Shells">
+                <span class="ammo-value-small" id="shells">25</span>
             </div>
-            <div class="health-display">
-                <div class="health-value" id="health-value">100</div>
-                <div class="health-label">Health</div>
+            <div class="ammo-count" title="Nails">
+                <span class="ammo-value-small" id="nails">0</span>
             </div>
-        </div>
-        <div class="hud-section ammo-section">
-            <div class="ammo-box active" title="Shells">
-                <span class="ammo-sprite shells"></span>
-                <span class="ammo-value" id="shells">25</span>
-                <span class="ammo-label">Shells</span>
+            <div class="ammo-count" title="Rockets">
+                <span class="ammo-value-small" id="rockets">0</span>
             </div>
-            <div class="ammo-box" title="Nails">
-                <span class="ammo-sprite nails"></span>
-                <span class="ammo-value" id="nails">100</span>
-                <span class="ammo-label">Nails</span>
-            </div>
-            <div class="ammo-box" title="Rockets">
-                <span class="ammo-sprite rockets"></span>
-                <span class="ammo-value" id="rockets">10</span>
-                <span class="ammo-label">Rockets</span>
-            </div>
-            <div class="ammo-box" title="Cells">
-                <span class="ammo-sprite cells"></span>
-                <span class="ammo-value" id="cells">50</span>
-                <span class="ammo-label">Cells</span>
+            <div class="ammo-count" title="Cells">
+                <span class="ammo-value-small" id="cells">0</span>
             </div>
         </div>
-        <div class="hud-section secrets-section">
-            <div class="secrets-display">
-                <div class="secrets-value"><span id="secrets-found">0</span>/<span id="secrets-total">3</span></div>
-                <div class="secrets-label">Secrets</div>
-            </div>
-            <div class="key-sprite silver"></div>
+
+        <!-- Armor value (red circle style) -->
+        <div class="hud-section armor-circle">
+            <div class="armor-value-display" id="armor-value">0</div>
         </div>
-        <div class="hud-section armor-section">
-            <div class="armor-display">
-                <div class="armor-value" id="armor-value">150</div>
-                <div class="armor-label">Armor</div>
+
+        <!-- Ranger Face (center) - Blue eyes default -->
+        <div class="hud-section face-section">
+            <div class="ranger-face-box">
+                <span class="face-sprite healthy" id="ranger-face"></span>
             </div>
-            <div class="armor-sprite"></div>
+        </div>
+
+        <!-- Health value (with small skull icon) -->
+        <div class="hud-section health-section">
+            <div class="health-value-display" id="health-value">100</div>
+        </div>
+
+        <!-- Armor type icon + current ammo -->
+        <div class="hud-section current-ammo">
+            <div class="ammo-value-large" id="current-ammo">25</div>
         </div>
     </div>
 

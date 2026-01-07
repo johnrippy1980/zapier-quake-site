@@ -208,243 +208,121 @@
         }
 
         /* ===== QUAKE 1 AUTHENTIC HUD ===== */
+        /* Matching the original 1996 Quake status bar layout */
         .quake-hud {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 80px;
-            background:
-                repeating-linear-gradient(
-                    90deg,
-                    #271b0f 0px,
-                    #2f2313 2px,
-                    #271b0f 4px
-                ),
-                linear-gradient(180deg, #2f2313 0%, #1f170b 50%, #0f0b07 100%);
-            border-top: 4px solid #4b371b;
-            box-shadow:
-                inset 0 2px 4px rgba(167, 123, 59, 0.1),
-                0 -4px 20px rgba(0,0,0,0.9);
+            height: 64px;
+            background: #2b1f13;
+            background-image:
+                url('images/quake-hud-bg.png'),
+                linear-gradient(180deg, #3b2b1b 0%, #2b1f13 20%, #1b130b 100%);
+            background-size: auto, cover;
+            border-top: 3px solid #4b3b23;
+            box-shadow: inset 0 2px 0 #5b4b33, 0 -2px 10px rgba(0,0,0,0.8);
             z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0;
+            font-family: 'Press Start 2P', monospace;
+            image-rendering: pixelated;
         }
 
         /* HUD Sections */
         .hud-section {
             display: flex;
             align-items: center;
+            justify-content: center;
             height: 100%;
-            padding: 8px 12px;
-            border-left: 2px solid #4b371b;
-            border-right: 2px solid #170f0b;
-        }
-        .hud-section:first-child {
-            border-left: none;
-        }
-        .hud-section:last-child {
-            border-right: none;
+            padding: 0 8px;
         }
 
-        /* Face Section (Left) */
-        .hud-face-section {
+        /* Ammo counts - small numbers on left (shells, nails, rockets, cells) */
+        .ammo-counts {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 140px;
+            gap: 2px;
+            padding-right: 12px;
         }
-        .ranger-face {
-            width: 56px;
-            height: 56px;
-            background:
-                linear-gradient(135deg, #3b2b17 0%, #271b0f 50%, #170f0b 100%);
-            border: 3px solid #4b371b;
-            border-radius: 2px;
+        .ammo-count {
+            width: 36px;
+            height: 48px;
+            background: linear-gradient(180deg, #231a0f 0%, #1b130b 100%);
+            border: 2px solid #3b2b1b;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            box-shadow:
-                inset 2px 2px 4px rgba(167, 123, 59, 0.2),
-                inset -2px -2px 4px rgba(0,0,0,0.5),
-                2px 2px 4px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
+            box-shadow: inset 1px 1px 0 #4b3b23;
         }
-        .ranger-face::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 2px,
-                rgba(0,0,0,0.1) 2px,
-                rgba(0,0,0,0.1) 4px
-            );
-        }
-        .face-emoji {
-            animation: faceBob 2s ease-in-out infinite;
-            filter: drop-shadow(1px 1px 1px #000);
-        }
-        @keyframes faceBob {
-            0%, 100% { transform: translateY(0) scale(1); }
-            25% { transform: translateY(-1px) scale(1.02); }
-            50% { transform: translateY(0) scale(1); }
-            75% { transform: translateY(1px) scale(0.98); }
-        }
-
-        /* Health Display */
-        .health-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .health-value {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.8rem;
-            color: #d70000;
-            text-shadow:
-                2px 2px 0 #000,
-                -1px -1px 0 #4b0000,
-                0 0 10px rgba(215, 0, 0, 0.5);
-            line-height: 1;
-        }
-        .health-label {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.4rem;
-            color: #7f5f3b;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Ammo Boxes (Center) */
-        .ammo-section {
-            display: flex;
-            gap: 4px;
-        }
-        .ammo-box {
-            width: 50px;
-            height: 60px;
-            background: linear-gradient(180deg, #271b0f 0%, #170f0b 100%);
-            border: 2px solid #4b371b;
-            border-radius: 2px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow:
-                inset 1px 1px 2px rgba(167, 123, 59, 0.1),
-                inset -1px -1px 2px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-        }
-        .ammo-box.active {
-            border-color: #8f4b23;
-            box-shadow:
-                0 0 10px rgba(143, 75, 35, 0.5),
-                inset 1px 1px 2px rgba(167, 123, 59, 0.2);
-        }
-        .ammo-icon {
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-        .ammo-value {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.7rem;
+        .ammo-value-small {
+            font-size: 0.75rem;
             color: #efdf17;
             text-shadow: 1px 1px 0 #000;
         }
-        .ammo-box.active .ammo-value {
-            color: #ffffff;
-            text-shadow: 0 0 5px #efdf17, 1px 1px 0 #000;
-        }
-        .ammo-label {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.25rem;
-            color: #7f5f3b;
-            text-transform: uppercase;
-        }
 
-        /* Armor Section (Right) */
-        .armor-section {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 140px;
-            justify-content: flex-end;
-        }
-        .armor-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .armor-value {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.8rem;
-            color: #00b300;
-            text-shadow:
-                2px 2px 0 #000,
-                -1px -1px 0 #004b00,
-                0 0 10px rgba(0, 179, 0, 0.5);
-            line-height: 1;
-        }
-        .armor-label {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.4rem;
-            color: #7f5f3b;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .armor-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #2b5b2b 0%, #1b3b1b 100%);
-            border: 2px solid #3b5b3b;
+        /* Armor circle - red circular display */
+        .armor-circle {
+            width: 56px;
+            height: 56px;
+            background: radial-gradient(circle, #4b0000 0%, #2b0000 60%, #1b0000 100%);
+            border: 3px solid #8b0000;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
             box-shadow:
-                inset 2px 2px 4px rgba(0, 179, 0, 0.2),
-                2px 2px 4px rgba(0,0,0,0.5);
+                inset 2px 2px 4px rgba(255,0,0,0.2),
+                inset -2px -2px 4px rgba(0,0,0,0.5),
+                0 0 10px rgba(139,0,0,0.5);
+            margin: 0 8px;
+        }
+        .armor-value-display {
+            font-size: 1.4rem;
+            color: #ff0000;
+            text-shadow: 2px 2px 0 #000, 0 0 8px rgba(255,0,0,0.5);
         }
 
-        /* Secrets Section */
-        .secrets-section {
+        /* Ranger Face - center of HUD */
+        .face-section {
+            padding: 0 4px;
+        }
+        .ranger-face-box {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(180deg, #2b1f13 0%, #1b130b 100%);
+            border: 2px solid #4b3b23;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            box-shadow: inset 1px 1px 0 #3b2b1b;
+            overflow: hidden;
         }
-        .secrets-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+        /* Health section - shows number with skull decoration */
+        .health-section {
+            margin: 0 8px;
         }
-        .secrets-value {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.2rem;
-            color: #cf6b2f;
+        .health-value-display {
+            font-size: 1.8rem;
+            color: #efdf17;
             text-shadow:
                 2px 2px 0 #000,
-                0 0 10px rgba(207, 107, 47, 0.5);
-            line-height: 1;
+                0 0 10px rgba(239,223,23,0.5);
+            letter-spacing: -2px;
         }
-        .secrets-label {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.4rem;
-            color: #7f5f3b;
-            text-transform: uppercase;
+
+        /* Current ammo - large number on right */
+        .current-ammo {
+            padding-left: 12px;
         }
-        .secrets-icon {
-            font-size: 24px;
-            filter: drop-shadow(1px 1px 1px #000);
+        .ammo-value-large {
+            font-size: 1.8rem;
+            color: #efdf17;
+            text-shadow:
+                2px 2px 0 #000,
+                0 0 10px rgba(239,223,23,0.5);
+            letter-spacing: -2px;
         }
 
         /* Hidden Secrets (clickable areas) */
@@ -498,22 +376,29 @@
         /* Responsive HUD */
         @media (max-width: 768px) {
             .quake-hud {
-                height: 70px;
+                height: 56px;
             }
-            .ammo-box {
+            .ammo-counts {
+                display: none;
+            }
+            .armor-circle {
+                width: 44px;
+                height: 44px;
+            }
+            .armor-value-display {
+                font-size: 1rem;
+            }
+            .ranger-face-box {
+                width: 44px;
+                height: 44px;
+            }
+            .face-sprite {
                 width: 40px;
-                height: 50px;
+                height: 40px;
+                background-size: 120px 200px;
             }
-            .health-value, .armor-value {
+            .health-value-display, .ammo-value-large {
                 font-size: 1.4rem;
-            }
-            .ranger-face {
-                width: 46px;
-                height: 46px;
-                font-size: 26px;
-            }
-            .hud-face-section, .armor-section {
-                min-width: 100px;
             }
         }
 
@@ -833,57 +718,44 @@
         </section>
     </main>
 
-    <!-- Quake 1 Authentic HUD - Using sprite-based design -->
+    <!-- Quake 1 Authentic HUD - Matching original layout -->
     <div class="quake-hud">
-        <!-- Face + Health Section -->
-        <div class="hud-section hud-face-section">
-            <div class="ranger-face"><span class="face-sprite"></span></div>
-            <div class="health-display">
-                <div class="health-value" id="health-value">100</div>
-                <div class="health-label">HEALTH</div>
+        <!-- Ammo counts (left side - shells, nails, rockets, cells) -->
+        <div class="hud-section ammo-counts">
+            <div class="ammo-count" title="Shells">
+                <span class="ammo-value-small" id="shells">25</span>
+            </div>
+            <div class="ammo-count" title="Nails">
+                <span class="ammo-value-small" id="nails">0</span>
+            </div>
+            <div class="ammo-count" title="Rockets">
+                <span class="ammo-value-small" id="rockets">0</span>
+            </div>
+            <div class="ammo-count" title="Cells">
+                <span class="ammo-value-small" id="cells">0</span>
             </div>
         </div>
 
-        <!-- Ammo Boxes Section -->
-        <div class="hud-section ammo-section">
-            <div class="ammo-box active" title="Shells">
-                <span class="ammo-sprite shells"></span>
-                <span class="ammo-value" id="shells">25</span>
-                <span class="ammo-label">SHELLS</span>
-            </div>
-            <div class="ammo-box" title="Nails">
-                <span class="ammo-sprite nails"></span>
-                <span class="ammo-value" id="nails">100</span>
-                <span class="ammo-label">NAILS</span>
-            </div>
-            <div class="ammo-box" title="Rockets">
-                <span class="ammo-sprite rockets"></span>
-                <span class="ammo-value" id="rockets">10</span>
-                <span class="ammo-label">ROCKETS</span>
-            </div>
-            <div class="ammo-box" title="Cells">
-                <span class="ammo-sprite cells"></span>
-                <span class="ammo-value" id="cells">50</span>
-                <span class="ammo-label">CELLS</span>
+        <!-- Armor value (red circle style) -->
+        <div class="hud-section armor-circle">
+            <div class="armor-value-display" id="armor-value">0</div>
+        </div>
+
+        <!-- Ranger Face (center) - Blue eyes default -->
+        <div class="hud-section face-section">
+            <div class="ranger-face-box">
+                <span class="face-sprite healthy" id="ranger-face"></span>
             </div>
         </div>
 
-        <!-- Secrets Section -->
-        <div class="hud-section secrets-section">
-            <div class="secrets-display">
-                <div class="secrets-value"><span id="secrets-found">0</span>/<span id="secrets-total">3</span></div>
-                <div class="secrets-label">SECRETS</div>
-            </div>
-            <div class="key-sprite silver"></div>
+        <!-- Health value (with small skull icon) -->
+        <div class="hud-section health-section">
+            <div class="health-value-display" id="health-value">100</div>
         </div>
 
-        <!-- Armor Section -->
-        <div class="hud-section armor-section">
-            <div class="armor-display">
-                <div class="armor-value" id="armor-value">150</div>
-                <div class="armor-label">ARMOR</div>
-            </div>
-            <div class="armor-sprite"></div>
+        <!-- Armor type icon + current ammo -->
+        <div class="hud-section current-ammo">
+            <div class="ammo-value-large" id="current-ammo">25</div>
         </div>
     </div>
 
@@ -904,26 +776,18 @@
         document.addEventListener('keydown', dismissSplash, { once: true });
         document.addEventListener('click', dismissSplash, { once: true });
 
-        // Weapon switching with number keys
-        const ammoBoxes = document.querySelectorAll('.ammo-box');
+        // Weapon switching with number keys (updates ammo display)
+        const ammoValues = [25, 0, 0, 0]; // shells, nails, rockets, cells
+        let currentWeapon = 0;
+
         document.addEventListener('keydown', (e) => {
             const weaponKeys = ['1', '2', '3', '4'];
             const keyIndex = weaponKeys.indexOf(e.key);
             if (keyIndex !== -1) {
                 if (typeof playMenuSound === 'function') playMenuSound();
-                ammoBoxes.forEach((box, i) => {
-                    box.classList.toggle('active', i === keyIndex);
-                });
+                currentWeapon = keyIndex;
+                document.getElementById('current-ammo').textContent = ammoValues[keyIndex];
             }
-        });
-
-        // Add click to switch weapons
-        ammoBoxes.forEach((box, i) => {
-            box.addEventListener('click', () => {
-                if (typeof playMenuSound === 'function') playMenuSound();
-                ammoBoxes.forEach(b => b.classList.remove('active'));
-                box.classList.add('active');
-            });
         });
     </script>
     <script src="js/quake-hud.js"></script>

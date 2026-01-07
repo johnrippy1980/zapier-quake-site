@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About John Rippy | Zap Arsenal</title>
+    <meta name="description" content="John Rippy - CTO at Drive Social Media and 2025 Zapier Automation Hero of the Year. Creator of Project Phoenix, a 95-step AI automation pipeline.">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1a0f0a;
+            --bg-card: #2a1a14;
+            --accent-orange: #ff6600;
+            --accent-brown: #8b4513;
+            --accent-gold: #ffa500;
+            --accent-red: #cc3300;
+            --text-primary: #e8d4c4;
+            --text-secondary: #a08070;
+            --border: #3a2a20;
+            --zapier-orange: #ff4a00;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(180deg, #2a1a0a 0%, #1a0f0a 100%);
+            border-bottom: 2px solid #4a3a2a;
+            z-index: 1001;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        .nav-logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--accent-orange);
+            text-decoration: none;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-link {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+            padding: 8px 12px;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            color: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        /* CRT Effects */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.2),
+                rgba(0, 0, 0, 0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            opacity: 0.4;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 40px;
+        }
+        .hero-badge {
+            display: inline-block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: linear-gradient(180deg, var(--zapier-orange) 0%, #cc3500 100%);
+            color: #fff;
+            padding: 8px 16px;
+            margin-bottom: 20px;
+            border: 2px solid var(--accent-gold);
+        }
+        .hero h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: var(--accent-orange);
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 10px;
+        }
+        .hero-title {
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+        .hero-company {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: var(--accent-orange);
+            text-shadow: 2px 2px 0 #000;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Content Sections */
+        section {
+            margin-bottom: 40px;
+        }
+        section h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        section h2::before {
+            content: '>';
+            color: var(--accent-orange);
+        }
+        section p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold));
+        }
+        .project-card h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--accent-orange);
+            margin-bottom: 15px;
+        }
+        .project-card p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        .project-features {
+            list-style: none;
+            padding: 0;
+        }
+        .project-features li {
+            color: var(--text-primary);
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.9rem;
+        }
+        .project-features li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent-orange);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .tech-tag {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            background: rgba(255, 102, 0, 0.2);
+            color: var(--accent-gold);
+            padding: 6px 12px;
+            border: 1px solid var(--accent-orange);
+        }
+
+        /* Links */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .link-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            padding: 15px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+        .link-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-2px);
+        }
+        .link-card span {
+            font-size: 24px;
+        }
+        .link-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--accent-gold);
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0500;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid var(--border);
+        }
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        footer a {
+            color: var(--accent-orange);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- CRT Effect -->
+    <div class="crt-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">ZAP ARSENAL</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">HOME</a>
+            <a href="index.html#features" class="nav-link">FEATURES</a>
+            <a href="play-quake.html" class="nav-link">PLAY QUAKE</a>
+            <a href="about.html" class="nav-link" style="color: var(--accent-orange);">ABOUT</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-badge">2025 AUTOMATION HERO OF THE YEAR</div>
+            <h1>JOHN RIPPY</h1>
+            <p class="hero-title">Chief Technology Officer</p>
+            <p class="hero-company">Drive Social Media | St. Louis, Missouri</p>
+        </section>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">95</div>
+                <div class="stat-label">Steps in Project Phoenix</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">50%</div>
+                <div class="stat-label">Dev Time Reduced</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3x</div>
+                <div class="stat-label">Faster Content Creation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">282</div>
+                <div class="stat-label">Team Members</div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <section>
+            <h2>ABOUT</h2>
+            <p>As CTO of Drive Social Media, I lead technology initiatives for a 282-person digital marketing and advertising company. My focus is on building AI-powered automation systems that enable teams to work smarter, not harder.</p>
+            <p>In 2025, I was recognized as Zapier's Automation Hero of the Year for developing Project Phoenix - a comprehensive sales intelligence and content automation platform that has transformed how our team operates.</p>
+        </section>
+
+        <!-- Project Phoenix -->
+        <section>
+            <h2>PROJECT PHOENIX</h2>
+            <div class="project-card">
+                <h3>95-STEP AI SALES INTELLIGENCE PLATFORM</h3>
+                <p>Project Phoenix is an AI-powered automation pipeline that analyzes prospective clients' digital presence and generates comprehensive competitive intelligence reports.</p>
+                <ul class="project-features">
+                    <li>Analyzes SEO performance, brand presence, online reviews, and ad campaigns</li>
+                    <li>Pulls data from SEMrush, Ahrefs, Google, and WHOIS APIs</li>
+                    <li>Generates competitor analysis with actionable recommendations</li>
+                    <li>Creates AI-powered blog posts and ad copy suggestions</li>
+                    <li>Reduces sales prep time from hours to minutes</li>
+                    <li>Tracks impact end-to-end for continuous improvement</li>
+                </ul>
+                <div class="tech-stack">
+                    <span class="tech-tag">ZAPIER</span>
+                    <span class="tech-tag">AI BY ZAPIER</span>
+                    <span class="tech-tag">CHATGPT</span>
+                    <span class="tech-tag">APIFY</span>
+                    <span class="tech-tag">SEMRUSH</span>
+                    <span class="tech-tag">AHREFS</span>
+                    <span class="tech-tag">CODE BY ZAPIER</span>
+                    <span class="tech-tag">ZAPIER TABLES</span>
+                    <span class="tech-tag">WEBHOOKS</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section>
+            <h2>RESULTS</h2>
+            <div class="project-card">
+                <ul class="project-features">
+                    <li>Sales prep time reduced from hours to minutes</li>
+                    <li>3x faster website content creation using AI-generated drafts</li>
+                    <li>Web development time cut from four weeks to two</li>
+                    <li>Team scalability maintained without expanding engineering</li>
+                    <li>Non-technical teams empowered to build workflows independently</li>
+                    <li>Consistent content scaling across the organization</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Links -->
+        <section>
+            <h2>CONNECT</h2>
+            <div class="links-grid">
+                <a href="https://www.linkedin.com/in/johnrippy/" target="_blank" class="link-card">
+                    <span>&#128101;</span>
+                    <div class="link-text">LINKEDIN</div>
+                </a>
+                <a href="https://github.com/johnrippy1980" target="_blank" class="link-card">
+                    <span>&#128187;</span>
+                    <div class="link-text">GITHUB</div>
+                </a>
+                <a href="https://zapier.com/blog/drive-social-media-scaling-sales-and-marketing/" target="_blank" class="link-card">
+                    <span>&#9889;</span>
+                    <div class="link-text">ZAPIER FEATURE</div>
+                </a>
+                <a href="https://zapier.com/blog/zappy-awards-winners-2025/" target="_blank" class="link-card">
+                    <span>&#127942;</span>
+                    <div class="link-text">ZAPPY AWARDS</div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with &#9889; by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
+    </footer>
+
+    <script>
+        // Sound system
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playMenuSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Add hover sounds
+        document.querySelectorAll('.nav-link, .link-card, .stat-card, .project-card').forEach(el => {
+            el.addEventListener('mouseenter', playMenuSound);
+        });
+    </script>
+</body>
+</html>

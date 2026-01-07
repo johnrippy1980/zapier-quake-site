@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Quake | Zap Arsenal</title>
+    <meta name="description" content="Play Quake in your browser! A tribute to the classic 1996 FPS by id Software.">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1a0f0a;
+            --bg-card: #2a1a14;
+            --accent-orange: #ff6600;
+            --accent-brown: #8b4513;
+            --accent-gold: #ffa500;
+            --accent-red: #cc3300;
+            --text-primary: #e8d4c4;
+            --text-secondary: #a08070;
+            --border: #3a2a20;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #000;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(180deg, #2a1a0a 0%, #1a0f0a 100%);
+            border-bottom: 2px solid #4a3a2a;
+            z-index: 1001;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .nav-logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--accent-orange);
+            text-decoration: none;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-link {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 6px 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        /* Game Container */
+        .game-container {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .game-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1280px;
+            max-height: 720px;
+            background: #0a0500;
+            border: 3px solid #4a3a2a;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .loading-screen.hidden {
+            display: none;
+        }
+        .loading-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2rem;
+            color: var(--accent-orange);
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 30px;
+        }
+        .loading-subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: var(--accent-gold);
+            margin-bottom: 40px;
+        }
+        .loading-bar-container {
+            width: 300px;
+            height: 20px;
+            background: #1a0a00;
+            border: 2px solid #4a3a2a;
+            position: relative;
+        }
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold));
+            transition: width 0.3s;
+        }
+        .loading-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            margin-top: 15px;
+        }
+        .start-button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 15px 30px;
+            background: linear-gradient(180deg, var(--accent-orange) 0%, var(--accent-red) 100%);
+            color: #fff;
+            border: 2px solid var(--accent-gold);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            display: none;
+        }
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 102, 0, 0.6);
+        }
+        .start-button.visible {
+            display: block;
+            animation: blink 1s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Game Canvas */
+        #quake-canvas {
+            width: 100%;
+            height: 100%;
+            display: none;
+            cursor: none;
+        }
+        #quake-canvas.active {
+            display: block;
+        }
+
+        /* Game iframe for WebQuake */
+        #quake-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+        #quake-frame.active {
+            display: block;
+        }
+
+        /* Controls HUD */
+        .controls-hud {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(180deg, #3a2a1a 0%, #2a1a0a 50%, #1a0a00 100%);
+            border-top: 2px solid #5a4a3a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 0 20px;
+        }
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-key {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: #2a1a0a;
+            border: 1px solid #5a4a3a;
+            padding: 4px 8px;
+            color: var(--accent-gold);
+        }
+        .control-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            color: var(--text-secondary);
+        }
+
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.7);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+            cursor: pointer;
+            z-index: 50;
+        }
+        .fullscreen-btn:hover {
+            background: rgba(255, 102, 0, 0.2);
+        }
+
+        /* Info panel */
+        .info-panel {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            color: var(--text-secondary);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">ZAP ARSENAL</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">HOME</a>
+            <a href="about.html" class="nav-link">ABOUT</a>
+            <a href="index.html#features" class="nav-link">FEATURES</a>
+        </div>
+    </nav>
+
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="game-wrapper">
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loading-screen">
+                <div class="loading-title">QUAKE</div>
+                <div class="loading-subtitle">id Software 1996</div>
+                <div class="loading-bar-container">
+                    <div class="loading-bar" id="loading-bar"></div>
+                </div>
+                <div class="loading-text" id="loading-text">Initializing...</div>
+                <button class="start-button" id="start-button">CLICK TO START</button>
+            </div>
+
+            <!-- Fullscreen Button -->
+            <button class="fullscreen-btn" id="fullscreen-btn">FULLSCREEN</button>
+
+            <!-- WebQuake iframe -->
+            <iframe id="quake-frame" src="quake-wasm/Client/index.htm" allow="pointer-lock; fullscreen"></iframe>
+
+            <!-- Info Panel -->
+            <div class="info-panel">
+                ESC = Menu | Click to capture mouse
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls HUD -->
+    <div class="controls-hud">
+        <div class="control-item">
+            <span class="control-key">W A S D</span>
+            <span class="control-label">MOVE</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">MOUSE</span>
+            <span class="control-label">LOOK</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">LMB</span>
+            <span class="control-label">SHOOT</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">SPACE</span>
+            <span class="control-label">JUMP</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">1-8</span>
+            <span class="control-label">WEAPONS</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">ESC</span>
+            <span class="control-label">MENU</span>
+        </div>
+    </div>
+
+    <script>
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingText = document.getElementById('loading-text');
+        const startButton = document.getElementById('start-button');
+        const quakeFrame = document.getElementById('quake-frame');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const gameWrapper = document.querySelector('.game-wrapper');
+
+        // Simulate loading progress
+        const loadingSteps = [
+            { progress: 10, text: 'Loading PAK files...' },
+            { progress: 25, text: 'Initializing renderer...' },
+            { progress: 40, text: 'Loading textures...' },
+            { progress: 55, text: 'Loading models...' },
+            { progress: 70, text: 'Loading sounds...' },
+            { progress: 85, text: 'Spawning entities...' },
+            { progress: 100, text: 'Ready!' }
+        ];
+
+        let currentStep = 0;
+
+        function updateLoading() {
+            if (currentStep < loadingSteps.length) {
+                const step = loadingSteps[currentStep];
+                loadingBar.style.width = step.progress + '%';
+                loadingText.textContent = step.text;
+                currentStep++;
+
+                if (currentStep < loadingSteps.length) {
+                    setTimeout(updateLoading, 400 + Math.random() * 300);
+                } else {
+                    // Loading complete
+                    setTimeout(() => {
+                        startButton.classList.add('visible');
+                    }, 500);
+                }
+            }
+        }
+
+        // Start loading animation
+        setTimeout(updateLoading, 500);
+
+        // Start game on button click
+        startButton.addEventListener('click', () => {
+            loadingScreen.classList.add('hidden');
+            quakeFrame.classList.add('active');
+
+            // Focus the iframe for keyboard input
+            quakeFrame.focus();
+        });
+
+        // Fullscreen functionality
+        fullscreenBtn.addEventListener('click', () => {
+            if (gameWrapper.requestFullscreen) {
+                gameWrapper.requestFullscreen();
+            } else if (gameWrapper.webkitRequestFullscreen) {
+                gameWrapper.webkitRequestFullscreen();
+            } else if (gameWrapper.msRequestFullscreen) {
+                gameWrapper.msRequestFullscreen();
+            }
+        });
+
+        // Handle fullscreen change
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = 'EXIT FULLSCREEN';
+            } else {
+                fullscreenBtn.textContent = 'FULLSCREEN';
+            }
+        });
+
+        // Focus iframe when clicking on game wrapper
+        gameWrapper.addEventListener('click', (e) => {
+            if (e.target !== fullscreenBtn && !loadingScreen.contains(e.target)) {
+                quakeFrame.focus();
+            }
+        });
+    </script>
+</body>
+</html>

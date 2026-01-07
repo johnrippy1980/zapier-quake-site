@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zap Arsenal | Zapier Automation Tools by John Rippy</title>
+    <meta name="description" content="Powerful Zapier automation tools and integrations for workflow automation. Built by John Rippy, 2025 Zapier Automation Hero.">
+    <meta name="keywords" content="Zapier, automation, workflows, integrations, zaps, John Rippy, automation hero">
+    <meta name="author" content="John Rippy">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://zap-arsenal.vercel.app/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zap-arsenal.vercel.app/">
+    <meta property="og:title" content="Zap Arsenal | Zapier Automation Tools by John Rippy">
+    <meta property="og:description" content="Powerful Zapier automation tools and integrations. Built by a 2025 Zapier Automation Hero.">
+    <meta property="og:image" content="https://zap-arsenal.vercel.app/images/og-image.png">
+    <meta property="og:site_name" content="Zap Arsenal">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://zap-arsenal.vercel.app/">
+    <meta name="twitter:title" content="Zap Arsenal | Zapier Automation Tools by John Rippy">
+    <meta name="twitter:description" content="Powerful Zapier automation tools and integrations for workflow automation.">
+    <meta name="twitter:image" content="https://zap-arsenal.vercel.app/images/og-image.png">
+
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Quake-inspired color palette - browns, oranges, dark tones */
+            --bg-dark: #1a0f0a;
+            --bg-card: #2a1a14;
+            --accent-orange: #ff6600;
+            --accent-brown: #8b4513;
+            --accent-gold: #ffa500;
+            --accent-red: #cc3300;
+            --accent-lava: #ff4400;
+            --text-primary: #e8d4c4;
+            --text-secondary: #a08070;
+            --border: #3a2a20;
+            --zapier-orange: #ff4a00;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== QUAKE SPLASH SCREEN ===== */
+        .quake-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000 url('images/quake-bg.jpg') center center / cover no-repeat;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        .quake-splash::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 15, 10, 0.7);
+            z-index: 0;
+        }
+        .quake-splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .splash-title {
+            position: relative;
+            z-index: 1;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            color: var(--accent-orange);
+            text-shadow:
+                4px 4px 0 #4a2500,
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                0 0 20px rgba(255, 102, 0, 0.8),
+                0 0 40px rgba(255, 102, 0, 0.5);
+            margin-bottom: 2rem;
+            animation: splashPulse 1s ease-in-out infinite;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .splash-subtitle {
+            position: relative;
+            z-index: 1;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            margin-bottom: 2rem;
+        }
+        .splash-press {
+            position: relative;
+            z-index: 1;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            text-shadow:
+                2px 2px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                0 0 10px rgba(255, 165, 0, 0.8);
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ===== CRT SCANLINE OVERLAY ===== */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.2),
+                rgba(0, 0, 0, 0.2) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            opacity: 0.5;
+        }
+
+        /* ===== BROWN/ORANGE VIGNETTE ===== */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9997;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(139, 69, 19, 0.3) 100%);
+        }
+
+        /* ===== QUAKE HUD (Metallic Brown Style) ===== */
+        .quake-hud {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: linear-gradient(180deg, #3a2a1a 0%, #2a1a0a 50%, #1a0a00 100%);
+            border-top: 3px solid #5a4a3a;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
+        }
+        .quake-hud::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff6600, transparent);
+        }
+
+        .hud-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .hud-icon {
+            font-size: 24px;
+        }
+        .hud-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: var(--accent-orange);
+            text-shadow: 2px 2px 0 #000;
+        }
+        .hud-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Animated Ranger Face */
+        .ranger-face {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4a3a2a, #2a1a0a);
+            border: 2px solid #5a4a3a;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            animation: rangerBob 0.5s ease-in-out infinite;
+        }
+        @keyframes rangerBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        /* ===== NAVIGATION ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(180deg, #2a1a0a 0%, #1a0f0a 100%);
+            border-bottom: 2px solid #4a3a2a;
+            z-index: 1001;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        .nav-logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--accent-orange);
+            text-decoration: none;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-link {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+            padding: 8px 12px;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            color: var(--accent-orange);
+            border-color: var(--accent-orange);
+            background: rgba(255, 102, 0, 0.1);
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+        }
+        .nav-link.play-btn {
+            background: linear-gradient(180deg, var(--accent-orange) 0%, var(--accent-red) 100%);
+            color: #fff;
+            border-color: var(--accent-gold);
+        }
+        .nav-link.play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(180deg, transparent, rgba(255, 102, 0, 0.05));
+        }
+        .hero h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2rem;
+            color: var(--accent-orange);
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 15px 30px;
+            background: linear-gradient(180deg, var(--zapier-orange) 0%, #cc3500 100%);
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid var(--accent-gold);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 74, 0, 0.6);
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .features h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: var(--accent-orange);
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold), var(--accent-orange));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 102, 0, 0.2);
+        }
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .feature-card h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* ===== STATS SECTION ===== */
+        .stats {
+            background: linear-gradient(180deg, rgba(255, 102, 0, 0.05), transparent);
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2rem;
+            color: var(--accent-orange);
+            text-shadow: 2px 2px 0 #000;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #0a0500;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid var(--border);
+        }
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        footer a {
+            color: var(--accent-orange);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .splash-title { font-size: 1.5rem; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 1.2rem; }
+            .quake-hud { height: 60px; }
+            .hud-value { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Quake Splash Screen -->
+    <div class="quake-splash" id="splash">
+        <div class="splash-title">ZAP<br>ARSENAL</div>
+        <div class="splash-subtitle">ZAPIER AUTOMATION TOOLS</div>
+        <div class="splash-press">PRESS ANY KEY TO CONTINUE</div>
+    </div>
+
+    <!-- CRT Effects -->
+    <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">ZAP ARSENAL</a>
+        <div class="nav-links">
+            <a href="#features" class="nav-link">FEATURES</a>
+            <a href="about.html" class="nav-link">ABOUT</a>
+            <a href="https://zapier.com" target="_blank" class="nav-link">ZAPIER</a>
+            <a href="play-quake.html" class="nav-link play-btn">PLAY QUAKE</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <h1>AUTOMATE<br>EVERYTHING</h1>
+            <p>Powerful Zapier automation tools and integrations built by a 2025 Zapier Automation Hero. Connect your apps and automate your workflows.</p>
+            <a href="https://zapier.com/apps" class="cta-button">EXPLORE INTEGRATIONS</a>
+        </section>
+
+        <section class="features" id="features">
+            <h2>POWER-UPS</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#9889;</div>
+                    <h3>INSTANT ZAPS</h3>
+                    <p>Lightning-fast automation triggers that fire instantly when events occur in your connected apps.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128279;</div>
+                    <h3>MULTI-STEP</h3>
+                    <p>Chain multiple actions together in complex workflows with conditional logic and filters.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128640;</div>
+                    <h3>AI ACTIONS</h3>
+                    <p>Leverage AI-powered actions to transform data, generate content, and make smart decisions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128736;</div>
+                    <h3>CUSTOM CODE</h3>
+                    <p>Write custom JavaScript or Python code steps when you need ultimate flexibility.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128202;</div>
+                    <h3>TABLES</h3>
+                    <p>Store and manage data with Zapier Tables - your automation database in the cloud.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128172;</div>
+                    <h3>INTERFACES</h3>
+                    <p>Build custom forms and landing pages that trigger your automations.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="zaps-count">500+</div>
+                    <div class="stat-label">Active Zaps</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="tasks-count">1M+</div>
+                    <div class="stat-label">Tasks Automated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="apps-count">100+</div>
+                    <div class="stat-label">Connected Apps</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Quake HUD -->
+    <div class="quake-hud">
+        <div class="hud-stat">
+            <div class="hud-icon">&#9889;</div>
+            <div>
+                <div class="hud-value" id="zaps-hud">500</div>
+                <div class="hud-label">ZAPS</div>
+            </div>
+        </div>
+        <div class="ranger-face">&#129489;</div>
+        <div class="hud-stat">
+            <div>
+                <div class="hud-value" id="tasks-hud">100</div>
+                <div class="hud-label">TASKS/HR</div>
+            </div>
+            <div class="hud-icon">&#128736;</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with &#9889; by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
+        <p style="margin-top: 10px; font-size: 0.7rem;">Quake is a trademark of id Software. This site is a fan tribute.</p>
+    </footer>
+
+    <!-- Audio (will load Quake sounds) -->
+    <audio id="menu-sound" preload="auto"></audio>
+    <audio id="select-sound" preload="auto"></audio>
+
+    <script>
+        // Sound system using Web Audio API for Quake-like sounds
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        // Generate Quake-style menu blip sound
+        function playMenuSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.1);
+
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Generate Quake-style select/confirm sound
+        function playSelectSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.15);
+
+            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.15);
+        }
+
+        // Splash screen
+        const splash = document.getElementById('splash');
+        function dismissSplash() {
+            playSelectSound();
+            splash.classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', dismissSplash, { once: true });
+        document.addEventListener('click', dismissSplash, { once: true });
+
+        // Add hover sounds to nav links
+        document.querySelectorAll('.nav-link, .cta-button, .feature-card').forEach(el => {
+            el.addEventListener('mouseenter', playMenuSound);
+        });
+
+        // Animate HUD numbers
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Start HUD animation after splash
+        setTimeout(() => {
+            animateValue(document.getElementById('zaps-hud'), 0, 500, 2000);
+            animateValue(document.getElementById('tasks-hud'), 0, 100, 2000);
+        }, 1000);
+    </script>
+</body>
+</html>

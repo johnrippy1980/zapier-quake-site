@@ -1,7 +1,6 @@
-// ===== QUAKE HUD SYSTEM =====
-// Shared across all pages - handles HUD, music, and secrets
+// ===== AUTHENTIC QUAKE 1 SOUND & HUD SYSTEM =====
+// Recreating the original 1996 id Software sounds with Web Audio API
 
-// Sound system using Web Audio API
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -11,54 +10,87 @@ function initAudio() {
     }
 }
 
+// Authentic Quake menu tick sound (menu1.wav recreation)
 function playMenuSound() {
     initAudio();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.type = 'square';
-    oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.1);
-    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    oscillator.start(audioCtx.currentTime);
-    oscillator.stop(audioCtx.currentTime + 0.1);
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    // Quake menu tick - short sharp click
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.02);
+
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.05);
 }
 
+// Quake select/confirm sound (menu2.wav recreation)
 function playSelectSound() {
     initAudio();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.type = 'square';
-    oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
-    oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.15);
-    gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-    oscillator.start(audioCtx.currentTime);
-    oscillator.stop(audioCtx.currentTime + 0.15);
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.03);
+    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
+
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.1);
 }
 
+// Quake secret found sound (authentic rising chime)
 function playSecretSound() {
     initAudio();
-    const notes = [220, 330, 440, 550];
+    // Play a rising arpeggio like the actual Quake secret sound
+    const notes = [330, 392, 494, 587, 659];
     notes.forEach((freq, i) => {
         setTimeout(() => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
+
             osc.type = 'square';
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.15);
-        }, i * 80);
+            osc.stop(audioCtx.currentTime + 0.2);
+        }, i * 60);
     });
+}
+
+// Quake item pickup sound
+function playPickupSound() {
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
+
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.12);
 }
 
 // ===== SECRETS SYSTEM =====
@@ -78,7 +110,7 @@ function showSecretPopup(message) {
     if (popup && msgEl) {
         msgEl.textContent = message;
         popup.classList.add('show');
-        setTimeout(() => popup.classList.remove('show'), 2000);
+        setTimeout(() => popup.classList.remove('show'), 2500);
     }
 }
 
@@ -96,16 +128,16 @@ function initSecrets() {
     updateSecretsDisplay();
     document.querySelectorAll('.secret-area').forEach(area => {
         const secretId = area.dataset.secret;
-        const message = area.dataset.secretMsg || 'You found a secret!';
+        const message = area.dataset.secretMsg || 'You found a secret area!';
         if (foundSecrets.includes(secretId)) {
-            area.style.opacity = '0.7';
+            area.style.opacity = '0.6';
         }
         area.addEventListener('click', (e) => {
             if (!foundSecrets.includes(secretId)) {
                 e.preventDefault();
                 findSecret(secretId, message);
                 area.classList.add('found');
-                setTimeout(() => { area.style.opacity = '0.7'; }, 500);
+                setTimeout(() => { area.style.opacity = '0.6'; }, 500);
             }
         });
     });
@@ -127,7 +159,7 @@ function initMusic() {
         quakeTheme.currentTime = musicTime;
         quakeTheme.play().then(() => {
             musicBtn.classList.add('playing');
-            if (musicText) musicText.textContent = 'STOP THEME';
+            if (musicText) musicText.textContent = 'STOP';
         }).catch(e => {
             console.log('Auto-play blocked');
             isPlaying = false;
@@ -150,16 +182,16 @@ function initMusic() {
     });
 
     musicBtn.addEventListener('click', () => {
-        playMenuSound();
+        playSelectSound();
         if (isPlaying) {
             quakeTheme.pause();
             musicBtn.classList.remove('playing');
-            if (musicText) musicText.textContent = 'PLAY THEME';
+            if (musicText) musicText.textContent = 'MUSIC';
             localStorage.setItem('quake_music_playing', 'false');
         } else {
             quakeTheme.play().catch(e => console.log('Audio play failed:', e));
             musicBtn.classList.add('playing');
-            if (musicText) musicText.textContent = 'STOP THEME';
+            if (musicText) musicText.textContent = 'STOP';
             localStorage.setItem('quake_music_playing', 'true');
         }
         isPlaying = !isPlaying;
@@ -183,43 +215,15 @@ function animateValue(element, start, end, duration) {
 
 function initHudAnimations() {
     setTimeout(() => {
-        animateValue(document.getElementById('health-value'), 0, 100, 1500);
-        animateValue(document.getElementById('armor-value'), 0, 150, 1500);
-        animateValue(document.getElementById('shells'), 0, 25, 1000);
-        animateValue(document.getElementById('nails'), 0, 100, 1200);
-        animateValue(document.getElementById('rockets'), 0, 10, 800);
-        animateValue(document.getElementById('cells'), 0, 50, 1100);
-    }, 500);
-}
-
-// ===== WEAPON SWITCHING =====
-function initWeaponSwitching() {
-    const ammoBoxes = document.querySelectorAll('.ammo-box');
-    if (!ammoBoxes.length) return;
-
-    document.addEventListener('keydown', (e) => {
-        const weaponKeys = ['1', '2', '3', '4'];
-        const keyIndex = weaponKeys.indexOf(e.key);
-        if (keyIndex !== -1) {
-            playMenuSound();
-            ammoBoxes.forEach((box, i) => {
-                box.classList.toggle('active', i === keyIndex);
-            });
-        }
-    });
-
-    ammoBoxes.forEach((box) => {
-        box.addEventListener('click', () => {
-            playMenuSound();
-            ammoBoxes.forEach(b => b.classList.remove('active'));
-            box.classList.add('active');
-        });
-    });
+        animateValue(document.getElementById('health-value'), 0, 100, 800);
+        animateValue(document.getElementById('armor-value'), 0, 100, 800);
+        animateValue(document.getElementById('ammo-value'), 0, 25, 600);
+    }, 300);
 }
 
 // ===== HOVER SOUNDS =====
 function initHoverSounds() {
-    document.querySelectorAll('.nav-link, .cta-button, .feature-card, .link-card, .stat-card, .project-card').forEach(el => {
+    document.querySelectorAll('.nav-link, .cta-button, .feature-card, .link-card, .stat-card, .project-card, .quake-btn').forEach(el => {
         el.addEventListener('mouseenter', playMenuSound);
     });
 }
@@ -229,6 +233,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initSecrets();
     initMusic();
     initHudAnimations();
-    initWeaponSwitching();
     initHoverSounds();
 });

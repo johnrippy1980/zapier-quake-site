@@ -233,6 +233,131 @@
             );
         }
 
+        /* ===== BADGE (Award pill) ===== */
+        .badge {
+            display: inline-block;
+            background: rgba(207, 107, 47, 0.15);
+            border: 1px solid #cf6b2f;
+            color: #cf6b2f;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== QUAKE AGGRESSIVE TEXT ===== */
+        .quake-text {
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 3px 3px 0 #8B4513, 6px 6px 0 rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+        h1 .strike {
+            text-decoration: line-through;
+            color: #666;
+            opacity: 0.6;
+        }
+        h1 .accent {
+            color: #cf6b2f;
+            text-shadow: 0 0 40px rgba(207, 107, 47, 0.5);
+        }
+
+        /* Gib/Blood Drip Animation (Quake style - brown/rust instead of red) */
+        .gib-letter {
+            position: relative;
+            display: inline-block;
+            color: #8B0000;
+        }
+        .gib-letter::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, #8B0000, #4a0000, transparent);
+            border-radius: 0 0 50% 50%;
+        }
+        .gib-g::after {
+            width: 4px;
+            animation: gibDrip1 2.5s ease-in infinite;
+            animation-delay: 0s;
+        }
+        .gib-i::after {
+            width: 3px;
+            animation: gibDrip2 2.5s ease-in infinite;
+            animation-delay: 0.4s;
+        }
+        .gib-b::after {
+            width: 5px;
+            animation: gibDrip3 2.5s ease-in infinite;
+            animation-delay: 0.7s;
+        }
+        .gib-b2::after {
+            width: 4px;
+            animation: gibDrip4 2.5s ease-in infinite;
+            animation-delay: 1.0s;
+        }
+        .gib-e::after {
+            width: 3px;
+            animation: gibDrip1 2.5s ease-in infinite;
+            animation-delay: 0.2s;
+        }
+        .gib-d::after {
+            width: 6px;
+            animation: gibDrip3 2.5s ease-in infinite;
+            animation-delay: 0.5s;
+        }
+        @keyframes gibDrip1 {
+            0% { height: 0; opacity: 0; }
+            10% { height: 0; opacity: 0; }
+            30% { height: 15px; opacity: 1; }
+            70% { height: 25px; opacity: 0.9; }
+            100% { height: 35px; opacity: 0; }
+        }
+        @keyframes gibDrip2 {
+            0% { height: 0; opacity: 0; }
+            10% { height: 0; opacity: 0; }
+            30% { height: 20px; opacity: 1; }
+            70% { height: 35px; opacity: 0.9; }
+            100% { height: 50px; opacity: 0; }
+        }
+        @keyframes gibDrip3 {
+            0% { height: 0; opacity: 0; }
+            10% { height: 0; opacity: 0; }
+            30% { height: 25px; opacity: 1; }
+            70% { height: 40px; opacity: 0.9; }
+            100% { height: 55px; opacity: 0; }
+        }
+        @keyframes gibDrip4 {
+            0% { height: 0; opacity: 0; }
+            10% { height: 0; opacity: 0; }
+            30% { height: 18px; opacity: 1; }
+            70% { height: 30px; opacity: 0.9; }
+            100% { height: 45px; opacity: 0; }
+        }
+
+        /* Hero updates */
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+        }
+        .hero-subtitle {
+            font-size: 1rem;
+            color: #b39b7a;
+            margin-bottom: 2rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            line-height: 1.8;
+        }
+
         /* ===== MUSIC PLAYER ===== */
         .music-player {
             position: fixed;
@@ -584,9 +709,17 @@
     <!-- Main Content -->
     <main>
         <section class="hero">
-            <h1>AUTOMATE<br>EVERYTHING</h1>
-            <p>Powerful Zapier automation tools and integrations built by a 2025 Zapier Automation Hero. Connect your apps and automate your workflows.</p>
-            <a href="https://zapier.com/apps" class="cta-button">EXPLORE INTEGRATIONS</a>
+            <div class="hero-content">
+                <span class="badge">&#127942; 2025 Zapier Automation Hero</span>
+                <h1 class="quake-text">
+                    <span class="strike">MANUAL WORKFLOWS</span><br>
+                    GET <span class="gib-letter gib-g">G</span><span class="gib-letter gib-i">I</span><span class="gib-letter gib-b">B</span><span class="gib-letter gib-b2">B</span><span class="gib-letter gib-e">E</span><span class="gib-letter gib-d">D</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Zapier automation that rips through repetitive tasks like a quad-damage nailgun.
+                </p>
+                <a href="#features" class="cta-button">ENTER THE SLIPGATE</a>
+            </div>
         </section>
 
         <section class="features" id="features">

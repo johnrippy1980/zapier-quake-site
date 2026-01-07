@@ -729,37 +729,37 @@
             box-shadow: 0 0 6px #FFD700;
         }
 
-        /* Individual nail animations with staggered timing */
+        /* Individual nail animations with staggered timing - loops infinitely */
         .nailgun-divider:hover .nail-1 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0s;
         }
         .nailgun-divider:hover .nail-2 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.05s;
         }
         .nailgun-divider:hover .nail-3 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.1s;
         }
         .nailgun-divider:hover .nail-4 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.15s;
         }
         .nailgun-divider:hover .nail-5 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.2s;
         }
         .nailgun-divider:hover .nail-6 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.25s;
         }
         .nailgun-divider:hover .nail-7 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.3s;
         }
         .nailgun-divider:hover .nail-8 {
-            animation: shootNail 0.3s linear forwards;
+            animation: shootNail 0.4s linear infinite;
             animation-delay: 0.35s;
         }
 
@@ -915,23 +915,10 @@
         <!-- Nailgun Divider -->
         <div class="nailgun-divider" id="nailgunDivider">
             <div class="nailgun-container">
-                <!-- Left nail stream -->
-                <div class="nail-stream-left">
-                    <div class="nail nail-1"></div>
-                    <div class="nail nail-2"></div>
-                    <div class="nail nail-3"></div>
-                    <div class="nail nail-4"></div>
-                    <div class="nail nail-5"></div>
-                    <div class="nail nail-6"></div>
-                    <div class="nail nail-7"></div>
-                    <div class="nail nail-8"></div>
-                </div>
-                <div class="muzzle-flash" style="left: auto; right: calc(100% - 30px);"></div>
-
                 <!-- Nailgun Image -->
                 <img src="images/nailgun.png" alt="Quake Nailgun" class="nailgun-img">
 
-                <!-- Right nail stream -->
+                <!-- Right nail stream only -->
                 <div class="nail-stream">
                     <div class="nail nail-1"></div>
                     <div class="nail nail-2"></div>
@@ -1178,10 +1165,11 @@
             }
         });
 
-        // Nailgun divider sound effect
+        // Nailgun divider sound effect - loops while hovering
         const nailgunDivider = document.getElementById('nailgunDivider');
         const nailgunSound = new Audio('audio/nailgun.wav');
-        nailgunSound.volume = 0.5;
+        nailgunSound.volume = 0.6;
+        nailgunSound.loop = true; // Loop for continuous fire
         let nailgunPlaying = false;
 
         nailgunDivider.addEventListener('mouseenter', () => {

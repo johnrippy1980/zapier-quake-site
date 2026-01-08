@@ -1404,21 +1404,19 @@
         let ploopInterval = null;
         let splatInterval = null;
 
-        // Use existing pickup sound for poo sounds (we know this works)
+        // Use fart sound for poo shooting (from soundjay.com - royalty free)
         function playPloopSound() {
-            console.log('[Poo Sound] Playing ploop');
-            const ploop = new Audio('audio/pickup.wav');
-            ploop.volume = 0.4;
-            ploop.playbackRate = 0.6; // Lower pitch for goopy sound
-            ploop.play().catch(e => console.log('Ploop failed:', e));
+            console.log('[Poo Sound] Playing fart');
+            const fart = new Audio('audio/fart.wav');
+            fart.volume = 0.5;
+            fart.play().catch(e => console.log('Fart failed:', e));
         }
 
-        // Use gib sound for splat
+        // Use gib sound for splat (Quake's gib dropping sound)
         function playSplatSound() {
             console.log('[Poo Sound] Playing splat');
             const splat = new Audio('audio/gib.wav');
-            splat.volume = 0.3;
-            splat.playbackRate = 0.7; // Slightly slower for splat effect
+            splat.volume = 0.4;
             splat.play().catch(e => console.log('Splat failed:', e));
         }
 

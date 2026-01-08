@@ -860,19 +860,8 @@
             50% { opacity: 0.4; transform: translateY(-50%) scale(0.8); }
         }
 
-        /* Peace Mode: Ensure body layout isn't affected */
-        .peace-mode {
-            /* Prevent poo animation from affecting viewport width */
-            overflow-x: hidden !important;
-        }
-
-        /* Clip poo projectiles so they don't affect page width */
-        .peace-mode .nailgun-divider {
-            overflow: visible;
-        }
-
-        /* Peace Mode: Poo emoji projectiles that spin! */
-        .peace-mode .nail {
+        /* Poo-forator: Poo emoji projectiles that spin! (the default now!) */
+        .nail {
             background: none !important;
             box-shadow: none !important;
             width: auto !important;
@@ -881,31 +870,31 @@
             line-height: 1 !important;
             border-radius: 0 !important;
         }
-        .peace-mode .nail::before,
-        .peace-mode .nail::after {
+        .nail::before,
+        .nail::after {
             display: none !important;
             content: none !important;
         }
         /* Override the default nail hover animation - slower poo shots */
-        .peace-mode .nailgun-divider:hover .nail,
-        .peace-mode .nailgun-divider:hover .nail-1,
-        .peace-mode .nailgun-divider:hover .nail-2,
-        .peace-mode .nailgun-divider:hover .nail-3,
-        .peace-mode .nailgun-divider:hover .nail-4,
-        .peace-mode .nailgun-divider:hover .nail-5,
-        .peace-mode .nailgun-divider:hover .nail-6,
-        .peace-mode .nailgun-divider:hover .nail-7,
-        .peace-mode .nailgun-divider:hover .nail-8 {
+        .nailgun-divider:hover .nail,
+        .nailgun-divider:hover .nail-1,
+        .nailgun-divider:hover .nail-2,
+        .nailgun-divider:hover .nail-3,
+        .nailgun-divider:hover .nail-4,
+        .nailgun-divider:hover .nail-5,
+        .nailgun-divider:hover .nail-6,
+        .nailgun-divider:hover .nail-7,
+        .nailgun-divider:hover .nail-8 {
             animation: shootPoo 3.5s ease-out infinite !important;
         }
-        .peace-mode .nailgun-divider:hover .nail-1 { animation-delay: 0s !important; }
-        .peace-mode .nailgun-divider:hover .nail-2 { animation-delay: 0.4s !important; }
-        .peace-mode .nailgun-divider:hover .nail-3 { animation-delay: 0.8s !important; }
-        .peace-mode .nailgun-divider:hover .nail-4 { animation-delay: 1.2s !important; }
-        .peace-mode .nailgun-divider:hover .nail-5 { animation-delay: 0.5s !important; }
-        .peace-mode .nailgun-divider:hover .nail-6 { animation-delay: 0.9s !important; }
-        .peace-mode .nailgun-divider:hover .nail-7 { animation-delay: 1.3s !important; }
-        .peace-mode .nailgun-divider:hover .nail-8 { animation-delay: 1.7s !important; }
+        .nailgun-divider:hover .nail-1 { animation-delay: 0s !important; }
+        .nailgun-divider:hover .nail-2 { animation-delay: 0.4s !important; }
+        .nailgun-divider:hover .nail-3 { animation-delay: 0.8s !important; }
+        .nailgun-divider:hover .nail-4 { animation-delay: 1.2s !important; }
+        .nailgun-divider:hover .nail-5 { animation-delay: 0.5s !important; }
+        .nailgun-divider:hover .nail-6 { animation-delay: 0.9s !important; }
+        .nailgun-divider:hover .nail-7 { animation-delay: 1.3s !important; }
+        .nailgun-divider:hover .nail-8 { animation-delay: 1.7s !important; }
 
         @keyframes shootPoo {
             0% {
@@ -1483,27 +1472,22 @@
             if (!nailgunPlaying) {
                 nailgunPlaying = true;
 
-                // In Peace Mode, play poo sounds instead of nailgun
-                if (isPeaceModeActive()) {
-                    console.log('[Poo-forator] Peace Mode active - playing poo sounds!');
-                    // Play fart sounds periodically (slower to match 3.5s animation)
-                    playPloopSound();
-                    ploopInterval = setInterval(() => {
-                        if (nailgunPlaying) playPloopSound();
-                    }, 700);
+                // Poo-forator is now the default! Fart sounds + splat on impact
+                console.log('[Poo-forator] Firing poo projectiles!');
+                // Play fart sounds periodically (slower to match 3.5s animation)
+                playPloopSound();
+                ploopInterval = setInterval(() => {
+                    if (nailgunPlaying) playPloopSound();
+                }, 700);
 
-                    // Play splat sounds after poos reach edge (3.5s animation - first hits at ~3.1s)
-                    setTimeout(() => {
+                // Play splat sounds after poos reach edge (3.5s animation - first hits at ~3.1s)
+                setTimeout(() => {
+                    if (nailgunPlaying) playSplatSound();
+                    // Then continue with splats matching the staggered firing (every 400ms)
+                    splatInterval = setInterval(() => {
                         if (nailgunPlaying) playSplatSound();
-                        // Then continue with splats matching the staggered firing (every 400ms)
-                        splatInterval = setInterval(() => {
-                            if (nailgunPlaying) playSplatSound();
-                        }, 400);
-                    }, 3100);
-                } else {
-                    nailgunSound.currentTime = 0;
-                    nailgunSound.play().catch(e => console.log('Audio play failed:', e));
-                }
+                    }, 400);
+                }, 3100);
 
                 // Start checking for enemy kills along the nail path
                 // The nailgun fires horizontally from its position to the right edge
@@ -1526,20 +1510,14 @@
         nailgunDivider.addEventListener('mouseleave', () => {
             nailgunPlaying = false;
 
-            // Clean up sounds based on mode
-            if (isPeaceModeActive()) {
-                // Stop poo sound intervals
-                if (ploopInterval) {
-                    clearInterval(ploopInterval);
-                    ploopInterval = null;
-                }
-                if (splatInterval) {
-                    clearInterval(splatInterval);
-                    splatInterval = null;
-                }
-            } else {
-                nailgunSound.pause();
-                nailgunSound.currentTime = 0;
+            // Stop poo sound intervals
+            if (ploopInterval) {
+                clearInterval(ploopInterval);
+                ploopInterval = null;
+            }
+            if (splatInterval) {
+                clearInterval(splatInterval);
+                splatInterval = null;
             }
 
             // Stop checking for kills
@@ -1745,28 +1723,13 @@
     })();
     </script>
 
-    <!-- Peace Mode: Poo Emoji Visual Setup (sounds handled in main nailgun script) -->
+    <!-- Poo-forator: Always enabled by default (it's hilarious) -->
     <script>
     (function() {
         'use strict';
 
-        // Check if all secrets found (Peace Mode)
-        function isPeaceMode() {
-            for (let i = 1; i <= 5; i++) {
-                if (localStorage.getItem('zaparena_secret' + i) !== 'true') {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // Convert nails to poo emojis (sounds are in the main nailgun handler)
+        // Set up the Poo-forator on page load
         function activatePooPerforator() {
-            if (!isPeaceMode()) return;
-
-            // Add peace-mode class to body for CSS targeting
-            document.body.classList.add('peace-mode');
-
             // Replace nail content with poo emojis
             const nails = document.querySelectorAll('.nail');
             nails.forEach(nail => {
@@ -1780,18 +1743,11 @@
                 nailgunLabel.style.color = '#8B4513';
             }
 
-            console.log('[Peace Mode] Poo-forator activated! Spinning poo emojis engaged!');
+            console.log('[Poo-forator] Activated! Spinning poo emojis engaged!');
         }
 
         // Run on page load
         activatePooPerforator();
-
-        // Also listen for storage changes (in case secrets found in another tab)
-        window.addEventListener('storage', (e) => {
-            if (e.key && e.key.startsWith('zaparena_secret')) {
-                activatePooPerforator();
-            }
-        });
     })();
     </script>
 </body>

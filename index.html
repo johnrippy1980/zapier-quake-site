@@ -1379,11 +1379,24 @@
         let nailgunPlaying = false;
         let nailgunKillInterval = null;
 
+        // Check if Peace Mode is active (all 5 secrets found)
+        function isPeaceModeActive() {
+            for (let i = 1; i <= 5; i++) {
+                if (localStorage.getItem('zaparena_secret' + i) !== 'true') {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         nailgunDivider.addEventListener('mouseenter', () => {
             if (!nailgunPlaying) {
                 nailgunPlaying = true;
-                nailgunSound.currentTime = 0;
-                nailgunSound.play().catch(e => console.log('Audio play failed:', e));
+                // In Peace Mode, don't play nailgun sound - let poo sounds play instead
+                if (!isPeaceModeActive()) {
+                    nailgunSound.currentTime = 0;
+                    nailgunSound.play().catch(e => console.log('Audio play failed:', e));
+                }
 
                 // Start checking for enemy kills along the nail path
                 // The nailgun fires horizontally from its position to the right edge
@@ -1405,8 +1418,11 @@
 
         nailgunDivider.addEventListener('mouseleave', () => {
             nailgunPlaying = false;
-            nailgunSound.pause();
-            nailgunSound.currentTime = 0;
+            // Only stop nailgun sound if not in Peace Mode
+            if (!isPeaceModeActive()) {
+                nailgunSound.pause();
+                nailgunSound.currentTime = 0;
+            }
             // Stop checking for kills
             if (nailgunKillInterval) {
                 clearInterval(nailgunKillInterval);

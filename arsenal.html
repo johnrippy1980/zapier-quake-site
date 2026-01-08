@@ -326,11 +326,7 @@
             background: #FFD700;
             border-radius: 50%;
             box-shadow: 0 0 10px #FFD700;
-            animation: pelletFly 0.4s linear forwards;
-        }
-        @keyframes pelletFly {
-            0% { opacity: 1; }
-            100% { opacity: 0; transform: translateX(800px); }
+            animation: projectileFly 0.4s linear forwards;
         }
 
         /* Nails */
@@ -340,7 +336,8 @@
             background: linear-gradient(90deg, #8B7355 0%, #5D4E37 50%, #3D3225 100%);
             border-radius: 0 2px 2px 0;
             box-shadow: 0 0 8px rgba(207, 107, 47, 0.6);
-            animation: nailFly 0.35s linear forwards;
+            animation: projectileFly 0.35s linear forwards;
+            transform: rotate(var(--angle, 0deg));
         }
         .nail::before {
             content: '';
@@ -350,10 +347,6 @@
             transform: translateY(-50%);
             border: 4px solid transparent;
             border-right: 5px solid #8B7355;
-        }
-        @keyframes nailFly {
-            0% { opacity: 1; }
-            100% { opacity: 0; transform: translateX(800px); }
         }
 
         /* Grenade */
@@ -366,11 +359,11 @@
             animation: grenadeBounce 0.8s ease-out forwards;
         }
         @keyframes grenadeBounce {
-            0% { transform: translate(0, 0); }
-            30% { transform: translate(200px, 50px); }
-            50% { transform: translate(350px, 20px); }
-            70% { transform: translate(500px, 60px); }
-            100% { transform: translate(700px, 0) scale(3); opacity: 0; }
+            0% { transform: translate(0, 0) rotate(0deg); }
+            30% { transform: translate(calc(var(--end-x, 200px) * 0.3), calc(var(--end-y, 50px) * 0.3 - 80px)) rotate(180deg); }
+            50% { transform: translate(calc(var(--end-x, 350px) * 0.5), calc(var(--end-y, 20px) * 0.5 - 40px)) rotate(360deg); }
+            70% { transform: translate(calc(var(--end-x, 500px) * 0.7), calc(var(--end-y, 60px) * 0.7 - 20px)) rotate(540deg); }
+            100% { transform: translate(var(--end-x, 700px), var(--end-y, 0)) rotate(720deg) scale(3); opacity: 0; }
         }
 
         /* Rocket */
@@ -380,7 +373,8 @@
             background: linear-gradient(90deg, #4a4a4a, #6a6a6a, #4a4a4a);
             border-radius: 0 6px 6px 0;
             position: relative;
-            animation: rocketFly 0.5s linear forwards;
+            animation: projectileFly 0.5s linear forwards;
+            transform: rotate(var(--angle, 0deg));
         }
         .rocket::before {
             content: '';
@@ -398,23 +392,32 @@
             0%, 100% { transform: translateY(-50%) scale(1); }
             50% { transform: translateY(-50%) scale(1.2); }
         }
-        @keyframes rocketFly {
-            0% { opacity: 1; }
-            100% { opacity: 0; transform: translateX(800px); }
-        }
 
         /* Lightning */
         .lightning {
-            width: 800px;
             height: 4px;
             background: linear-gradient(90deg, #00ffff, #ffffff, #00ffff);
             box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
             animation: lightningZap 0.3s ease-out forwards;
+            transform-origin: left center;
+            transform: rotate(var(--angle, 0deg));
         }
         @keyframes lightningZap {
             0% { opacity: 1; width: 0; }
             30% { opacity: 1; width: 800px; }
             100% { opacity: 0; width: 800px; }
+        }
+
+        /* Universal projectile fly animation using CSS variables */
+        @keyframes projectileFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(var(--angle, 0deg));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--end-x, 800px), var(--end-y, 0)) rotate(var(--angle, 0deg));
+            }
         }
 
         /* Muzzle Flash */
@@ -1186,12 +1189,26 @@
             }
         });
 
-        // Create projectile
-        function createProjectile(type, startX, startY) {
+        // Create projectile with random direction
+        function createProjectile(type, startX, startY, customAngle = null) {
             const el = document.createElement('div');
             el.className = 'projectile ' + type;
             el.style.left = startX + 'px';
             el.style.top = startY + 'px';
+
+            // Random angle (0-360 degrees) or use custom angle
+            const angle = customAngle !== null ? customAngle : Math.random() * 360;
+            const radians = angle * Math.PI / 180;
+            const distance = 600 + Math.random() * 300;
+
+            // Calculate end position based on angle
+            const endX = Math.cos(radians) * distance;
+            const endY = Math.sin(radians) * distance;
+
+            el.style.setProperty('--end-x', `${endX}px`);
+            el.style.setProperty('--end-y', `${endY}px`);
+            el.style.setProperty('--angle', `${angle}deg`);
+
             projectileLayer.appendChild(el);
 
             // Remove after animation
@@ -1208,10 +1225,9 @@
             card.classList.add('firing');
             setTimeout(() => card.classList.remove('firing'), 150);
 
-            // Get starting position (from selected weapon card)
-            const rect = card.getBoundingClientRect();
-            const startX = rect.right;
-            const startY = rect.top + rect.height / 2;
+            // Fire from center of screen for better visual effect
+            const startX = window.innerWidth / 2;
+            const startY = window.innerHeight / 2;
 
             switch (selectedWeapon) {
                 case 'axe':
@@ -1223,9 +1239,9 @@
                 case 'shotgun':
                     playSound('shotgun');
                     flashScreen('yellow', 80);
-                    // Create spread of pellets
+                    // Create spread of pellets in random directions
                     for (let i = 0; i < 6; i++) {
-                        const pellet = createProjectile('pellet', startX, startY + (Math.random() - 0.5) * 40);
+                        const pellet = createProjectile('pellet', startX, startY);
                         pellet.style.animationDelay = (i * 0.02) + 's';
                     }
                     setTimeout(() => playSound('ric'), 200);
@@ -1234,9 +1250,9 @@
                 case 'sshotgun':
                     playSound('sshotgun');
                     flashScreen('yellow', 100);
-                    // Create larger spread
+                    // Create larger spread in random directions
                     for (let i = 0; i < 14; i++) {
-                        const pellet = createProjectile('pellet', startX, startY + (Math.random() - 0.5) * 80);
+                        const pellet = createProjectile('pellet', startX, startY);
                         pellet.style.animationDelay = (i * 0.015) + 's';
                     }
                     setTimeout(() => {
@@ -1248,10 +1264,10 @@
                 case 'nailgun':
                     playSound('nailgun');
                     flashScreen('orange', 50);
-                    // Burst of nails
+                    // Burst of nails in random directions
                     for (let i = 0; i < 5; i++) {
                         setTimeout(() => {
-                            createProjectile('nail', startX, startY + (Math.random() - 0.5) * 20);
+                            createProjectile('nail', startX, startY);
                         }, i * 60);
                     }
                     setTimeout(() => playSound('tink'), 300);
@@ -1260,10 +1276,10 @@
                 case 'snailgun':
                     playSound('snailgun');
                     flashScreen('orange', 50);
-                    // Faster burst
+                    // Faster burst in random directions
                     for (let i = 0; i < 10; i++) {
                         setTimeout(() => {
-                            createProjectile('nail', startX, startY + (Math.random() - 0.5) * 30);
+                            createProjectile('nail', startX, startY);
                         }, i * 30);
                     }
                     setTimeout(() => playSound('tink'), 250);
@@ -1271,29 +1287,33 @@
 
                 case 'grenade':
                     playSound('grenade');
-                    createProjectile('grenade', startX, startY);
+                    const grenade = createProjectile('grenade', startX, startY);
+                    // Get grenade's trajectory end point for explosion
+                    const grenadeStyle = getComputedStyle(grenade);
                     setTimeout(() => {
                         playSound('explosion');
                         flashScreen('orange', 150);
-                        createProjectile('explosion', startX + 600, startY - 50);
+                        // Explosion at random end position
+                        createProjectile('explosion', startX + parseFloat(grenade.style.getPropertyValue('--end-x')) * 0.9, startY + parseFloat(grenade.style.getPropertyValue('--end-y')) * 0.9);
                     }, 700);
                     break;
 
                 case 'rocket':
                     playSound('rocket');
-                    createProjectile('rocket', startX, startY - 6);
+                    const rocket = createProjectile('rocket', startX, startY);
                     flashScreen('orange', 80);
                     setTimeout(() => {
                         playSound('explosion');
                         flashScreen('orange', 200);
-                        createProjectile('explosion', startX + 700, startY - 50);
+                        // Explosion at random end position
+                        createProjectile('explosion', startX + parseFloat(rocket.style.getPropertyValue('--end-x')) * 0.9, startY + parseFloat(rocket.style.getPropertyValue('--end-y')) * 0.9);
                     }, 450);
                     break;
 
                 case 'lightning':
                     playSound('lightning');
                     flashScreen('blue', 300);
-                    const bolt = createProjectile('lightning', startX, startY - 2);
+                    const bolt = createProjectile('lightning', startX, startY);
                     setTimeout(() => playSound('lhit'), 100);
                     break;
             }

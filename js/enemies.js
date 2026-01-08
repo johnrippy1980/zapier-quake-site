@@ -1,9 +1,14 @@
 // Quake Enemy Spawning System
 // Spawns random enemies across all pages with authentic Quake sounds
 // Difficulty affects spawn rate: Easy=rare, Normal=occasional, Hard=frequent, Nightmare=swarm
+// SECRET #5: Kill 69 enemies for "You just gibbed everywhere!"
 
 (function() {
     'use strict';
+
+    // Track total kills across sessions (persistent)
+    let totalKills = parseInt(localStorage.getItem('zaparena_total_kills') || '0');
+    let secret5Found = localStorage.getItem('zaparena_secret5') === 'true';
 
     // Difficulty settings - spawn intervals in milliseconds
     const DIFFICULTY_SETTINGS = {
@@ -219,10 +224,18 @@
             activeEnemies--;
             setTimeout(() => el.remove(), 200);
 
-            // Update HUD kills if available
-            const hudKills = document.getElementById('hudKills');
-            if (hudKills) {
-                hudKills.textContent = parseInt(hudKills.textContent || 0) + 1;
+            // Increment total kills (persistent)
+            totalKills++;
+            localStorage.setItem('zaparena_total_kills', totalKills.toString());
+
+            // Update HUD kills using the global API if available
+            if (window.ZapArena && window.ZapArena.updateKillsDisplay) {
+                window.ZapArena.updateKillsDisplay();
+            }
+
+            // SECRET #5: 69 kills triggers "You just gibbed everywhere!"
+            if (totalKills === 69 && !secret5Found) {
+                triggerSecret5(centerX, centerY);
             }
         });
 
@@ -254,6 +267,90 @@
                 setTimeout(() => el.remove(), 1000);
             }
         }, lifespan);
+    }
+
+    // SECRET #5: "You just gibbed everywhere!" - massive gib explosion at 69 kills
+    function triggerSecret5(originX, originY) {
+        secret5Found = true;
+        localStorage.setItem('zaparena_secret5', 'true');
+
+        // Play multiple gib sounds for chaos
+        playSound('gib');
+        setTimeout(() => playSound('gib'), 100);
+        setTimeout(() => playSound('gib'), 200);
+        setTimeout(() => playSound('gib'), 300);
+
+        // Try to play secret sound if available
+        try {
+            const secretSound = new Audio('audio/secret.wav');
+            secretSound.volume = 0.6;
+            setTimeout(() => secretSound.play().catch(() => {}), 500);
+        } catch(e) {}
+
+        // MASSIVE gib shower from all corners of the screen
+        const gibPoints = [
+            { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+            { x: window.innerWidth * 0.2, y: window.innerHeight * 0.3 },
+            { x: window.innerWidth * 0.8, y: window.innerHeight * 0.3 },
+            { x: window.innerWidth * 0.3, y: window.innerHeight * 0.7 },
+            { x: window.innerWidth * 0.7, y: window.innerHeight * 0.7 }
+        ];
+
+        // Spawn 100+ gibs across the screen
+        for (let wave = 0; wave < 5; wave++) {
+            setTimeout(() => {
+                gibPoints.forEach(point => {
+                    for (let i = 0; i < 20; i++) {
+                        setTimeout(() => {
+                            createEnemyGibs(
+                                point.x + (Math.random() - 0.5) * 200,
+                                point.y + (Math.random() - 0.5) * 200
+                            );
+                        }, i * 30);
+                    }
+                });
+            }, wave * 150);
+        }
+
+        // Create red screen flash
+        const flash = document.createElement('div');
+        flash.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(139, 0, 0, 0.6);
+            pointer-events: none;
+            z-index: 10000;
+            animation: secret5Flash 1s ease-out forwards;
+        `;
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 1000);
+
+        // Show the secret banner
+        const banner = document.createElement('div');
+        banner.className = 'secret5-banner';
+        banner.innerHTML = `
+            <h2>SECRET FOUND!</h2>
+            <p class="secret5-message">YOU JUST GIBBED EVERYWHERE!</p>
+            <p class="secret5-count">69 KILLS - NICE.</p>
+            <div class="secret5-number">SECRET 5 OF 5</div>
+        `;
+        document.body.appendChild(banner);
+
+        // Update secrets counter in HUD using the global API
+        if (window.ZapArena && window.ZapArena.updateSecretsDisplay) {
+            window.ZapArena.updateSecretsDisplay();
+        }
+
+        // Remove banner after 5 seconds
+        setTimeout(() => {
+            banner.style.animation = 'secret5FadeOut 0.5s ease-out forwards';
+            setTimeout(() => banner.remove(), 500);
+        }, 5000);
+
+        console.log('[Quake Enemy System] SECRET #5 FOUND: You just gibbed everywhere! (69 kills)');
     }
 
     // Add required CSS
@@ -336,6 +433,64 @@
                     inset 2px 2px 4px rgba(180, 50, 50, 0.3),
                     0 0 8px rgba(139, 0, 0, 0.6);
                 animation: gibFly 1s ease-out forwards;
+            }
+
+            /* SECRET #5: 69 kills banner */
+            @keyframes secret5Flash {
+                0% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+
+            @keyframes secret5FadeOut {
+                0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            }
+
+            @keyframes secret5Pulse {
+                0%, 100% { transform: translate(-50%, -50%) scale(1); }
+                50% { transform: translate(-50%, -50%) scale(1.02); }
+            }
+
+            .secret5-banner {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(139, 0, 0, 0.95);
+                border: 4px solid #ffcc00;
+                padding: 40px 80px;
+                z-index: 10001;
+                text-align: center;
+                box-shadow: 0 0 100px rgba(255, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.5);
+                animation: secret5Pulse 0.5s ease-in-out infinite;
+                font-family: 'Press Start 2P', monospace;
+            }
+
+            .secret5-banner h2 {
+                font-size: 2rem;
+                color: #ffcc00;
+                text-shadow: 4px 4px 0 #000, 0 0 40px rgba(255, 200, 0, 0.8);
+                margin-bottom: 20px;
+            }
+
+            .secret5-message {
+                font-size: 1rem;
+                color: #ff6666;
+                text-shadow: 2px 2px 0 #000;
+                margin-bottom: 10px;
+            }
+
+            .secret5-count {
+                font-size: 1.5rem;
+                color: #ffffff;
+                text-shadow: 2px 2px 0 #000, 0 0 20px rgba(255, 255, 255, 0.5);
+                margin: 20px 0;
+            }
+
+            .secret5-number {
+                font-size: 0.8rem;
+                color: #ffcc00;
+                margin-top: 20px;
             }
         `;
         document.head.appendChild(style);

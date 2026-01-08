@@ -326,7 +326,7 @@
             background: #FFD700;
             border-radius: 50%;
             box-shadow: 0 0 10px #FFD700;
-            animation: projectileFly 0.4s linear forwards;
+            animation: projectileFly 0.7s linear forwards;
         }
 
         /* Nails */
@@ -336,7 +336,7 @@
             background: linear-gradient(90deg, #8B7355 0%, #5D4E37 50%, #3D3225 100%);
             border-radius: 0 2px 2px 0;
             box-shadow: 0 0 8px rgba(207, 107, 47, 0.6);
-            animation: projectileFly 0.35s linear forwards;
+            animation: projectileFly 0.6s linear forwards;
             transform: rotate(var(--angle, 0deg));
         }
         .nail::before {
@@ -373,7 +373,7 @@
             background: linear-gradient(90deg, #4a4a4a, #6a6a6a, #4a4a4a);
             border-radius: 0 6px 6px 0;
             position: relative;
-            animation: projectileFly 0.5s linear forwards;
+            animation: projectileFly 0.8s linear forwards;
             transform: rotate(var(--angle, 0deg));
         }
         .rocket::before {
@@ -1153,7 +1153,7 @@
             <h2>SECRET FOUND!</h2>
             <p>You discovered the n8n barrel!</p>
             <p>The automation competitor has been GIBBED!</p>
-            <div class="secret-count">SECRET 4 OF 4</div>
+            <div class="secret-count" id="secretCount">SECRET 4 OF 5</div>
         </div>
     </main>
 
@@ -1188,7 +1188,7 @@
         </div>
         <div class="hud-section">
             <div class="hud-stat">
-                <div class="hud-value hud-secrets" id="hudSecrets">0</div>
+                <div class="hud-value hud-secrets" id="hudSecrets">0/5</div>
                 <div class="hud-label">SECRETS</div>
             </div>
         </div>
@@ -1266,7 +1266,7 @@
             }
         });
 
-        // Create projectile with random direction
+        // Create projectile with random direction - extends to screen edge
         function createProjectile(type, startX, startY, customAngle = null) {
             const el = document.createElement('div');
             el.className = 'projectile ' + type;
@@ -1276,7 +1276,32 @@
             // Random angle (0-360 degrees) or use custom angle
             const angle = customAngle !== null ? customAngle : Math.random() * 360;
             const radians = angle * Math.PI / 180;
-            const distance = 600 + Math.random() * 300;
+
+            // Calculate distance to screen edge based on angle
+            const screenW = window.innerWidth;
+            const screenH = window.innerHeight;
+            const cosA = Math.cos(radians);
+            const sinA = Math.sin(radians);
+
+            // Find intersection with screen edge
+            let distance = 2000; // Fallback max distance
+            if (cosA > 0) {
+                // Moving right - check right edge
+                distance = Math.min(distance, (screenW - startX) / cosA);
+            } else if (cosA < 0) {
+                // Moving left - check left edge
+                distance = Math.min(distance, -startX / cosA);
+            }
+            if (sinA > 0) {
+                // Moving down - check bottom edge
+                distance = Math.min(distance, (screenH - startY) / sinA);
+            } else if (sinA < 0) {
+                // Moving up - check top edge
+                distance = Math.min(distance, -startY / sinA);
+            }
+
+            // Add some overshoot to ensure it reaches the edge
+            distance = distance * 1.1;
 
             // Calculate end position based on angle
             const endX = Math.cos(radians) * distance;
@@ -1289,7 +1314,7 @@
             projectileLayer.appendChild(el);
 
             // Remove after animation
-            setTimeout(() => el.remove(), 1000);
+            setTimeout(() => el.remove(), 1500);
             return el;
         }
 
@@ -1338,12 +1363,15 @@
                     for (let i = 0; i < 6; i++) {
                         const pellet = createProjectile('pellet', startX, startY);
                         pellet.style.animationDelay = (i * 0.02) + 's';
-                        // Check along pellet path for kills
+                        // Check along pellet path for kills multiple times
                         const endX = startX + parseFloat(pellet.style.getPropertyValue('--end-x'));
                         const endY = startY + parseFloat(pellet.style.getPropertyValue('--end-y'));
-                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 60), 200);
+                        // Check at 33%, 66%, and 100% of travel
+                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 80), 150);
+                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 80), 350);
+                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 80), 550);
                     }
-                    setTimeout(() => playSound('ric'), 200);
+                    setTimeout(() => playSound('ric'), 400);
                     break;
 
                 case 'sshotgun':
@@ -1353,15 +1381,17 @@
                     for (let i = 0; i < 14; i++) {
                         const pellet = createProjectile('pellet', startX, startY);
                         pellet.style.animationDelay = (i * 0.015) + 's';
-                        // Check along pellet path for kills
+                        // Check along pellet path for kills multiple times
                         const endX = startX + parseFloat(pellet.style.getPropertyValue('--end-x'));
                         const endY = startY + parseFloat(pellet.style.getPropertyValue('--end-y'));
-                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 60), 200);
+                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 80), 150);
+                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 80), 350);
+                        setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 80), 550);
                     }
                     setTimeout(() => {
                         playSound('ric');
                         setTimeout(() => playSound('ric'), 50);
-                    }, 200);
+                    }, 400);
                     break;
 
                 case 'nailgun':
@@ -1373,10 +1403,13 @@
                             const nail = createProjectile('nail', startX, startY);
                             const endX = startX + parseFloat(nail.style.getPropertyValue('--end-x'));
                             const endY = startY + parseFloat(nail.style.getPropertyValue('--end-y'));
-                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 50), 300);
+                            // Check multiple times along path
+                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 70), 150);
+                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 70), 300);
+                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 70), 500);
                         }, i * 60);
                     }
-                    setTimeout(() => playSound('tink'), 300);
+                    setTimeout(() => playSound('tink'), 400);
                     break;
 
                 case 'snailgun':
@@ -1388,10 +1421,13 @@
                             const nail = createProjectile('nail', startX, startY);
                             const endX = startX + parseFloat(nail.style.getPropertyValue('--end-x'));
                             const endY = startY + parseFloat(nail.style.getPropertyValue('--end-y'));
-                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 50), 250);
+                            // Check multiple times along path
+                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 70), 150);
+                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 70), 300);
+                            setTimeout(() => checkEnemyKillPath(startX, startY, endX, endY, 70), 500);
                         }, i * 30);
                     }
-                    setTimeout(() => playSound('tink'), 250);
+                    setTimeout(() => playSound('tink'), 400);
                     break;
 
                 case 'grenade':
@@ -1400,14 +1436,17 @@
                     // Get grenade's trajectory end point for explosion
                     const grenadeEndX = startX + parseFloat(grenade.style.getPropertyValue('--end-x')) * 0.9;
                     const grenadeEndY = startY + parseFloat(grenade.style.getPropertyValue('--end-y')) * 0.9;
+                    // Check along path as grenade travels
+                    setTimeout(() => checkEnemyKillPath(startX, startY, grenadeEndX, grenadeEndY, 100), 200);
+                    setTimeout(() => checkEnemyKillPath(startX, startY, grenadeEndX, grenadeEndY, 100), 400);
                     setTimeout(() => {
                         playSound('explosion');
                         flashScreen('orange', 150);
                         // Explosion at random end position
                         createProjectile('explosion', grenadeEndX, grenadeEndY);
-                        // Grenade has large explosion radius - check path and end point
-                        checkEnemyKillPath(startX, startY, grenadeEndX, grenadeEndY, 80);
-                        checkEnemyKill(grenadeEndX, grenadeEndY, 200);
+                        // Grenade has large explosion radius
+                        checkEnemyKillPath(startX, startY, grenadeEndX, grenadeEndY, 120);
+                        checkEnemyKill(grenadeEndX, grenadeEndY, 250);
                     }, 700);
                     break;
 
@@ -1417,15 +1456,18 @@
                     flashScreen('orange', 80);
                     const rocketEndX = startX + parseFloat(rocket.style.getPropertyValue('--end-x')) * 0.9;
                     const rocketEndY = startY + parseFloat(rocket.style.getPropertyValue('--end-y')) * 0.9;
+                    // Check along path as rocket travels
+                    setTimeout(() => checkEnemyKillPath(startX, startY, rocketEndX, rocketEndY, 120), 200);
+                    setTimeout(() => checkEnemyKillPath(startX, startY, rocketEndX, rocketEndY, 120), 400);
                     setTimeout(() => {
                         playSound('explosion');
                         flashScreen('orange', 200);
                         // Explosion at random end position
                         createProjectile('explosion', rocketEndX, rocketEndY);
-                        // Rocket has very large explosion radius - check path and end point
-                        checkEnemyKillPath(startX, startY, rocketEndX, rocketEndY, 100);
-                        checkEnemyKill(rocketEndX, rocketEndY, 250);
-                    }, 450);
+                        // Rocket has very large explosion radius
+                        checkEnemyKillPath(startX, startY, rocketEndX, rocketEndY, 150);
+                        checkEnemyKill(rocketEndX, rocketEndY, 300);
+                    }, 700);
                     break;
 
                 case 'lightning':
@@ -1434,11 +1476,12 @@
                     const bolt = createProjectile('lightning', startX, startY);
                     const boltEndX = startX + parseFloat(bolt.style.getPropertyValue('--end-x'));
                     const boltEndY = startY + parseFloat(bolt.style.getPropertyValue('--end-y'));
-                    // Lightning checks along entire path with wide corridor
+                    // Lightning checks along entire path with wide corridor - instant hitscan
+                    checkEnemyKillPath(startX, startY, boltEndX, boltEndY, 100);
                     setTimeout(() => {
                         playSound('lhit');
-                        checkEnemyKillPath(startX, startY, boltEndX, boltEndY, 80);
-                    }, 100);
+                        checkEnemyKillPath(startX, startY, boltEndX, boltEndY, 100);
+                    }, 150);
                     break;
             }
         }
@@ -1600,16 +1643,23 @@
             if (!secret4Found) {
                 setTimeout(() => {
                     playSound('secret');
-                    secretBanner.classList.add('show');
+
+                    // Save this secret first so count is accurate
                     localStorage.setItem('zaparena_secret4', 'true');
                     secret4Found = true;
 
-                    // Update HUD secrets counter
-                    const hudSecretsEl = document.getElementById('hudSecrets');
-                    if (hudSecretsEl) {
-                        const currentSecrets = parseInt(hudSecretsEl.textContent) || 0;
-                        hudSecretsEl.textContent = currentSecrets + 1;
+                    // Update the secret count - show the new total
+                    const newSecretCount = countSecrets();
+                    hudStats.secrets = newSecretCount;
+                    updateHUD();
+
+                    // Update the banner to show which secret number this is
+                    const secretCountEl = document.getElementById('secretCount');
+                    if (secretCountEl) {
+                        secretCountEl.textContent = 'SECRET ' + newSecretCount + ' OF 5';
                     }
+
+                    secretBanner.classList.add('show');
 
                     setTimeout(() => {
                         secretBanner.classList.remove('show');
@@ -1688,23 +1738,29 @@
         // ===== HUD =====
         let hudStats = { kills: 0, health: 100, armor: 100, secrets: 0 };
 
+        // Count total secrets found
+        function countSecrets() {
+            let count = 0;
+            for (let i = 1; i <= 5; i++) {
+                if (localStorage.getItem('zaparena_secret' + i) === 'true') {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         function updateHUD() {
             const killsEl = document.getElementById('hudKills');
             if (killsEl) killsEl.textContent = hudStats.kills;
             document.getElementById('hudHealth').textContent = hudStats.health;
             document.getElementById('hudArmor').textContent = hudStats.armor;
-            document.getElementById('hudSecrets').textContent = hudStats.secrets;
+            document.getElementById('hudSecrets').textContent = hudStats.secrets + '/5';
         }
 
         // Load kills from localStorage on page load
         hudStats.kills = parseInt(localStorage.getItem('zaparena_total_kills') || '0');
+        hudStats.secrets = countSecrets();
         updateHUD();
-
-        // Update secret count when n8n secret is found
-        if (secret4Found) {
-            hudStats.secrets = 1;
-            updateHUD();
-        }
 
         // ===== DIFFICULTY SELECTOR =====
         const difficultyBtn = document.getElementById('difficultyBtn');

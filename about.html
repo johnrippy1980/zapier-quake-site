@@ -92,7 +92,35 @@
                 transparent 1px,
                 transparent 3px
             );
-            opacity: 0.4;
+            opacity: 0.5;
+        }
+
+        /* Blood Vignette */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9997;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(80, 20, 10, 0.4) 100%);
+        }
+
+        /* Pain Flash */
+        .pain-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9996;
+            background: rgba(139, 0, 0, 0);
+            transition: background 0.1s;
+        }
+        .pain-flash.active {
+            background: rgba(139, 0, 0, 0.4);
         }
 
         /* Main Content */
@@ -312,8 +340,10 @@
         <p id="secret-message">You found a secret area!</p>
     </div>
 
-    <!-- CRT Effect -->
+    <!-- CRT Effects -->
     <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+    <div class="pain-flash"></div>
 
     <!-- Navigation -->
     <nav class="nav">

@@ -309,7 +309,8 @@ Host.Init = function()
 	Sbar.Init();
 	CL.Init();
 	IN.Init();
-	Cmd.text = 'exec quake.rc\n' + Cmd.text;
+	// Load quake.rc first, then autoexec.cfg for modern FPS controls
+	Cmd.text = 'exec quake.rc\nexec autoexec.cfg\n' + Cmd.text;
 	Host.initialized = true;
 	Sys.Print('========Quake Initialized=========\n');
 };

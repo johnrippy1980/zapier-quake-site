@@ -79,7 +79,8 @@ IN.MouseMove = function()
 	mouse_y *= CL.sensitivity.value;
 
 	var strafe = CL.kbuttons[CL.kbutton.strafe].state & 1;
-	var mlook = CL.kbuttons[CL.kbutton.mlook].state & 1;
+	// Modern FPS: mouselook is always on (ignore +mlook state)
+	var mlook = 1; // Was: CL.kbuttons[CL.kbutton.mlook].state & 1;
 	var angles = CL.state.viewangles;
 
 	if ((strafe !== 0) || ((CL.lookstrafe.value !== 0) && (mlook !== 0)))
@@ -87,10 +88,10 @@ IN.MouseMove = function()
 	else
 		angles[1] -= CL.m_yaw.value * mouse_x;
 
-	if (mlook !== 0)
-		V.StopPitchDrift();
+	// Modern FPS: always stop pitch drift
+	V.StopPitchDrift();
 
-	if ((mlook !== 0) && (strafe === 0))
+	if (strafe === 0)
 	{
 		angles[0] += CL.m_pitch.value * mouse_y;
 		if (angles[0] > 80.0)
@@ -100,7 +101,7 @@ IN.MouseMove = function()
 	}
 	else
 	{
-		if ((strafe !== 0) && (Host.noclip_anglehack === true))
+		if (Host.noclip_anglehack === true)
 			CL.state.cmd.upmove -= CL.m_forward.value * mouse_y;
 		else
 			CL.state.cmd.forwardmove -= CL.m_forward.value * mouse_y;

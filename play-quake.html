@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Play Quake | Zap Arsenal</title>
-    <meta name="description" content="Play Quake in your browser! A tribute to the classic 1996 FPS by id Software.">
+    <meta name="description" content="Play Quake in your browser! Modern WASD controls + mouselook. A tribute to the classic 1996 FPS by id Software.">
     <link rel="icon" type="image/jpeg" href="images/quake-box-art.jpg">
-    <meta http-equiv="refresh" content="0; url=quake.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/quake-hud.css">
     <style>
         :root {
-            /* Authentic Quake 1 Color Palette from Lospec */
+            /* Authentic Quake 1 Color Palette */
             --bg-dark: #0f0b07;
             --bg-card: #1f170b;
             --bg-medium: #271b0f;
@@ -60,6 +59,7 @@
         .nav-links {
             display: flex;
             gap: 20px;
+            align-items: center;
         }
         .nav-link {
             font-family: 'Press Start 2P', cursive;
@@ -89,110 +89,117 @@
             background: #000;
         }
 
-        .game-wrapper {
+        /* Arcade Cabinet Wrapper */
+        .arcade-cabinet {
             position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 1280px;
-            max-height: 720px;
-            background: #0f0b07;
-            border: 3px solid #4b371b;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 4px solid #444;
+            border-top-color: #555;
+            border-left-color: #555;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+            box-shadow:
+                0 0 50px rgba(143, 75, 35, 0.5),
+                inset 0 2px 0 #5a5a5a,
+                inset 0 -2px 0 #1a1a1a;
         }
 
-        /* Loading Screen */
-        .loading-screen {
+        .arcade-cabinet::before {
+            content: 'CLICK GAME TO CAPTURE MOUSE';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--accent-gold);
+            animation: blink 1s step-end infinite;
+            white-space: nowrap;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .screen-bezel {
+            background: #111;
+            border: 6px solid #333;
+            border-top-color: #222;
+            border-left-color: #222;
+            border-radius: 4px;
+            padding: 8px;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        /* WebQuake Canvas */
+        #mainwindow {
+            display: block;
+            width: 800px;
+            height: 600px;
             background: #0f0b07;
+            cursor: crosshair;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: rgba(15, 11, 7, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 100;
+            border-radius: 4px;
         }
-        .loading-screen.hidden {
-            display: none;
-        }
+        .loading-overlay.hidden { display: none; }
+
         .loading-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 2rem;
             color: var(--accent-orange);
             text-shadow: 3px 3px 0 #000;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         .loading-subtitle {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--accent-gold);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
-        .loading-bar-container {
-            width: 300px;
-            height: 20px;
-            background: #170f0b;
-            border: 2px solid #4b371b;
-            position: relative;
-        }
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #8f4b23, #a77b3b);
-            transition: width 0.3s;
-        }
-        .loading-text {
+        #progress {
             font-family: 'Press Start 2P', cursive;
             font-size: 0.6rem;
             color: var(--text-secondary);
-            margin-top: 15px;
         }
-        .start-button {
+
+        /* Hidden WebQuake elements */
+        #loading, #end, #end1, #end2 { display: none !important; }
+
+        /* Control Buttons */
+        .control-buttons {
+            position: absolute;
+            top: -25px;
+            right: 0;
+            display: flex;
+            gap: 8px;
+        }
+        .control-btn {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem;
-            padding: 15px 30px;
-            background: linear-gradient(180deg, #8f4b23 0%, #6b0000 100%);
-            color: #c7a35b;
-            border: 2px solid #a77b3b;
+            font-size: 0.4rem;
+            padding: 5px 10px;
+            background: rgba(0,0,0,0.8);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 30px;
-            display: none;
+            transition: all 0.2s;
         }
-        .start-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(143, 75, 35, 0.6);
-        }
-        .start-button.visible {
-            display: block;
-            animation: blink 1s ease-in-out infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Game Canvas */
-        #quake-canvas {
-            width: 100%;
-            height: 100%;
-            display: none;
-            cursor: none;
-        }
-        #quake-canvas.active {
-            display: block;
-        }
-
-        /* Game iframe for WebQuake */
-        #quake-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: none;
-        }
-        #quake-frame.active {
-            display: block;
+        .control-btn:hover {
+            background: rgba(143, 75, 35, 0.3);
         }
 
         /* Controls HUD */
@@ -207,55 +214,73 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 30px;
             padding: 0 20px;
         }
         .control-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .control-key {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.5rem;
+            font-size: 0.45rem;
             background: #170f0b;
             border: 1px solid #4b371b;
-            padding: 4px 8px;
+            padding: 3px 6px;
             color: #a77b3b;
         }
         .control-label {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.4rem;
+            font-size: 0.35rem;
             color: var(--text-secondary);
         }
 
-        /* Fullscreen button */
-        .fullscreen-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .music-btn {
             font-family: 'Press Start 2P', cursive;
             font-size: 0.5rem;
             padding: 8px 12px;
-            background: rgba(0,0,0,0.7);
-            color: var(--accent-orange);
-            border: 1px solid var(--accent-orange);
+            background: rgba(0,0,0,0.8);
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
             cursor: pointer;
-            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .fullscreen-btn:hover {
-            background: rgba(255, 102, 0, 0.2);
+        .music-btn:hover {
+            background: rgba(167, 123, 59, 0.2);
         }
 
-        /* Info panel */
-        .info-panel {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.4rem;
-            color: var(--text-secondary);
-            z-index: 50;
+        /* Responsive */
+        @media (max-width: 900px) {
+            #mainwindow {
+                width: 640px;
+                height: 480px;
+            }
+        }
+        @media (max-width: 700px) {
+            #mainwindow {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4/3;
+            }
+            .arcade-cabinet {
+                width: calc(100% - 20px);
+                padding: 8px;
+            }
+            .controls-hud {
+                gap: 10px;
+            }
+            .control-item { display: none; }
+            .control-item:nth-child(-n+4) { display: flex; }
         }
     </style>
 </head>
@@ -264,12 +289,6 @@
     <audio id="quake-theme" loop>
         <source src="audio/quake-theme.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- Secret Popup -->
-    <div class="secret-popup" id="secret-popup">
-        <h3>SECRET FOUND!</h3>
-        <p id="secret-message">You found a secret area!</p>
-    </div>
 
     <!-- Navigation -->
     <nav class="nav">
@@ -283,36 +302,36 @@
 
     <!-- Game Container -->
     <div class="game-container">
-        <div class="game-wrapper">
-            <!-- Loading Screen -->
-            <div class="loading-screen" id="loading-screen">
-                <div class="loading-title">QUAKE</div>
-                <div class="loading-subtitle">id Software 1996</div>
-                <div class="loading-bar-container">
-                    <div class="loading-bar" id="loading-bar"></div>
-                </div>
-                <div class="loading-text" id="loading-text">Initializing...</div>
-                <button class="start-button secret-area" id="start-button" data-secret="play-start" data-secret-msg="You found the start button! Time to frag!">CLICK TO START</button>
+        <div class="arcade-cabinet">
+            <div class="control-buttons">
+                <button class="control-btn" id="fullscreenBtn">FULLSCREEN</button>
             </div>
+            <div class="screen-bezel">
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-title">QUAKE</div>
+                    <div class="loading-subtitle">id Software 1996</div>
+                    <span id="progress">Loading...</span>
+                </div>
 
-            <!-- Fullscreen Button -->
-            <button class="fullscreen-btn" id="fullscreen-btn">FULLSCREEN</button>
+                <!-- WebQuake Canvas -->
+                <canvas id="mainwindow" tabindex="1"></canvas>
 
-            <!-- WebQuake iframe - loads from root where id1/pak0.pak is accessible -->
-            <iframe id="quake-frame" src="quake" allow="pointer-lock; fullscreen"></iframe>
-
-            <!-- Info Panel -->
-            <div class="info-panel">
-                ESC = Menu | Click to capture mouse
+                <!-- Hidden WebQuake elements -->
+                <img id="loading" alt="Loading" style="display: none;">
+                <div id="end" style="display: none;">
+                    <span id="end1"></span>
+                    <span id="end2"></span>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Music Player Button -->
-    <div class="music-player" style="bottom: 70px;">
-        <button class="music-btn" id="music-btn">
+    <div class="music-player">
+        <button class="music-btn" id="musicBtn">
             <span class="music-icon">[M]</span>
-            <span id="music-text">PLAY THEME</span>
+            <span id="musicText">PLAY THEME</span>
         </button>
     </div>
 
@@ -344,83 +363,502 @@
         </div>
     </div>
 
+    <!-- WebQuake Shader Scripts (Required) -->
+    <script type="x-shader/x-vertex" id="vshAlias">
+uniform vec3 uOrigin;
+uniform mat3 uAngles;
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+uniform vec3 uLightVec;
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+varying float vLightDot;
+void main(void)
+{
+	vec3 position = uViewAngles * (uAngles * aPosition + uOrigin - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vTexCoord = aTexCoord;
+	vLightDot = dot(aNormal, uLightVec);
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshAlias">
+precision mediump float;
+uniform float uGamma;
+uniform float uAmbientLight;
+uniform float uShadeLight;
+uniform sampler2D tTexture;
+varying vec2 vTexCoord;
+varying float vLightDot;
+void main(void)
+{
+	vec4 texture = texture2D(tTexture, vTexCoord);
+	gl_FragColor = vec4(texture.rgb * mix(1.0, vLightDot * uShadeLight + uAmbientLight, texture.a), 1.0);
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshBrush">
+uniform vec3 uOrigin;
+uniform mat3 uAngles;
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+attribute vec3 aPosition;
+attribute vec4 aTexCoord;
+attribute vec4 aLightStyle;
+varying vec4 vTexCoord;
+varying vec4 vLightStyle;
+void main(void)
+{
+	vec3 position = uViewAngles * (uAngles * aPosition + uOrigin - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vTexCoord = aTexCoord;
+	vLightStyle = aLightStyle;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshBrush">
+precision mediump float;
+uniform float uGamma;
+uniform sampler2D tTexture;
+uniform sampler2D tLightmap;
+uniform sampler2D tDlight;
+uniform sampler2D tLightStyle;
+varying vec4 vTexCoord;
+varying vec4 vLightStyle;
+void main(void)
+{
+	vec4 texture = texture2D(tTexture, vTexCoord.xy);
+	gl_FragColor = vec4(texture.rgb *
+		mix(1.0, dot(texture2D(tLightmap, vTexCoord.zw), vec4(
+			texture2D(tLightStyle, vec2(vLightStyle.x, 0.0)).a,
+			texture2D(tLightStyle, vec2(vLightStyle.y, 0.0)).a,
+			texture2D(tLightStyle, vec2(vLightStyle.z, 0.0)).a,
+			texture2D(tLightStyle, vec2(vLightStyle.w, 0.0)).a)
+		* 43.828125) + texture2D(tDlight, vTexCoord.zw).a, texture.a), 1.0);
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshCharacter">
+uniform vec2 uCharacter;
+uniform vec2 uDest;
+uniform mat4 uOrtho;
+attribute vec2 aPosition;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_Position = uOrtho * vec4(aPosition * 8.0 + uDest, 0.0, 1.0);
+	vTexCoord = (aPosition + uCharacter) * 0.0625;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshCharacter">
+precision mediump float;
+uniform sampler2D tTexture;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_FragColor = texture2D(tTexture, vTexCoord);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshDlight">
+uniform vec3 uOrigin;
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+uniform float uRadius;
+attribute vec3 aPosition;
+varying float vAlpha;
+void main(void)
+{
+	vec3 position = aPosition * 0.35 * uRadius + uViewAngles * (uOrigin - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vAlpha = aPosition.y * -0.2;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshDlight">
+precision mediump float;
+uniform float uGamma;
+varying float vAlpha;
+void main(void)
+{
+	gl_FragColor = vec4(pow(1.0, uGamma), pow(0.5, uGamma), 0.0, vAlpha);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshFill">
+uniform mat4 uOrtho;
+attribute vec2 aPosition;
+attribute vec4 aColor;
+varying vec4 vColor;
+void main(void)
+{
+	gl_Position = uOrtho * vec4(aPosition, 0.0, 1.0);
+	vColor = aColor;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshFill">
+precision mediump float;
+varying vec4 vColor;
+void main(void)
+{
+	gl_FragColor = vColor;
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshParticle">
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+uniform float uScale;
+attribute vec3 aOrigin;
+attribute vec2 aCoord;
+attribute float aScale;
+attribute vec3 aColor;
+varying vec2 vCoord;
+varying vec3 vColor;
+void main(void)
+{
+	vec2 point = aCoord * aScale;
+	vec3 position = vec3(point.x, 0.0, point.y) + uViewAngles * (aOrigin - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vCoord = aCoord;
+	vColor = aColor;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshParticle">
+precision mediump float;
+uniform float uGamma;
+varying vec2 vCoord;
+varying vec3 vColor;
+void main(void)
+{
+	gl_FragColor = vec4(vColor, 1.0 - smoothstep(0.75, 1.0, length(vCoord)));
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshPic">
+uniform mat4 uOrtho;
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_Position = uOrtho * vec4(aPosition, 0.0, 1.0);
+	vTexCoord = aTexCoord;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshPic">
+precision mediump float;
+uniform sampler2D tTexture;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_FragColor = texture2D(tTexture, vTexCoord);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshPicTranslate">
+uniform mat4 uOrtho;
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_Position = uOrtho * vec4(aPosition, 0.0, 1.0);
+	vTexCoord = aTexCoord;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshPicTranslate">
+precision mediump float;
+uniform vec3 uTop;
+uniform vec3 uBottom;
+uniform sampler2D tTexture;
+uniform sampler2D tTrans;
+varying vec2 vTexCoord;
+void main(void)
+{
+	vec4 texture = texture2D(tTexture, vTexCoord);
+	vec4 trans = texture2D(tTrans, vTexCoord);
+	gl_FragColor = vec4(mix(mix(texture.rgb, uTop * trans.x, trans.y), uBottom * trans.z, trans.w), texture.a);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshPlayer">
+uniform vec3 uOrigin;
+uniform mat3 uAngles;
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+uniform vec3 uLightVec;
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+varying float vLightDot;
+void main(void)
+{
+	vec3 position = uViewAngles * (uAngles * aPosition + uOrigin - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vTexCoord = aTexCoord;
+	vLightDot = dot(aNormal, uLightVec);
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshPlayer">
+precision mediump float;
+uniform float uGamma;
+uniform float uAmbientLight;
+uniform float uShadeLight;
+uniform vec3 uTop;
+uniform vec3 uBottom;
+uniform sampler2D tTexture;
+uniform sampler2D tPlayer;
+varying vec2 vTexCoord;
+varying float vLightDot;
+void main(void)
+{
+	vec4 texture = texture2D(tTexture, vTexCoord);
+	vec4 player = texture2D(tPlayer, vTexCoord);
+	gl_FragColor = vec4(
+		mix(mix(texture.rgb, uTop * (1.0 / 191.25) * player.x, player.y), uBottom * (1.0 / 191.25) * player.z, player.w)
+		* mix(1.0, vLightDot * uShadeLight + uAmbientLight, texture.a), 1.0);
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshSky">
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+uniform vec3 uScale;
+attribute vec3 aPosition;
+varying vec2 vTexCoord;
+void main(void)
+{
+	vec3 position = uViewAngles * (aPosition * uScale * 18918.0);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vTexCoord = aPosition.xy * uScale.xy * 1.5;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshSky">
+precision mediump float;
+uniform float uGamma;
+uniform vec2 uTime;
+uniform sampler2D tSolid;
+uniform sampler2D tAlpha;
+varying vec2 vTexCoord;
+void main(void)
+{
+	vec4 alpha = texture2D(tAlpha, vTexCoord + uTime.x);
+	gl_FragColor = vec4(mix(texture2D(tSolid, vTexCoord + uTime.y).rgb, alpha.rgb, alpha.a), 1.0);
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshSkyChain">
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+attribute vec3 aPosition;
+void main(void)
+{
+	vec3 position = uViewAngles * (aPosition - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshSkyChain">
+precision mediump float;
+void main(void)
+{
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshSprite">
+uniform vec4 uRect;
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main(void)
+{
+	vec3 position = uViewAngles * (aPosition - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vTexCoord = aTexCoord;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshSprite">
+precision mediump float;
+uniform float uGamma;
+uniform sampler2D tTexture;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_FragColor = texture2D(tTexture, vTexCoord);
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshTurbulent">
+uniform vec3 uOrigin;
+uniform mat3 uAngles;
+uniform vec3 uViewOrigin;
+uniform mat3 uViewAngles;
+uniform mat4 uPerspective;
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main(void)
+{
+	vec3 position = uViewAngles * (uAngles * aPosition + uOrigin - uViewOrigin);
+	gl_Position = uPerspective * vec4(position.xz, -position.y, 1.0);
+	vTexCoord = aTexCoord;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshTurbulent">
+precision mediump float;
+uniform float uGamma;
+uniform float uTime;
+uniform sampler2D tTexture;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_FragColor = vec4(texture2D(tTexture, vTexCoord + vec2(sin(vTexCoord.t * 3.141593 + uTime), sin(vTexCoord.s * 3.141593 + uTime)) * 0.125).rgb, 1.0);
+	gl_FragColor.r = pow(gl_FragColor.r, uGamma);
+	gl_FragColor.g = pow(gl_FragColor.g, uGamma);
+	gl_FragColor.b = pow(gl_FragColor.b, uGamma);
+}
+    </script>
+    <script type="x-shader/x-vertex" id="vshWarp">
+uniform mat4 uOrtho;
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_Position = uOrtho * vec4(aPosition, 0.0, 1.0);
+	vTexCoord = aTexCoord;
+}
+    </script>
+    <script type="x-shader/x-fragment" id="fshWarp">
+precision mediump float;
+uniform float uTime;
+uniform sampler2D tTexture;
+varying vec2 vTexCoord;
+void main(void)
+{
+	gl_FragColor = texture2D(tTexture, vTexCoord + vec2(sin(vTexCoord.t * 15.70796 + uTime) * 0.003125, sin(vTexCoord.s * 9.817477 + uTime) * 0.005));
+}
+    </script>
+
+    <!-- WebQuake Engine Scripts -->
+    <script type="text/javascript" src="WebQuake/CDAudio.js"></script>
+    <script type="text/javascript" src="WebQuake/Chase.js"></script>
+    <script type="text/javascript" src="WebQuake/CL.js"></script>
+    <script type="text/javascript" src="WebQuake/Cmd.js"></script>
+    <script type="text/javascript" src="WebQuake/COM.js"></script>
+    <script type="text/javascript" src="WebQuake/Console.js"></script>
+    <script type="text/javascript" src="WebQuake/CRC.js"></script>
+    <script type="text/javascript" src="WebQuake/Cvar.js"></script>
+    <script type="text/javascript" src="WebQuake/Def.js"></script>
+    <script type="text/javascript" src="WebQuake/Draw.js"></script>
+    <script type="text/javascript" src="WebQuake/ED.js"></script>
+    <script type="text/javascript" src="WebQuake/GL.js"></script>
+    <script type="text/javascript" src="WebQuake/Host.js"></script>
+    <script type="text/javascript" src="WebQuake/IN.js"></script>
+    <script type="text/javascript" src="WebQuake/Key.js"></script>
+    <script type="text/javascript" src="WebQuake/M.js"></script>
+    <script type="text/javascript" src="WebQuake/Mod.js"></script>
+    <script type="text/javascript" src="WebQuake/MSG.js"></script>
+    <script type="text/javascript" src="WebQuake/NET.js"></script>
+    <script type="text/javascript" src="WebQuake/NET_Loop.js"></script>
+    <script type="text/javascript" src="WebQuake/NET_WEBS.js"></script>
+    <script type="text/javascript" src="WebQuake/PF.js"></script>
+    <script type="text/javascript" src="WebQuake/PR.js"></script>
+    <script type="text/javascript" src="WebQuake/Protocol.js"></script>
+    <script type="text/javascript" src="WebQuake/Q.js"></script>
+    <script type="text/javascript" src="WebQuake/R.js"></script>
+    <script type="text/javascript" src="WebQuake/S.js"></script>
+    <script type="text/javascript" src="WebQuake/Sbar.js"></script>
+    <script type="text/javascript" src="WebQuake/SCR.js"></script>
+    <script type="text/javascript" src="WebQuake/SV.js"></script>
+    <script type="text/javascript" src="WebQuake/Sys.js"></script>
+    <script type="text/javascript" src="WebQuake/SZ.js"></script>
+    <script type="text/javascript" src="WebQuake/V.js"></script>
+    <script type="text/javascript" src="WebQuake/Vec.js"></script>
+    <script type="text/javascript" src="WebQuake/VID.js"></script>
+    <script type="text/javascript" src="WebQuake/W.js"></script>
+
     <script>
-        const loadingScreen = document.getElementById('loading-screen');
-        const loadingBar = document.getElementById('loading-bar');
-        const loadingText = document.getElementById('loading-text');
-        const startButton = document.getElementById('start-button');
-        const quakeFrame = document.getElementById('quake-frame');
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        const gameWrapper = document.querySelector('.game-wrapper');
+        // UI Controls
+        const canvas = document.getElementById('mainwindow');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicText = document.getElementById('musicText');
+        const quakeTheme = document.getElementById('quake-theme');
 
-        // Simulate loading progress
-        const loadingSteps = [
-            { progress: 10, text: 'Loading PAK files...' },
-            { progress: 25, text: 'Initializing renderer...' },
-            { progress: 40, text: 'Loading textures...' },
-            { progress: 55, text: 'Loading models...' },
-            { progress: 70, text: 'Loading sounds...' },
-            { progress: 85, text: 'Spawning entities...' },
-            { progress: 100, text: 'Ready!' }
-        ];
-
-        let currentStep = 0;
-
-        function updateLoading() {
-            if (currentStep < loadingSteps.length) {
-                const step = loadingSteps[currentStep];
-                loadingBar.style.width = step.progress + '%';
-                loadingText.textContent = step.text;
-                currentStep++;
-
-                if (currentStep < loadingSteps.length) {
-                    setTimeout(updateLoading, 400 + Math.random() * 300);
-                } else {
-                    // Loading complete
-                    setTimeout(() => {
-                        startButton.classList.add('visible');
-                    }, 500);
+        // Hide loading overlay once game starts rendering
+        // WebQuake will hide #progress, we watch for that
+        const progressEl = document.getElementById('progress');
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    if (progressEl.style.display === 'none') {
+                        loadingOverlay.classList.add('hidden');
+                        canvas.focus();
+                    }
                 }
-            }
-        }
-
-        // Start loading animation
-        setTimeout(updateLoading, 500);
-
-        // Start game on button click
-        startButton.addEventListener('click', () => {
-            loadingScreen.classList.add('hidden');
-            quakeFrame.classList.add('active');
-
-            // Focus the iframe for keyboard input
-            quakeFrame.focus();
+            });
         });
+        observer.observe(progressEl, { attributes: true });
 
-        // Fullscreen functionality
-        fullscreenBtn.addEventListener('click', () => {
-            if (gameWrapper.requestFullscreen) {
-                gameWrapper.requestFullscreen();
-            } else if (gameWrapper.webkitRequestFullscreen) {
-                gameWrapper.webkitRequestFullscreen();
-            } else if (gameWrapper.msRequestFullscreen) {
-                gameWrapper.msRequestFullscreen();
+        // Also check periodically in case MutationObserver misses it
+        const checkLoaded = setInterval(function() {
+            if (progressEl.style.display === 'none' ||
+                (typeof Host !== 'undefined' && Host.initialized)) {
+                loadingOverlay.classList.add('hidden');
+                canvas.focus();
+                clearInterval(checkLoaded);
+            }
+        }, 500);
+
+        // Fullscreen
+        fullscreenBtn.addEventListener('click', function() {
+            const cabinet = document.querySelector('.arcade-cabinet');
+            if (cabinet.requestFullscreen) {
+                cabinet.requestFullscreen();
+            } else if (cabinet.webkitRequestFullscreen) {
+                cabinet.webkitRequestFullscreen();
             }
         });
 
-        // Handle fullscreen change
-        document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = 'EXIT FULLSCREEN';
+        document.addEventListener('fullscreenchange', function() {
+            fullscreenBtn.textContent = document.fullscreenElement ? 'EXIT' : 'FULLSCREEN';
+        });
+
+        // Music controls
+        let musicPlaying = false;
+        musicBtn.addEventListener('click', function() {
+            if (musicPlaying) {
+                quakeTheme.pause();
+                musicText.textContent = 'PLAY THEME';
+                musicPlaying = false;
             } else {
-                fullscreenBtn.textContent = 'FULLSCREEN';
+                quakeTheme.play().then(function() {
+                    musicText.textContent = 'STOP THEME';
+                    musicPlaying = true;
+                }).catch(function() {});
             }
         });
 
-        // Focus iframe when clicking on game wrapper
-        gameWrapper.addEventListener('click', (e) => {
-            if (e.target !== fullscreenBtn && !loadingScreen.contains(e.target)) {
-                quakeFrame.focus();
-            }
+        // Focus canvas on click
+        canvas.addEventListener('click', function() {
+            canvas.focus();
         });
     </script>
     <script src="js/quake-hud.js"></script>

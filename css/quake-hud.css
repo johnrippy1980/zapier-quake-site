@@ -1,6 +1,10 @@
 /* ===== QUAKE 1 HUD - Actor Arsenal Style with Real Quake Texture ===== */
 /* Uses actual extracted texture from Quake 1 status bar */
 
+/* Global crosshair cursor for FPS feel */
+*, *::before, *::after { cursor: crosshair !important; }
+html, body { cursor: crosshair !important; }
+
 /* Main HUD container - full width with authentic Quake metal texture */
 .quake-hud {
     position: fixed;

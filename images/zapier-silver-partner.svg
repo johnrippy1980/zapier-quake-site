@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
-  <rect width="300" height="100" fill="#1a1a1a"/>
-  <rect x="100" y="0" width="1" height="100" fill="#333"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100">
+  <rect width="380" height="100" fill="#1a1a1a"/>
+  <rect x="110" y="0" width="1" height="100" fill="#333"/>
 
   <!-- Zapier logo section -->
   <g transform="translate(20, 35)">
@@ -11,7 +11,7 @@
   </g>
 
   <!-- Silver Solution Partner text -->
-  <g transform="translate(115, 30)">
+  <g transform="translate(125, 30)">
     <text x="0" y="15" font-family="Arial, sans-serif" font-size="18" font-weight="300" fill="white" letter-spacing="2">SILVER</text>
     <text x="0" y="40" font-family="Arial, sans-serif" font-size="18" font-weight="300" fill="white" letter-spacing="2">SOLUTION PARTNER</text>
   </g>

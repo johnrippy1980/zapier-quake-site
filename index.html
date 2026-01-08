@@ -1319,11 +1319,36 @@
             });
         });
 
-        // Music player
+        // Music player with persistence across page navigation
+        // Uses same localStorage keys as quake-hud.js for cross-page persistence
         const musicBtn = document.getElementById('music-btn');
         const musicText = document.getElementById('music-text');
         const quakeTheme = document.getElementById('quake-theme');
         let isPlaying = false;
+
+        // Check if music was playing on previous page
+        if (localStorage.getItem('quake_music_playing') === 'true') {
+            const savedTime = parseFloat(localStorage.getItem('quake_music_time') || '0');
+            quakeTheme.currentTime = savedTime;
+            quakeTheme.play().then(() => {
+                isPlaying = true;
+                musicBtn.classList.add('playing');
+                musicText.textContent = 'STOP THEME';
+            }).catch(() => {});
+        }
+
+        // Save music time periodically while playing
+        setInterval(() => {
+            if (isPlaying) {
+                localStorage.setItem('quake_music_time', quakeTheme.currentTime.toString());
+            }
+        }, 500);
+
+        // Save state before leaving page
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('quake_music_playing', isPlaying ? 'true' : 'false');
+            localStorage.setItem('quake_music_time', quakeTheme.currentTime.toString());
+        });
 
         musicBtn.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent splash dismissal
@@ -1332,11 +1357,13 @@
                 musicBtn.classList.remove('playing');
                 musicText.textContent = 'PLAY THEME';
                 isPlaying = false;
+                localStorage.setItem('quake_music_playing', 'false');
             } else {
                 quakeTheme.play().then(() => {
                     musicBtn.classList.add('playing');
                     musicText.textContent = 'STOP THEME';
                     isPlaying = true;
+                    localStorage.setItem('quake_music_playing', 'true');
                 }).catch(e => {
                     console.log('Audio play failed:', e);
                     musicText.textContent = 'CLICK AGAIN';

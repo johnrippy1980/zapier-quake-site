@@ -566,25 +566,41 @@
             max-height: 120px;
         }
 
-        /* SECRET #4: n8n Gib Shower */
+        /* SECRET #4: n8n Gib Shower - Quake-style bloody meat chunks */
         .gib {
             position: fixed;
             pointer-events: none;
             z-index: 9999;
-            font-size: 2rem;
+            background: radial-gradient(ellipse at 30% 30%, #8B0000 0%, #5a0000 40%, #3a0000 70%, #2a0000 100%);
+            border-radius: 40% 60% 50% 50%;
+            box-shadow:
+                inset -2px -2px 4px rgba(0, 0, 0, 0.5),
+                inset 2px 2px 4px rgba(180, 50, 50, 0.3),
+                0 0 8px rgba(139, 0, 0, 0.6);
             animation: gibFall linear forwards;
+        }
+        .gib::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, rgba(200, 80, 80, 0.6) 0%, transparent 70%);
+            border-radius: 50%;
         }
         @keyframes gibFall {
             0% {
                 opacity: 1;
-                transform: translateY(0) rotate(0deg) scale(1);
+                transform: translateX(0) translateY(0) rotate(0deg) scale(1);
             }
-            70% {
+            50% {
                 opacity: 1;
+                transform: translateX(calc(var(--end-x) * 0.6)) translateY(calc(var(--end-y) * -0.3)) rotate(360deg) scale(1.1);
             }
             100% {
-                opacity: 0;
-                transform: translateY(100vh) rotate(720deg) scale(0.5);
+                opacity: 0.8;
+                transform: translateX(var(--end-x)) translateY(var(--end-y)) rotate(720deg) scale(0.6);
             }
         }
         .gib-splat {
@@ -1338,9 +1354,6 @@
         const secretBanner = document.getElementById('secretBanner');
         let secret4Found = localStorage.getItem('zaparena_secret4') === 'true';
 
-        // Quake gib types - body parts!
-        const gibTypes = ['🦴', '🫀', '🧠', '👁️', '🦷', '🫁', '💀', '🦵', '🦶', '✋'];
-
         // Check if URL targets n8n.io
         function isN8nTarget(url) {
             const lowerUrl = url.toLowerCase();
@@ -1350,30 +1363,38 @@
                    lowerUrl.includes('/n8n');
         }
 
-        // Create a single gib
+        // Create a single gib - bloody meat chunks like Quake
         function createGib(startX, startY) {
             const gib = document.createElement('div');
             gib.className = 'gib';
-            gib.textContent = gibTypes[Math.floor(Math.random() * gibTypes.length)];
+
+            // Random gib size and shape
+            const size = 8 + Math.random() * 16;
+            const isChunk = Math.random() > 0.3;
+
+            gib.style.width = size + 'px';
+            gib.style.height = (isChunk ? size * 0.7 : size) + 'px';
             gib.style.left = startX + 'px';
             gib.style.top = startY + 'px';
 
             // Random trajectory
             const angle = Math.random() * 360;
-            const distance = 100 + Math.random() * 300;
-            const duration = 1 + Math.random() * 1.5;
+            const distance = 150 + Math.random() * 400;
+            const duration = 0.8 + Math.random() * 1.2;
             const endX = startX + Math.cos(angle * Math.PI / 180) * distance;
+            const endY = startY + Math.sin(angle * Math.PI / 180) * distance * 0.5;
 
             gib.style.setProperty('--end-x', `${endX - startX}px`);
+            gib.style.setProperty('--end-y', `${Math.abs(endY - startY) + 200}px`);
             gib.style.animationDuration = duration + 's';
 
             document.body.appendChild(gib);
 
             // Create splat when gib lands
             setTimeout(() => {
-                createGibSplat(endX, window.innerHeight - 50 + Math.random() * 30);
+                createGibSplat(endX, window.innerHeight - 80 - Math.random() * 50);
                 gib.remove();
-            }, duration * 700);
+            }, duration * 800);
 
             setTimeout(() => gib.remove(), duration * 1000);
         }
@@ -1431,13 +1452,20 @@
             setTimeout(() => playSound('gib'), 400);
             setTimeout(() => playSound('gib'), 700);
 
-            // Show secret banner
+            // Show secret banner and update HUD
             if (!secret4Found) {
                 setTimeout(() => {
                     playSound('secret');
                     secretBanner.classList.add('show');
                     localStorage.setItem('zaparena_secret4', 'true');
                     secret4Found = true;
+
+                    // Update HUD secrets counter
+                    const hudSecretsEl = document.getElementById('hudSecrets');
+                    if (hudSecretsEl) {
+                        const currentSecrets = parseInt(hudSecretsEl.textContent) || 0;
+                        hudSecretsEl.textContent = currentSecrets + 1;
+                    }
 
                     setTimeout(() => {
                         secretBanner.classList.remove('show');

@@ -719,13 +719,13 @@
             transform: scale(1.05);
         }
 
-        /* Nail projectiles that shoot out */
+        /* Nail projectiles that shoot out - extends to right edge of screen */
         .nail-stream {
             position: absolute;
             top: 50%;
             left: 100%;
             transform: translateY(-50%);
-            width: 300px;
+            width: 100vw;
             height: 60px;
             pointer-events: none;
             overflow: visible;
@@ -768,38 +768,38 @@
             box-shadow: 0 0 6px #FFD700;
         }
 
-        /* Individual nail animations with staggered timing - loops infinitely */
+        /* Individual nail animations with staggered timing - loops infinitely, travels full screen width */
         .nailgun-divider:hover .nail-1 {
-            animation: shootNail 0.4s linear infinite;
+            animation: shootNail 0.8s linear infinite;
             animation-delay: 0s;
         }
         .nailgun-divider:hover .nail-2 {
-            animation: shootNail 0.4s linear infinite;
-            animation-delay: 0.05s;
-        }
-        .nailgun-divider:hover .nail-3 {
-            animation: shootNail 0.4s linear infinite;
+            animation: shootNail 0.8s linear infinite;
             animation-delay: 0.1s;
         }
-        .nailgun-divider:hover .nail-4 {
-            animation: shootNail 0.4s linear infinite;
-            animation-delay: 0.15s;
-        }
-        .nailgun-divider:hover .nail-5 {
-            animation: shootNail 0.4s linear infinite;
+        .nailgun-divider:hover .nail-3 {
+            animation: shootNail 0.8s linear infinite;
             animation-delay: 0.2s;
         }
+        .nailgun-divider:hover .nail-4 {
+            animation: shootNail 0.8s linear infinite;
+            animation-delay: 0.3s;
+        }
+        .nailgun-divider:hover .nail-5 {
+            animation: shootNail 0.8s linear infinite;
+            animation-delay: 0.15s;
+        }
         .nailgun-divider:hover .nail-6 {
-            animation: shootNail 0.4s linear infinite;
+            animation: shootNail 0.8s linear infinite;
             animation-delay: 0.25s;
         }
         .nailgun-divider:hover .nail-7 {
-            animation: shootNail 0.4s linear infinite;
-            animation-delay: 0.3s;
+            animation: shootNail 0.8s linear infinite;
+            animation-delay: 0.35s;
         }
         .nailgun-divider:hover .nail-8 {
-            animation: shootNail 0.4s linear infinite;
-            animation-delay: 0.35s;
+            animation: shootNail 0.8s linear infinite;
+            animation-delay: 0.45s;
         }
 
         .nail-1 { top: 20%; }
@@ -816,9 +816,12 @@
                 opacity: 1;
                 transform: translateX(0);
             }
+            80% {
+                opacity: 1;
+            }
             100% {
                 opacity: 0;
-                transform: translateX(300px);
+                transform: translateX(100vw);
             }
         }
 
@@ -1323,12 +1326,29 @@
         nailgunSound.volume = 0.6;
         nailgunSound.loop = true; // Loop for continuous fire
         let nailgunPlaying = false;
+        let nailgunKillInterval = null;
 
         nailgunDivider.addEventListener('mouseenter', () => {
             if (!nailgunPlaying) {
                 nailgunPlaying = true;
                 nailgunSound.currentTime = 0;
                 nailgunSound.play().catch(e => console.log('Audio play failed:', e));
+
+                // Start checking for enemy kills along the nail path
+                // The nailgun fires horizontally from its position to the right edge
+                nailgunKillInterval = setInterval(() => {
+                    if (window.ZapArenaEnemies && window.ZapArenaEnemies.killAlongPath) {
+                        const nailgunRect = nailgunDivider.getBoundingClientRect();
+                        const startX = nailgunRect.right;
+                        const startY = nailgunRect.top + nailgunRect.height / 2;
+                        const endX = window.innerWidth;
+                        const endY = startY;
+                        // Check along the horizontal nail path with a 40px radius
+                        window.ZapArenaEnemies.killAlongPath(startX, startY - 30, endX, endY - 30, 40);
+                        window.ZapArenaEnemies.killAlongPath(startX, startY, endX, endY, 40);
+                        window.ZapArenaEnemies.killAlongPath(startX, startY + 30, endX, endY + 30, 40);
+                    }
+                }, 100); // Check every 100ms
             }
         });
 
@@ -1336,6 +1356,11 @@
             nailgunPlaying = false;
             nailgunSound.pause();
             nailgunSound.currentTime = 0;
+            // Stop checking for kills
+            if (nailgunKillInterval) {
+                clearInterval(nailgunKillInterval);
+                nailgunKillInterval = null;
+            }
         });
 
         // ===== SOUND EFFECTS SYSTEM (Like Actor Arsenal) =====

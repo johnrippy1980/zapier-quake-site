@@ -938,6 +938,129 @@
         }
     }
 
+    // Kill an enemy at a specific position (for arsenal weapon hits)
+    // Returns true if an enemy was killed
+    function killEnemyAtPosition(x, y, hitRadius) {
+        hitRadius = hitRadius || 60;  // Default hit radius
+
+        const enemies = document.querySelectorAll('.quake-enemy');
+        for (const enemy of enemies) {
+            const rect = enemy.getBoundingClientRect();
+            const enemyCenterX = rect.left + rect.width / 2;
+            const enemyCenterY = rect.top + rect.height / 2;
+
+            // Check if projectile hits within radius of enemy center
+            const dist = Math.sqrt(Math.pow(x - enemyCenterX, 2) + Math.pow(y - enemyCenterY, 2));
+
+            if (dist <= hitRadius + Math.max(rect.width, rect.height) / 2) {
+                // Kill this enemy!
+                playSound('sgun1');
+                createEnemyGibs(enemyCenterX, enemyCenterY);
+
+                enemy.style.animation = 'enemyDeath 0.2s ease-out forwards';
+                activeEnemies--;
+                setTimeout(() => enemy.remove(), 200);
+
+                // Increment kills
+                totalKills++;
+                localStorage.setItem('zaparena_total_kills', totalKills.toString());
+
+                if (window.ZapArena && window.ZapArena.updateKillsDisplay) {
+                    window.ZapArena.updateKillsDisplay();
+                }
+
+                // SECRET #5 check
+                if (totalKills === 69 && !secret5Found) {
+                    triggerSecret5(enemyCenterX, enemyCenterY);
+                }
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Kill all enemies along a path (for explosive weapons)
+    // Returns count of enemies killed
+    function killEnemiesAlongPath(startX, startY, endX, endY, explosionRadius) {
+        explosionRadius = explosionRadius || 100;
+        let killCount = 0;
+
+        const enemies = document.querySelectorAll('.quake-enemy');
+        for (const enemy of enemies) {
+            const rect = enemy.getBoundingClientRect();
+            const enemyCenterX = rect.left + rect.width / 2;
+            const enemyCenterY = rect.top + rect.height / 2;
+
+            // Check distance from enemy to the line segment
+            const distToLine = pointToLineDistance(enemyCenterX, enemyCenterY, startX, startY, endX, endY);
+
+            if (distToLine <= explosionRadius + Math.max(rect.width, rect.height) / 2) {
+                playSound('sgun1');
+                createEnemyGibs(enemyCenterX, enemyCenterY);
+
+                enemy.style.animation = 'enemyDeath 0.2s ease-out forwards';
+                activeEnemies--;
+                setTimeout(() => enemy.remove(), 200);
+
+                totalKills++;
+                localStorage.setItem('zaparena_total_kills', totalKills.toString());
+
+                if (window.ZapArena && window.ZapArena.updateKillsDisplay) {
+                    window.ZapArena.updateKillsDisplay();
+                }
+
+                if (totalKills === 69 && !secret5Found) {
+                    triggerSecret5(enemyCenterX, enemyCenterY);
+                }
+
+                killCount++;
+            }
+        }
+        return killCount;
+    }
+
+    // Helper: Calculate distance from point to line segment
+    function pointToLineDistance(px, py, x1, y1, x2, y2) {
+        const A = px - x1;
+        const B = py - y1;
+        const C = x2 - x1;
+        const D = y2 - y1;
+
+        const dot = A * C + B * D;
+        const lenSq = C * C + D * D;
+        let param = -1;
+
+        if (lenSq !== 0) {
+            param = dot / lenSq;
+        }
+
+        let xx, yy;
+
+        if (param < 0) {
+            xx = x1;
+            yy = y1;
+        } else if (param > 1) {
+            xx = x2;
+            yy = y2;
+        } else {
+            xx = x1 + param * C;
+            yy = y1 + param * D;
+        }
+
+        const dx = px - xx;
+        const dy = py - yy;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // Expose API for arsenal weapons
+    window.ZapArenaEnemies = {
+        killAtPosition: killEnemyAtPosition,
+        killAlongPath: killEnemiesAlongPath,
+        getActiveCount: function() { return activeEnemies; },
+        isPeaceMode: function() { return peaceModeActive; }
+    };
+
     // Start when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

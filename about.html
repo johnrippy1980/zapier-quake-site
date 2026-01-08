@@ -362,6 +362,57 @@
             color: var(--accent-orange);
             text-decoration: none;
         }
+
+        /* ===== GIB SPRITES (CSS-based blood splatters) ===== */
+        .gib-splatter {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50;
+        }
+        .gib-chunk {
+            position: absolute;
+            background: radial-gradient(ellipse at center, #8B0000 0%, #5a0000 60%, transparent 100%);
+            border-radius: 50% 40% 50% 40%;
+            opacity: 0.8;
+        }
+        .gib-1 {
+            width: 8px;
+            height: 6px;
+            animation: gibFloat1 4s ease-in-out infinite;
+        }
+        .gib-2 {
+            width: 12px;
+            height: 10px;
+            animation: gibFloat2 5s ease-in-out infinite;
+        }
+        .gib-3 {
+            width: 6px;
+            height: 8px;
+            animation: gibFloat3 3.5s ease-in-out infinite;
+        }
+        @keyframes gibFloat1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(3px, -5px) rotate(10deg); }
+        }
+        @keyframes gibFloat2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-4px, -3px) rotate(-15deg); }
+        }
+        @keyframes gibFloat3 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(2px, -4px) rotate(5deg); }
+        }
+        /* Gib placement areas */
+        .gib-area-1 { top: 15%; left: 5%; }
+        .gib-area-2 { top: 45%; right: 3%; }
+        .gib-area-3 { top: 75%; left: 8%; }
+        .gib-area-4 { top: 30%; right: 6%; }
+        .gib-area-5 { top: 60%; left: 2%; }
+        .gib-area-6 { top: 85%; right: 4%; }
+
+        @media (max-width: 768px) {
+            .gib-splatter { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -380,6 +431,35 @@
     <div class="crt-overlay"></div>
     <div class="vignette"></div>
     <div class="pain-flash"></div>
+
+    <!-- Gib Splatters -->
+    <div class="gib-splatter gib-area-1">
+        <div class="gib-chunk gib-1" style="top: 0; left: 0;"></div>
+        <div class="gib-chunk gib-2" style="top: 10px; left: 15px;"></div>
+        <div class="gib-chunk gib-3" style="top: 5px; left: 8px;"></div>
+    </div>
+    <div class="gib-splatter gib-area-2">
+        <div class="gib-chunk gib-2" style="top: 0; left: 0;"></div>
+        <div class="gib-chunk gib-1" style="top: 12px; left: 8px;"></div>
+    </div>
+    <div class="gib-splatter gib-area-3">
+        <div class="gib-chunk gib-3" style="top: 0; left: 0;"></div>
+        <div class="gib-chunk gib-2" style="top: 8px; left: 12px;"></div>
+        <div class="gib-chunk gib-1" style="top: 3px; left: 20px;"></div>
+    </div>
+    <div class="gib-splatter gib-area-4">
+        <div class="gib-chunk gib-1" style="top: 0; left: 0;"></div>
+        <div class="gib-chunk gib-3" style="top: 15px; left: 5px;"></div>
+    </div>
+    <div class="gib-splatter gib-area-5">
+        <div class="gib-chunk gib-2" style="top: 0; left: 0;"></div>
+        <div class="gib-chunk gib-1" style="top: 6px; left: 18px;"></div>
+        <div class="gib-chunk gib-3" style="top: 12px; left: 10px;"></div>
+    </div>
+    <div class="gib-splatter gib-area-6">
+        <div class="gib-chunk gib-3" style="top: 0; left: 0;"></div>
+        <div class="gib-chunk gib-2" style="top: 10px; left: 14px;"></div>
+    </div>
 
     <!-- Navigation -->
     <nav class="nav">

@@ -2,6 +2,7 @@
 // Spawns random enemies across all pages with authentic Quake sounds
 // Difficulty affects spawn rate: Easy=rare, Normal=occasional, Hard=frequent, Nightmare=swarm
 // SECRET #5: Kill 69 enemies for "You just gibbed everywhere!"
+// PEACE MODE: When all 5 secrets found, enemies become unicorns and puppies!
 
 (function() {
     'use strict';
@@ -9,6 +10,19 @@
     // Track total kills across sessions (persistent)
     let totalKills = parseInt(localStorage.getItem('zaparena_total_kills') || '0');
     let secret5Found = localStorage.getItem('zaparena_secret5') === 'true';
+
+    // Check if all 5 secrets have been found (Peace Mode)
+    function allSecretsFound() {
+        for (let i = 1; i <= 5; i++) {
+            if (localStorage.getItem('zaparena_secret' + i) !== 'true') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Peace Mode flag - checked at init and when secrets change
+    let peaceModeActive = allSecretsFound();
 
     // Difficulty settings - spawn intervals in milliseconds
     const DIFFICULTY_SETTINGS = {
@@ -81,6 +95,45 @@
         }
     ];
 
+    // PEACE MODE: Friendly creatures that replace enemies when all secrets found
+    const FRIENDLY_CREATURES = [
+        {
+            name: 'unicorn',
+            emoji: '🦄',
+            size: 80,
+            spawnSound: 'pickup',  // Use pickup sound as "sparkle"
+            petSound: 'secret'     // Happy sound when petted
+        },
+        {
+            name: 'puppy',
+            emoji: '🐕',
+            size: 70,
+            spawnSound: 'pickup',
+            petSound: 'secret'
+        },
+        {
+            name: 'kitten',
+            emoji: '🐱',
+            size: 65,
+            spawnSound: 'pickup',
+            petSound: 'secret'
+        },
+        {
+            name: 'bunny',
+            emoji: '🐰',
+            size: 60,
+            spawnSound: 'pickup',
+            petSound: 'secret'
+        },
+        {
+            name: 'rainbow',
+            emoji: '🌈',
+            size: 100,
+            spawnSound: 'pickup',
+            petSound: 'secret'
+        }
+    ];
+
     // Audio cache
     const audioCache = {};
 
@@ -145,6 +198,150 @@
         }
 
         playSound('gib');
+    }
+
+    // PEACE MODE: Create hearts and sparkles instead of blood
+    function createLoveExplosion(x, y) {
+        const hearts = ['❤️', '💖', '💕', '✨', '⭐', '🌟', '💫', '🎀'];
+        const particleCount = 12 + Math.floor(Math.random() * 8);
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'love-particle';
+            particle.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+            const size = 20 + Math.random() * 20;
+            particle.style.fontSize = size + 'px';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 80 + Math.random() * 150;
+            const endX = Math.cos(angle) * velocity;
+            const endY = Math.sin(angle) * velocity - 80;
+
+            particle.style.setProperty('--end-x', endX + 'px');
+            particle.style.setProperty('--end-y', endY + 'px');
+            particle.style.setProperty('--rotation', (Math.random() * 360) + 'deg');
+
+            document.body.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 1500);
+        }
+
+        playSound('secret');
+    }
+
+    // PEACE MODE: Spawn a friendly creature instead of an enemy
+    function spawnFriendlyCreature() {
+        const settings = getSettings();
+
+        if (activeEnemies >= settings.maxActive) {
+            return;
+        }
+
+        const creature = FRIENDLY_CREATURES[Math.floor(Math.random() * FRIENDLY_CREATURES.length)];
+
+        const el = document.createElement('div');
+        el.className = 'friendly-creature';
+        el.dataset.creature = creature.name;
+
+        // Random position
+        const x = 50 + Math.random() * (window.innerWidth - creature.size - 100);
+        const y = 50 + Math.random() * (window.innerHeight - creature.size - 100);
+
+        el.style.cssText = `
+            position: fixed;
+            left: ${x}px;
+            top: ${y}px;
+            width: ${creature.size}px;
+            height: ${creature.size}px;
+            font-size: ${creature.size * 0.8}px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9000;
+            animation: friendlySpawn 0.5s ease-out forwards;
+            filter: drop-shadow(0 0 15px rgba(255, 200, 255, 0.8));
+            user-select: none;
+        `;
+        el.textContent = creature.emoji;
+
+        playSound(creature.spawnSound);
+
+        activeEnemies++;
+
+        // Click to pet (instead of kill!)
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const rect = el.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // Hearts explosion instead of blood
+            createLoveExplosion(centerX, centerY);
+
+            // Happy bounce animation
+            el.style.animation = 'friendlyPet 0.5s ease-out';
+
+            // Show happy message
+            const msg = document.createElement('div');
+            msg.className = 'pet-message';
+            msg.textContent = ['Good boy!', 'So cute!', 'Aww!', '*happiness*', 'Friend!'][Math.floor(Math.random() * 5)];
+            msg.style.cssText = `
+                position: fixed;
+                left: ${centerX}px;
+                top: ${centerY - 40}px;
+                transform: translateX(-50%);
+                font-family: 'Press Start 2P', monospace;
+                font-size: 0.6rem;
+                color: #ff69b4;
+                text-shadow: 2px 2px 0 #fff;
+                z-index: 9001;
+                animation: petMessageFloat 1s ease-out forwards;
+                pointer-events: none;
+            `;
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 1000);
+
+            // Reset animation after bounce
+            setTimeout(() => {
+                el.style.animation = 'friendlyBounce 2s ease-in-out infinite';
+            }, 500);
+        });
+
+        document.body.appendChild(el);
+
+        // Friendly wandering (more playful movement)
+        const lifespan = 12000 + Math.random() * 15000;
+        const wanderInterval = setInterval(() => {
+            if (!document.body.contains(el)) {
+                clearInterval(wanderInterval);
+                return;
+            }
+
+            const currentX = parseFloat(el.style.left);
+            const currentY = parseFloat(el.style.top);
+            const newX = Math.max(0, Math.min(window.innerWidth - creature.size, currentX + (Math.random() - 0.5) * 100));
+            const newY = Math.max(0, Math.min(window.innerHeight - creature.size, currentY + (Math.random() - 0.5) * 100));
+
+            el.style.transition = 'left 1s ease-in-out, top 1s ease-in-out';
+            el.style.left = newX + 'px';
+            el.style.top = newY + 'px';
+        }, 2500);
+
+        // Friendly fade out (not death!)
+        setTimeout(() => {
+            clearInterval(wanderInterval);
+            if (document.body.contains(el)) {
+                el.style.animation = 'friendlyBye 1s ease-out forwards';
+                activeEnemies--;
+                setTimeout(() => el.remove(), 1000);
+            }
+        }, lifespan);
     }
 
     // Spawn an enemy
@@ -492,8 +689,169 @@
                 color: #ffcc00;
                 margin-top: 20px;
             }
+
+            /* ===== PEACE MODE STYLES ===== */
+            @keyframes friendlySpawn {
+                0% {
+                    opacity: 0;
+                    transform: scale(0) rotate(-180deg);
+                }
+                50% {
+                    transform: scale(1.3) rotate(10deg);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1) rotate(0deg);
+                }
+            }
+
+            @keyframes friendlyBounce {
+                0%, 100% {
+                    transform: translateY(0) scale(1);
+                }
+                50% {
+                    transform: translateY(-10px) scale(1.1);
+                }
+            }
+
+            @keyframes friendlyPet {
+                0% { transform: scale(1); }
+                25% { transform: scale(1.3) rotate(-10deg); }
+                50% { transform: scale(1.4) rotate(10deg); }
+                75% { transform: scale(1.2) rotate(-5deg); }
+                100% { transform: scale(1) rotate(0deg); }
+            }
+
+            @keyframes friendlyBye {
+                0% {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1.2) translateY(-20px);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(0.5) translateY(-50px);
+                }
+            }
+
+            @keyframes loveFloat {
+                0% {
+                    opacity: 1;
+                    transform: translate(0, 0) rotate(0deg) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translate(var(--end-x), var(--end-y)) rotate(var(--rotation)) scale(0.5);
+                }
+            }
+
+            @keyframes petMessageFloat {
+                0% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-30px);
+                }
+            }
+
+            .friendly-creature {
+                animation: friendlyBounce 2s ease-in-out infinite;
+                transition: filter 0.2s;
+            }
+
+            .friendly-creature:hover {
+                filter: drop-shadow(0 0 25px rgba(255, 150, 255, 1)) brightness(1.2) !important;
+                transform: scale(1.1);
+            }
+
+            .love-particle {
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                animation: loveFloat 1.5s ease-out forwards;
+            }
+
+            /* Peace Mode Banner (shown once when all secrets found) */
+            .peace-mode-banner {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, #ff69b4 0%, #ffb6c1 50%, #87ceeb 100%);
+                border: 4px solid #fff;
+                padding: 40px 60px;
+                z-index: 10001;
+                text-align: center;
+                box-shadow: 0 0 100px rgba(255, 105, 180, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.3);
+                animation: peaceBannerPulse 0.5s ease-in-out infinite;
+                font-family: 'Press Start 2P', monospace;
+                border-radius: 20px;
+            }
+
+            @keyframes peaceBannerPulse {
+                0%, 100% { transform: translate(-50%, -50%) scale(1); }
+                50% { transform: translate(-50%, -50%) scale(1.02); }
+            }
+
+            @keyframes peaceBannerFade {
+                0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            }
+
+            .peace-mode-banner h2 {
+                font-size: 1.5rem;
+                color: #fff;
+                text-shadow: 3px 3px 0 #ff69b4, -1px -1px 0 #87ceeb;
+                margin-bottom: 15px;
+            }
+
+            .peace-mode-banner p {
+                font-size: 0.7rem;
+                color: #fff;
+                text-shadow: 2px 2px 0 #ff69b4;
+                margin-bottom: 10px;
+            }
+
+            .peace-mode-banner .emoji-row {
+                font-size: 2rem;
+                margin: 15px 0;
+            }
         `;
         document.head.appendChild(style);
+    }
+
+    // Show peace mode banner (once per session)
+    function showPeaceModeBanner() {
+        // Only show once per session
+        if (sessionStorage.getItem('zaparena_peace_banner_shown')) return;
+        sessionStorage.setItem('zaparena_peace_banner_shown', 'true');
+
+        playSound('secret');
+
+        const banner = document.createElement('div');
+        banner.className = 'peace-mode-banner';
+        banner.innerHTML = `
+            <h2>PEACE MODE UNLOCKED!</h2>
+            <div class="emoji-row">🦄 🐕 🐱 🐰 🌈</div>
+            <p>All 5 secrets found!</p>
+            <p>Enemies are now friends!</p>
+        `;
+        document.body.appendChild(banner);
+
+        // Spawn a bunch of friendly creatures to celebrate
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => spawnFriendlyCreature(), i * 300);
+        }
+
+        setTimeout(() => {
+            banner.style.animation = 'peaceBannerFade 0.5s ease-out forwards';
+            setTimeout(() => banner.remove(), 500);
+        }, 4000);
     }
 
     // Initialize enemy spawning system
@@ -507,8 +865,30 @@
         preloadSound('guncock');
         preloadSound('sgun1');
         preloadSound('gib');
+        preloadSound('pickup');
+        preloadSound('secret');
 
-        // Spawn enemies at random intervals based on difficulty
+        // Check for peace mode
+        peaceModeActive = allSecretsFound();
+
+        // Show peace mode banner if all secrets found
+        if (peaceModeActive) {
+            showPeaceModeBanner();
+        }
+
+        // Spawn function - enemies OR friendly creatures based on peace mode
+        function spawnCreature() {
+            // Re-check peace mode in case secrets were found during session
+            peaceModeActive = allSecretsFound();
+
+            if (peaceModeActive) {
+                spawnFriendlyCreature();
+            } else {
+                spawnEnemy();
+            }
+        }
+
+        // Spawn at random intervals based on difficulty
         function scheduleNextSpawn() {
             const settings = getSettings();
             const delay = settings.minDelay + Math.random() * (settings.maxDelay - settings.minDelay);
@@ -516,7 +896,7 @@
             setTimeout(() => {
                 // Only spawn if document is visible
                 if (!document.hidden) {
-                    spawnEnemy();
+                    spawnCreature();
                 }
                 scheduleNextSpawn();
             }, delay);
@@ -528,21 +908,34 @@
 
         setTimeout(() => {
             if (!document.hidden) {
-                spawnEnemy();
+                spawnCreature();
             }
             scheduleNextSpawn();
         }, initialDelay);
 
-        // Listen for difficulty changes
+        // Listen for storage changes (secrets found, difficulty changes)
         window.addEventListener('storage', function(e) {
             if (e.key === 'zaparena_difficulty') {
                 console.log('[Quake Enemy System] Difficulty changed to:', e.newValue);
             }
+            // Check if a secret was found and if we should activate peace mode
+            if (e.key && e.key.startsWith('zaparena_secret')) {
+                const wasInPeaceMode = peaceModeActive;
+                peaceModeActive = allSecretsFound();
+                if (!wasInPeaceMode && peaceModeActive) {
+                    console.log('[Quake Enemy System] ALL SECRETS FOUND! PEACE MODE ACTIVATED!');
+                    showPeaceModeBanner();
+                }
+            }
         });
 
         const difficulty = getDifficulty();
-        console.log('[Quake Enemy System] Initialized at difficulty:', difficulty);
-        console.log('[Quake Enemy System] Spawn interval:', settings.minDelay/1000 + '-' + settings.maxDelay/1000 + 's, Max enemies:', settings.maxActive);
+        if (peaceModeActive) {
+            console.log('[Quake Enemy System] PEACE MODE ACTIVE - Spawning unicorns and puppies!');
+        } else {
+            console.log('[Quake Enemy System] Initialized at difficulty:', difficulty);
+            console.log('[Quake Enemy System] Spawn interval:', settings.minDelay/1000 + '-' + settings.maxDelay/1000 + 's, Max enemies:', settings.maxActive);
+        }
     }
 
     // Start when DOM is ready

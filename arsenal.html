@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arsenal | Zap Arena - Pick Your Weapon</title>
+    <link rel="icon" type="image/jpeg" href="images/quake-box-art.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/quake-hud.css">
+    <style>
+        :root {
+            --bg-dark: #0f0b07;
+            --bg-card: #1f170b;
+            --accent-orange: #8f4b23;
+            --accent-gold: #a77b3b;
+            --accent-red: #8b0000;
+            --text-primary: #c7a35b;
+            --text-secondary: #7f5f3b;
+            --border: #3b2b17;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* CRT Scanlines */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.25),
+                rgba(0, 0, 0, 0.25) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            opacity: 0.5;
+        }
+
+        /* Blood Vignette */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9997;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(80, 20, 10, 0.4) 100%);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(180deg, #1f170b 0%, #0f0b07 100%);
+            border-bottom: 2px solid #4b371b;
+            z-index: 1001;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .nav-logo img {
+            height: 40px;
+            width: auto;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-link {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+            padding: 8px 12px;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            color: var(--accent-orange);
+            border-color: var(--accent-orange);
+            background: rgba(143, 75, 35, 0.1);
+        }
+
+        /* Main Content */
+        main {
+            padding: 100px 20px 150px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--accent-orange);
+            text-shadow: 4px 4px 0 #000, 0 0 30px rgba(143, 75, 35, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        /* Target URL Input */
+        .target-section {
+            background: var(--bg-card);
+            border: 3px solid var(--border);
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .target-label {
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            display: block;
+        }
+        .target-input-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .target-input {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+            padding: 15px 20px;
+            background: #0a0500;
+            border: 2px solid var(--accent-orange);
+            color: var(--text-primary);
+            width: 400px;
+            max-width: 100%;
+        }
+        .target-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(143, 75, 35, 0.5);
+        }
+        .target-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Weapon Grid */
+        .weapon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .weapon-card {
+            background: linear-gradient(180deg, #2a1f13 0%, #1a1209 100%);
+            border: 3px solid var(--border);
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .weapon-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .weapon-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(143, 75, 35, 0.4);
+        }
+        .weapon-card:hover::before {
+            opacity: 1;
+        }
+        .weapon-card.selected {
+            border-color: #cf6b2f;
+            box-shadow: 0 0 30px rgba(207, 107, 47, 0.6);
+        }
+        .weapon-card.firing {
+            animation: weaponRecoil 0.15s ease-out;
+        }
+        @keyframes weaponRecoil {
+            0% { transform: translateY(-5px); }
+            50% { transform: translateY(-5px) translateX(-3px); }
+            100% { transform: translateY(-5px); }
+        }
+
+        .weapon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .weapon-slot {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            text-shadow: 2px 2px 0 #000;
+        }
+        .weapon-name {
+            font-size: 0.9rem;
+            color: var(--accent-orange);
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .weapon-visual {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* CSS Weapon Sprites */
+        .weapon-sprite {
+            font-size: 4rem;
+            filter: drop-shadow(0 0 10px rgba(143, 75, 35, 0.5));
+            transition: transform 0.2s;
+        }
+        .weapon-card:hover .weapon-sprite {
+            transform: scale(1.1);
+        }
+
+        .weapon-desc {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .weapon-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.5rem;
+            color: var(--accent-gold);
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+
+        /* Projectile Animation Container */
+        .projectile-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9995;
+            overflow: hidden;
+        }
+
+        /* Projectile Styles */
+        .projectile {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* Axe Swing */
+        .axe-swing {
+            width: 100px;
+            height: 100px;
+            border: 4px solid #8B7355;
+            border-radius: 50%;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            animation: axeSwing 0.3s ease-out forwards;
+        }
+        @keyframes axeSwing {
+            0% { transform: rotate(0deg) scale(0.5); opacity: 1; }
+            100% { transform: rotate(180deg) scale(1.5); opacity: 0; }
+        }
+
+        /* Shotgun Pellets */
+        .pellet {
+            width: 6px;
+            height: 6px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #FFD700;
+            animation: pelletFly 0.4s linear forwards;
+        }
+        @keyframes pelletFly {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(800px); }
+        }
+
+        /* Nails */
+        .nail {
+            width: 20px;
+            height: 6px;
+            background: linear-gradient(90deg, #8B7355 0%, #5D4E37 50%, #3D3225 100%);
+            border-radius: 0 2px 2px 0;
+            box-shadow: 0 0 8px rgba(207, 107, 47, 0.6);
+            animation: nailFly 0.35s linear forwards;
+        }
+        .nail::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 4px solid transparent;
+            border-right: 5px solid #8B7355;
+        }
+        @keyframes nailFly {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(800px); }
+        }
+
+        /* Grenade */
+        .grenade {
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #5a5a5a, #2a2a2a);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(100, 100, 100, 0.5);
+            animation: grenadeBounce 0.8s ease-out forwards;
+        }
+        @keyframes grenadeBounce {
+            0% { transform: translate(0, 0); }
+            30% { transform: translate(200px, 50px); }
+            50% { transform: translate(350px, 20px); }
+            70% { transform: translate(500px, 60px); }
+            100% { transform: translate(700px, 0) scale(3); opacity: 0; }
+        }
+
+        /* Rocket */
+        .rocket {
+            width: 30px;
+            height: 12px;
+            background: linear-gradient(90deg, #4a4a4a, #6a6a6a, #4a4a4a);
+            border-radius: 0 6px 6px 0;
+            position: relative;
+            animation: rocketFly 0.5s linear forwards;
+        }
+        .rocket::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff6600, #ff3300, transparent);
+            border-radius: 50%;
+            animation: rocketFlame 0.1s infinite;
+        }
+        @keyframes rocketFlame {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); }
+        }
+        @keyframes rocketFly {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(800px); }
+        }
+
+        /* Lightning */
+        .lightning {
+            width: 800px;
+            height: 4px;
+            background: linear-gradient(90deg, #00ffff, #ffffff, #00ffff);
+            box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+            animation: lightningZap 0.3s ease-out forwards;
+        }
+        @keyframes lightningZap {
+            0% { opacity: 1; width: 0; }
+            30% { opacity: 1; width: 800px; }
+            100% { opacity: 0; width: 800px; }
+        }
+
+        /* Muzzle Flash */
+        .muzzle-flash {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255, 200, 100, 0.9) 0%, rgba(255, 150, 50, 0.6) 40%, transparent 70%);
+            border-radius: 50%;
+            animation: muzzleFlash 0.1s ease-out forwards;
+        }
+        @keyframes muzzleFlash {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* Explosion */
+        .explosion {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #ffff00 0%, #ff6600 30%, #ff0000 60%, transparent 70%);
+            border-radius: 50%;
+            animation: explode 0.4s ease-out forwards;
+        }
+        @keyframes explode {
+            0% { transform: scale(0.3); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Screen Effects */
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.05s;
+        }
+        .screen-flash.active {
+            opacity: 1;
+        }
+        .screen-flash.yellow {
+            background: rgba(255, 200, 0, 0.3);
+        }
+        .screen-flash.orange {
+            background: rgba(255, 100, 0, 0.3);
+        }
+        .screen-flash.blue {
+            background: rgba(0, 200, 255, 0.4);
+        }
+
+        /* Fire Button */
+        .fire-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .fire-button {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 1rem;
+            padding: 20px 60px;
+            background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%);
+            color: #ffcc00;
+            border: 3px solid #cf6b2f;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .fire-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(139, 0, 0, 0.8);
+        }
+        .fire-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Damage Report */
+        .damage-report {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            display: none;
+        }
+        .damage-report.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .damage-title {
+            font-size: 0.8rem;
+            color: #ff0000;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 10px;
+        }
+        .damage-text {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+        .damage-amount {
+            font-size: 2rem;
+            color: #ffcc00;
+            text-shadow: 3px 3px 0 #000;
+            margin: 15px 0;
+        }
+
+        /* Weapon Images */
+        .weapon-img {
+            max-width: 150px;
+            max-height: 100px;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 10px rgba(143, 75, 35, 0.5));
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .page-title { font-size: 1.2rem; }
+            .target-input { width: 100%; }
+            .weapon-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- CRT Effects -->
+    <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+    <div class="screen-flash" id="screenFlash"></div>
+    <div class="projectile-layer" id="projectileLayer"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="nav-logo"><img src="images/quake-logo.png" alt="Zap Arena"></a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">HOME</a>
+            <a href="about.html" class="nav-link">ABOUT</a>
+            <a href="play-quake.html" class="nav-link">PLAY QUAKE</a>
+        </div>
+    </nav>
+
+    <main>
+        <h1 class="page-title">ARSENAL</h1>
+        <p class="page-subtitle">SELECT YOUR WEAPON AND CHOOSE YOUR TARGET</p>
+
+        <!-- Target Input -->
+        <div class="target-section">
+            <label class="target-label">ENTER TARGET URL:</label>
+            <div class="target-input-container">
+                <input type="text" class="target-input" id="targetUrl" placeholder="https://example.com" value="">
+            </div>
+        </div>
+
+        <!-- Weapon Grid -->
+        <div class="weapon-grid">
+            <!-- 1. Axe -->
+            <div class="weapon-card" data-weapon="axe" data-slot="1">
+                <div class="weapon-header">
+                    <span class="weapon-slot">1</span>
+                    <span class="weapon-name">AXE</span>
+                </div>
+                <div class="weapon-visual">
+                    <span class="weapon-sprite">&#129683;</span>
+                </div>
+                <p class="weapon-desc">Emergency melee weapon. No ammo required. Gets the job done up close.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 20</span>
+                    <span>RANGE: MELEE</span>
+                    <span>AMMO: N/A</span>
+                </div>
+            </div>
+
+            <!-- 2. Shotgun -->
+            <div class="weapon-card" data-weapon="shotgun" data-slot="2">
+                <div class="weapon-header">
+                    <span class="weapon-slot">2</span>
+                    <span class="weapon-name">SHOTGUN</span>
+                </div>
+                <div class="weapon-visual">
+                    <span class="weapon-sprite">&#128299;</span>
+                </div>
+                <p class="weapon-desc">Reliable pump-action. Good damage at close to medium range with shell spread.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 24</span>
+                    <span>RANGE: SHORT</span>
+                    <span>AMMO: SHELLS</span>
+                </div>
+            </div>
+
+            <!-- 3. Super Shotgun -->
+            <div class="weapon-card" data-weapon="sshotgun" data-slot="3">
+                <div class="weapon-header">
+                    <span class="weapon-slot">3</span>
+                    <span class="weapon-name">SUPER SHOTGUN</span>
+                </div>
+                <div class="weapon-visual">
+                    <span class="weapon-sprite">&#128299;&#128299;</span>
+                </div>
+                <p class="weapon-desc">Double-barrel devastation. Fires both barrels for massive close-range damage.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 56</span>
+                    <span>RANGE: SHORT</span>
+                    <span>AMMO: SHELLS x2</span>
+                </div>
+            </div>
+
+            <!-- 4. Nailgun -->
+            <div class="weapon-card selected" data-weapon="nailgun" data-slot="4">
+                <div class="weapon-header">
+                    <span class="weapon-slot">4</span>
+                    <span class="weapon-name">NAILGUN</span>
+                </div>
+                <div class="weapon-visual">
+                    <img src="images/nailgun.png" alt="Nailgun" class="weapon-img">
+                </div>
+                <p class="weapon-desc">Rapid-fire nail driver. Perfect for sustained damage against tough enemies.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 9/nail</span>
+                    <span>RANGE: MEDIUM</span>
+                    <span>AMMO: NAILS</span>
+                </div>
+            </div>
+
+            <!-- 5. Super Nailgun (Perforator) -->
+            <div class="weapon-card" data-weapon="snailgun" data-slot="5">
+                <div class="weapon-header">
+                    <span class="weapon-slot">5</span>
+                    <span class="weapon-name">PERFORATOR</span>
+                </div>
+                <div class="weapon-visual">
+                    <img src="images/nailgun.png" alt="Perforator" class="weapon-img" style="filter: drop-shadow(0 0 10px rgba(143, 75, 35, 0.5)) hue-rotate(20deg) brightness(1.2);">
+                </div>
+                <p class="weapon-desc">Heavy-duty nail machine gun. Double fire rate, double the carnage.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 18/nail</span>
+                    <span>RANGE: MEDIUM</span>
+                    <span>AMMO: NAILS x2</span>
+                </div>
+            </div>
+
+            <!-- 6. Grenade Launcher -->
+            <div class="weapon-card" data-weapon="grenade" data-slot="6">
+                <div class="weapon-header">
+                    <span class="weapon-slot">6</span>
+                    <span class="weapon-name">GRENADE LAUNCHER</span>
+                </div>
+                <div class="weapon-visual">
+                    <span class="weapon-sprite">&#128163;</span>
+                </div>
+                <p class="weapon-desc">Bouncing explosive death. Grenades detonate on contact with enemies or after delay.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 120</span>
+                    <span>RANGE: MEDIUM</span>
+                    <span>AMMO: ROCKETS</span>
+                </div>
+            </div>
+
+            <!-- 7. Rocket Launcher -->
+            <div class="weapon-card" data-weapon="rocket" data-slot="7">
+                <div class="weapon-header">
+                    <span class="weapon-slot">7</span>
+                    <span class="weapon-name">ROCKET LAUNCHER</span>
+                </div>
+                <div class="weapon-visual">
+                    <span class="weapon-sprite">&#128640;</span>
+                </div>
+                <p class="weapon-desc">The classic. Direct hit rockets with splash damage. Watch your back.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 100-120</span>
+                    <span>RANGE: LONG</span>
+                    <span>AMMO: ROCKETS</span>
+                </div>
+            </div>
+
+            <!-- 8. Thunderbolt (Lightning Gun) -->
+            <div class="weapon-card" data-weapon="lightning" data-slot="8">
+                <div class="weapon-header">
+                    <span class="weapon-slot">8</span>
+                    <span class="weapon-name">THUNDERBOLT</span>
+                </div>
+                <div class="weapon-visual">
+                    <span class="weapon-sprite">&#9889;</span>
+                </div>
+                <p class="weapon-desc">Continuous lightning beam. Devastating DPS but drains cells fast. Don't use underwater.</p>
+                <div class="weapon-stats">
+                    <span>DMG: 30/tick</span>
+                    <span>RANGE: MEDIUM</span>
+                    <span>AMMO: CELLS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fire Button -->
+        <div class="fire-section">
+            <button class="fire-button" id="fireButton">FIRE!</button>
+        </div>
+
+        <!-- Damage Report -->
+        <div class="damage-report" id="damageReport">
+            <div class="damage-title">TARGET FRAGGED!</div>
+            <div class="damage-amount" id="damageAmount">0</div>
+            <p class="damage-text" id="damageText">Loading...</p>
+        </div>
+    </main>
+
+    <!-- Sound Effects -->
+    <audio id="snd-axe" src="audio/ax1.wav" preload="auto"></audio>
+    <audio id="snd-shotgun" src="audio/shotgn2.wav" preload="auto"></audio>
+    <audio id="snd-sshotgun" src="audio/sgun1.wav" preload="auto"></audio>
+    <audio id="snd-nailgun" src="audio/nailgun.wav" preload="auto"></audio>
+    <audio id="snd-snailgun" src="audio/spike2.wav" preload="auto"></audio>
+    <audio id="snd-grenade" src="audio/grenade.wav" preload="auto"></audio>
+    <audio id="snd-rocket" src="audio/rocket1i.wav" preload="auto"></audio>
+    <audio id="snd-lightning" src="audio/lstart.wav" preload="auto"></audio>
+    <audio id="snd-explosion" src="audio/r_exp3.wav" preload="auto"></audio>
+    <audio id="snd-lhit" src="audio/lhit.wav" preload="auto"></audio>
+    <audio id="snd-ric" src="audio/ric1.wav" preload="auto"></audio>
+    <audio id="snd-tink" src="audio/tink1.wav" preload="auto"></audio>
+    <audio id="snd-pickup" src="audio/pickup.wav" preload="auto"></audio>
+
+    <script>
+        // State
+        let selectedWeapon = 'nailgun';
+        const weaponCards = document.querySelectorAll('.weapon-card');
+        const fireButton = document.getElementById('fireButton');
+        const targetInput = document.getElementById('targetUrl');
+        const projectileLayer = document.getElementById('projectileLayer');
+        const screenFlash = document.getElementById('screenFlash');
+        const damageReport = document.getElementById('damageReport');
+        const damageAmount = document.getElementById('damageAmount');
+        const damageText = document.getElementById('damageText');
+
+        // Sound helper
+        function playSound(id) {
+            const snd = document.getElementById('snd-' + id);
+            if (snd) {
+                snd.currentTime = 0;
+                snd.play().catch(() => {});
+            }
+        }
+
+        // Flash screen
+        function flashScreen(color, duration = 100) {
+            screenFlash.className = 'screen-flash active ' + color;
+            setTimeout(() => {
+                screenFlash.className = 'screen-flash';
+            }, duration);
+        }
+
+        // Weapon selection
+        weaponCards.forEach(card => {
+            card.addEventListener('click', () => {
+                weaponCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedWeapon = card.dataset.weapon;
+                playSound('pickup');
+            });
+        });
+
+        // Keyboard weapon selection (1-8)
+        document.addEventListener('keydown', (e) => {
+            if (e.target === targetInput) return;
+            const slot = parseInt(e.key);
+            if (slot >= 1 && slot <= 8) {
+                const card = document.querySelector(`[data-slot="${slot}"]`);
+                if (card) {
+                    weaponCards.forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedWeapon = card.dataset.weapon;
+                    playSound('pickup');
+                }
+            }
+        });
+
+        // Create projectile
+        function createProjectile(type, startX, startY) {
+            const el = document.createElement('div');
+            el.className = 'projectile ' + type;
+            el.style.left = startX + 'px';
+            el.style.top = startY + 'px';
+            projectileLayer.appendChild(el);
+
+            // Remove after animation
+            setTimeout(() => el.remove(), 1000);
+            return el;
+        }
+
+        // Fire weapon
+        function fireWeapon() {
+            const card = document.querySelector(`[data-weapon="${selectedWeapon}"]`);
+            if (!card) return;
+
+            // Recoil animation
+            card.classList.add('firing');
+            setTimeout(() => card.classList.remove('firing'), 150);
+
+            // Get starting position (from selected weapon card)
+            const rect = card.getBoundingClientRect();
+            const startX = rect.right;
+            const startY = rect.top + rect.height / 2;
+
+            switch (selectedWeapon) {
+                case 'axe':
+                    playSound('axe');
+                    createProjectile('axe-swing', startX - 50, startY - 50);
+                    flashScreen('orange', 50);
+                    break;
+
+                case 'shotgun':
+                    playSound('shotgun');
+                    flashScreen('yellow', 80);
+                    // Create spread of pellets
+                    for (let i = 0; i < 6; i++) {
+                        const pellet = createProjectile('pellet', startX, startY + (Math.random() - 0.5) * 40);
+                        pellet.style.animationDelay = (i * 0.02) + 's';
+                    }
+                    setTimeout(() => playSound('ric'), 200);
+                    break;
+
+                case 'sshotgun':
+                    playSound('sshotgun');
+                    flashScreen('yellow', 100);
+                    // Create larger spread
+                    for (let i = 0; i < 14; i++) {
+                        const pellet = createProjectile('pellet', startX, startY + (Math.random() - 0.5) * 80);
+                        pellet.style.animationDelay = (i * 0.015) + 's';
+                    }
+                    setTimeout(() => {
+                        playSound('ric');
+                        setTimeout(() => playSound('ric'), 50);
+                    }, 200);
+                    break;
+
+                case 'nailgun':
+                    playSound('nailgun');
+                    flashScreen('orange', 50);
+                    // Burst of nails
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            createProjectile('nail', startX, startY + (Math.random() - 0.5) * 20);
+                        }, i * 60);
+                    }
+                    setTimeout(() => playSound('tink'), 300);
+                    break;
+
+                case 'snailgun':
+                    playSound('snailgun');
+                    flashScreen('orange', 50);
+                    // Faster burst
+                    for (let i = 0; i < 10; i++) {
+                        setTimeout(() => {
+                            createProjectile('nail', startX, startY + (Math.random() - 0.5) * 30);
+                        }, i * 30);
+                    }
+                    setTimeout(() => playSound('tink'), 250);
+                    break;
+
+                case 'grenade':
+                    playSound('grenade');
+                    createProjectile('grenade', startX, startY);
+                    setTimeout(() => {
+                        playSound('explosion');
+                        flashScreen('orange', 150);
+                        createProjectile('explosion', startX + 600, startY - 50);
+                    }, 700);
+                    break;
+
+                case 'rocket':
+                    playSound('rocket');
+                    createProjectile('rocket', startX, startY - 6);
+                    flashScreen('orange', 80);
+                    setTimeout(() => {
+                        playSound('explosion');
+                        flashScreen('orange', 200);
+                        createProjectile('explosion', startX + 700, startY - 50);
+                    }, 450);
+                    break;
+
+                case 'lightning':
+                    playSound('lightning');
+                    flashScreen('blue', 300);
+                    const bolt = createProjectile('lightning', startX, startY - 2);
+                    setTimeout(() => playSound('lhit'), 100);
+                    break;
+            }
+        }
+
+        // Calculate damage
+        function calculateDamage() {
+            const baseDamage = {
+                axe: 20,
+                shotgun: 24,
+                sshotgun: 56,
+                nailgun: 45,
+                snailgun: 90,
+                grenade: 120,
+                rocket: 110,
+                lightning: 150
+            };
+
+            const crit = Math.random() > 0.8;
+            let dmg = baseDamage[selectedWeapon] || 50;
+            if (crit) dmg *= 2;
+
+            return { damage: dmg, critical: crit };
+        }
+
+        // Show damage report
+        function showDamageReport() {
+            const { damage, critical } = calculateDamage();
+            const url = targetInput.value || 'your target';
+
+            damageAmount.textContent = damage + (critical ? ' CRITICAL!' : '');
+            damageAmount.style.color = critical ? '#ff0000' : '#ffcc00';
+
+            const messages = [
+                `${url} took ${damage} damage!`,
+                `You fragged ${url} with the ${selectedWeapon}!`,
+                `Target eliminated. ${damage} damage dealt.`,
+                `${url} has been gibbed!`
+            ];
+
+            damageText.textContent = messages[Math.floor(Math.random() * messages.length)];
+            damageReport.classList.add('show');
+
+            setTimeout(() => {
+                damageReport.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fire button
+        fireButton.addEventListener('click', () => {
+            fireWeapon();
+            setTimeout(showDamageReport, 500);
+        });
+
+        // Spacebar to fire
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && e.target !== targetInput) {
+                e.preventDefault();
+                fireButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

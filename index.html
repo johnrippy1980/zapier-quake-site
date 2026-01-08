@@ -1397,6 +1397,8 @@
         // Create a fun "ploop" fart sound
         function playPloopSound() {
             if (!pooAudioCtx) pooAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (pooAudioCtx.state === 'suspended') pooAudioCtx.resume();
+            console.log('[Poo Sound] Playing ploop');
             const osc = pooAudioCtx.createOscillator();
             const gain = pooAudioCtx.createGain();
             osc.connect(gain);
@@ -1413,6 +1415,8 @@
         // Create a "splat" sound
         function playSplatSound() {
             if (!pooAudioCtx) pooAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (pooAudioCtx.state === 'suspended') pooAudioCtx.resume();
+            console.log('[Poo Sound] Playing splat');
             const bufferSize = pooAudioCtx.sampleRate * 0.15;
             const buffer = pooAudioCtx.createBuffer(1, bufferSize, pooAudioCtx.sampleRate);
             const data = buffer.getChannelData(0);
@@ -1440,6 +1444,7 @@
 
                 // In Peace Mode, play poo sounds instead of nailgun
                 if (isPeaceModeActive()) {
+                    console.log('[Poo-forator] Peace Mode active - playing poo sounds!');
                     // Play ploop sounds periodically
                     playPloopSound();
                     ploopInterval = setInterval(() => {

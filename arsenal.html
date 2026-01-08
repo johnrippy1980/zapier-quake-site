@@ -658,12 +658,194 @@
             background: rgba(139, 0, 0, 0.5);
         }
 
+        /* Footer */
+        footer {
+            background: #0a0500;
+            padding: 30px 20px 80px 20px;
+            text-align: center;
+            border-top: 2px solid var(--border);
+        }
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        footer a {
+            color: var(--accent-orange);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 1002;
+        }
+        .music-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            padding: 12px 16px;
+            background: linear-gradient(180deg, #271b0f 0%, #170f0b 100%);
+            color: #a77b3b;
+            border: 2px solid #4b371b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .music-btn:hover {
+            border-color: #8f4b23;
+            box-shadow: 0 0 20px rgba(143, 75, 35, 0.4);
+        }
+        .music-btn.playing {
+            border-color: #cf6b2f;
+            animation: musicPulse 1s ease-in-out infinite;
+        }
+        .music-icon {
+            font-size: 1.2rem;
+        }
+        @keyframes musicPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(143, 75, 35, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(207, 107, 47, 0.8); }
+        }
+
+        /* Difficulty Selector */
+        .difficulty-selector {
+            position: relative;
+        }
+        .difficulty-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 8px 12px;
+            background: linear-gradient(180deg, #271b0f 0%, #170f0b 100%);
+            color: #a77b3b;
+            border: 1px solid #4b371b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .difficulty-btn:hover {
+            border-color: var(--accent-orange);
+            background: rgba(143, 75, 35, 0.1);
+        }
+        .difficulty-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #1f170b;
+            border: 2px solid #4b371b;
+            display: none;
+            flex-direction: column;
+            min-width: 200px;
+            z-index: 10001;
+        }
+        .difficulty-menu.show {
+            display: flex;
+        }
+        .difficulty-option {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            padding: 12px 15px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-bottom: 1px solid #3b2b17;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .difficulty-option:hover {
+            background: rgba(143, 75, 35, 0.2);
+            color: var(--text-primary);
+        }
+        .difficulty-option.active {
+            background: rgba(143, 75, 35, 0.3);
+            color: var(--accent-orange);
+        }
+        .difficulty-option:last-child {
+            border-bottom: none;
+        }
+
+        /* Nav play button styling */
+        .nav-link.play-btn {
+            background: linear-gradient(180deg, #8f4b23 0%, #6b0000 100%);
+            color: #c7a35b;
+            border-color: #a77b3b;
+        }
+        .nav-link.play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(143, 75, 35, 0.5);
+        }
+
+        /* Pain flash effect */
+        .pain-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9996;
+            background: rgba(139, 0, 0, 0);
+            transition: background 0.1s;
+        }
+        .pain-flash.active {
+            background: rgba(139, 0, 0, 0.4);
+        }
+
+        /* Nightmare mode effects */
+        @keyframes nightmarePulse {
+            0%, 100% {
+                background: radial-gradient(ellipse at center, transparent 15%, rgba(139, 0, 0, 0.5) 100%);
+            }
+            50% {
+                background: radial-gradient(ellipse at center, transparent 10%, rgba(180, 0, 0, 0.6) 100%);
+            }
+        }
+        .vignette.nightmare {
+            animation: nightmarePulse 2s ease-in-out infinite;
+        }
+        .crt-overlay.hard {
+            opacity: 0.7;
+        }
+        .crt-overlay.nightmare {
+            opacity: 0.85;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.4),
+                rgba(0, 0, 0, 0.4) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+
+        /* Screen shake */
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-3px, -2px); }
+            20% { transform: translate(3px, 2px); }
+            30% { transform: translate(-2px, 3px); }
+            40% { transform: translate(2px, -3px); }
+            50% { transform: translate(-3px, 2px); }
+            60% { transform: translate(3px, -2px); }
+            70% { transform: translate(-2px, -3px); }
+            80% { transform: translate(2px, 3px); }
+            90% { transform: translate(-3px, -2px); }
+        }
+        .shake {
+            animation: screenShake 0.4s ease-in-out;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .page-title { font-size: 1.2rem; }
             .target-input { width: 100%; }
             .weapon-grid { grid-template-columns: 1fr; }
+            .music-player { display: none; }
         }
     </style>
 </head>
@@ -671,16 +853,39 @@
     <!-- CRT Effects -->
     <div class="crt-overlay"></div>
     <div class="vignette"></div>
+    <div class="pain-flash"></div>
     <div class="screen-flash" id="screenFlash"></div>
     <div class="projectile-layer" id="projectileLayer"></div>
+
+    <!-- Music Player -->
+    <div class="music-player">
+        <button class="music-btn" id="music-btn">
+            <span class="music-icon">[M]</span>
+            <span id="music-text">PLAY THEME</span>
+        </button>
+    </div>
+    <audio id="quake-theme" loop>
+        <source src="audio/quake-theme.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Navigation -->
     <nav class="nav">
         <a href="index.html" class="nav-logo"><img src="images/quake-logo.png" alt="Zap Arena"></a>
         <div class="nav-links">
-            <a href="index.html" class="nav-link">HOME</a>
+            <a href="index.html#features" class="nav-link">FEATURES</a>
             <a href="about.html" class="nav-link">ABOUT</a>
-            <a href="play-quake.html" class="nav-link">PLAY QUAKE</a>
+            <a href="arsenal.html" class="nav-link">ARSENAL</a>
+            <a href="https://zapier.com" target="_blank" class="nav-link">ZAPIER</a>
+            <div class="difficulty-selector">
+                <button class="difficulty-btn" id="difficultyBtn">EASY</button>
+                <div class="difficulty-menu" id="difficultyMenu">
+                    <button class="difficulty-option active" data-difficulty="easy" data-armor="100">EASY - Full Armor</button>
+                    <button class="difficulty-option" data-difficulty="normal" data-armor="50">NORMAL - Half Armor</button>
+                    <button class="difficulty-option" data-difficulty="hard" data-armor="25">HARD - Quarter Armor</button>
+                    <button class="difficulty-option" data-difficulty="nightmare" data-armor="0">NIGHTMARE - No Armor</button>
+                </div>
+            </div>
+            <a href="play-quake.html" class="nav-link play-btn">PLAY QUAKE</a>
         </div>
     </nav>
 
@@ -855,6 +1060,43 @@
             <div class="secret-count">SECRET 4 OF 4</div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with [ZAP] by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
+        <p style="margin-top: 10px; font-size: 0.7rem;">Quake is a trademark of id Software. This site is a fan tribute.</p>
+    </footer>
+
+    <!-- Quake 1 Status Bar HUD -->
+    <div class="quake-hud">
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-ammo" id="hudAmmo">25</div>
+                <div class="hud-label">AMMO</div>
+            </div>
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-health" id="hudHealth">100</div>
+                <div class="hud-label">HEALTH</div>
+            </div>
+        </div>
+        <div class="hud-face-container">
+            <img src="images/ranger-face.png" class="hud-face" alt="Ranger" id="rangerFace">
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-armor" id="hudArmor">100</div>
+                <div class="hud-label">ARMOR</div>
+            </div>
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-secrets" id="hudSecrets">0</div>
+                <div class="hud-label">SECRETS</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Sound Effects -->
     <audio id="snd-axe" src="audio/ax1.wav" preload="auto"></audio>
@@ -1217,6 +1459,148 @@
             } else {
                 setTimeout(showDamageReport, 500);
             }
+        });
+
+        // ===== MUSIC PLAYER =====
+        const musicBtn = document.getElementById('music-btn');
+        const musicText = document.getElementById('music-text');
+        const quakeTheme = document.getElementById('quake-theme');
+        quakeTheme.loop = true;
+        let isPlaying = false;
+
+        // Check if music was playing on previous page
+        if (localStorage.getItem('quake_music_playing') === 'true') {
+            const savedTime = parseFloat(localStorage.getItem('quake_music_time') || '0');
+            quakeTheme.currentTime = savedTime;
+            quakeTheme.play().then(() => {
+                isPlaying = true;
+                musicBtn.classList.add('playing');
+                musicText.textContent = 'STOP THEME';
+            }).catch(() => {});
+        }
+
+        // Save music time periodically while playing
+        setInterval(() => {
+            if (isPlaying) {
+                localStorage.setItem('quake_music_time', quakeTheme.currentTime.toString());
+            }
+        }, 500);
+
+        // Save state before leaving page
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('quake_music_playing', isPlaying ? 'true' : 'false');
+            localStorage.setItem('quake_music_time', quakeTheme.currentTime.toString());
+        });
+
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                quakeTheme.pause();
+                musicBtn.classList.remove('playing');
+                musicText.textContent = 'PLAY THEME';
+                isPlaying = false;
+                localStorage.setItem('quake_music_playing', 'false');
+            } else {
+                quakeTheme.play().then(() => {
+                    musicBtn.classList.add('playing');
+                    musicText.textContent = 'STOP THEME';
+                    isPlaying = true;
+                    localStorage.setItem('quake_music_playing', 'true');
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                    musicText.textContent = 'CLICK AGAIN';
+                });
+            }
+        });
+
+        // ===== HUD =====
+        let hudStats = { ammo: 25, health: 100, armor: 100, secrets: 0 };
+
+        function updateHUD() {
+            document.getElementById('hudAmmo').textContent = hudStats.ammo;
+            document.getElementById('hudHealth').textContent = hudStats.health;
+            document.getElementById('hudArmor').textContent = hudStats.armor;
+            document.getElementById('hudSecrets').textContent = hudStats.secrets;
+        }
+
+        // Update secret count when n8n secret is found
+        if (secret4Found) {
+            hudStats.secrets = 1;
+            updateHUD();
+        }
+
+        // ===== DIFFICULTY SELECTOR =====
+        const difficultyBtn = document.getElementById('difficultyBtn');
+        const difficultyMenu = document.getElementById('difficultyMenu');
+        const difficultyOptions = document.querySelectorAll('.difficulty-option');
+        const vignette = document.querySelector('.vignette');
+        const crtOverlay = document.querySelector('.crt-overlay');
+        const painFlash = document.querySelector('.pain-flash');
+
+        difficultyBtn.addEventListener('click', () => {
+            difficultyMenu.classList.toggle('show');
+            playSound('pickup');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.difficulty-selector')) {
+                difficultyMenu.classList.remove('show');
+            }
+        });
+
+        // Handle difficulty selection
+        difficultyOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const difficulty = option.dataset.difficulty;
+                const armor = parseInt(option.dataset.armor);
+
+                // Update button text
+                difficultyBtn.textContent = difficulty.toUpperCase();
+
+                // Update armor in HUD
+                hudStats.armor = armor;
+                updateHUD();
+
+                // Update active state
+                difficultyOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                // Close menu
+                difficultyMenu.classList.remove('show');
+
+                // Reset all difficulty classes
+                vignette.classList.remove('nightmare');
+                crtOverlay.classList.remove('hard', 'nightmare');
+                vignette.style.opacity = '1';
+                vignette.style.background = '';
+
+                // Apply difficulty-specific visual effects
+                if (difficulty === 'easy') {
+                    vignette.style.opacity = '0.3';
+                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 50%, rgba(31, 23, 11, 0.3) 100%)';
+                    crtOverlay.style.opacity = '0.3';
+                } else if (difficulty === 'normal') {
+                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 40%, rgba(31, 23, 11, 0.5) 100%)';
+                    crtOverlay.style.opacity = '0.5';
+                } else if (difficulty === 'hard') {
+                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 30%, rgba(100, 20, 10, 0.45) 100%)';
+                    crtOverlay.classList.add('hard');
+                    crtOverlay.style.opacity = '';
+                    painFlash.classList.add('active');
+                    setTimeout(() => painFlash.classList.remove('active'), 150);
+                } else if (difficulty === 'nightmare') {
+                    vignette.classList.add('nightmare');
+                    crtOverlay.classList.add('nightmare');
+                    crtOverlay.style.opacity = '';
+                    document.body.classList.add('shake');
+                    setTimeout(() => document.body.classList.remove('shake'), 400);
+                    painFlash.classList.add('active');
+                    setTimeout(() => painFlash.classList.remove('active'), 200);
+                }
+
+                playSound('pickup');
+            });
         });
     </script>
 </body>

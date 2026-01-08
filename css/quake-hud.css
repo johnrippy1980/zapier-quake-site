@@ -110,7 +110,7 @@ html, body { cursor: crosshair !important; }
 }
 
 /* Quake-style colors for each stat */
-.hud-ammo { color: #ffcc00; }
+.hud-ammo, .hud-kills { color: #ffcc00; }
 .hud-health { color: #ff4444; }
 .hud-armor { color: #44ff88; }
 .hud-zaps { color: #ff8800; }
@@ -235,7 +235,7 @@ html, body { cursor: crosshair !important; }
     display: none;
     flex-direction: column;
     min-width: 200px;
-    z-index: 1002;
+    z-index: 10001;
 }
 
 .difficulty-menu.show {

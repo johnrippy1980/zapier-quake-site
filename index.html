@@ -163,6 +163,8 @@
         .splash-logo {
             position: absolute;
             top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
             width: 60%;
             max-width: 500px;
             height: auto;
@@ -172,9 +174,9 @@
             animation: logoPulse 4s ease-in-out infinite;
         }
         @keyframes logoPulse {
-            0% { opacity: 0.6; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.05); }
-            100% { opacity: 0.6; transform: scale(0.95); }
+            0% { opacity: 0.6; transform: translateX(-50%) scale(0.95); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+            100% { opacity: 0.6; transform: translateX(-50%) scale(0.95); }
         }
 
         /* ===== CRT SCANLINE OVERLAY ===== */
@@ -991,6 +993,7 @@
 <body>
     <!-- Quake Splash Screen - Monster Reunion '96 -->
     <div class="quake-splash" id="splash">
+        <img src="images/quake-logo.png" alt="Quake Logo" class="splash-logo">
         <div class="splash-title">ZAP ARENA</div>
         <div class="splash-subtitle">Episode 1: The Pit of Automation</div>
         <div class="splash-press">CLICK OR PRESS ANY KEY TO ENTER</div>
@@ -1196,8 +1199,8 @@
     <div class="quake-hud">
         <div class="hud-section">
             <div class="hud-stat">
-                <div class="hud-value hud-ammo" id="hudAmmo">25</div>
-                <div class="hud-label">AMMO</div>
+                <div class="hud-value hud-kills" id="hudKills">0</div>
+                <div class="hud-label">KILLS</div>
             </div>
         </div>
         <div class="hud-section">
@@ -1238,107 +1241,28 @@
         document.addEventListener('click', dismissSplash, { once: true });
 
         // Dynamic HUD values - update these to change the HUD
-        let hudStats = { ammo: 25, health: 100, armor: 100, secrets: 0 };
+        let hudStats = { kills: 0, health: 100, armor: 100, secrets: 0 };
 
         function updateHUD() {
-            document.getElementById('hudAmmo').textContent = hudStats.ammo;
+            const killsEl = document.getElementById('hudKills');
+            if (killsEl) killsEl.textContent = hudStats.kills;
             document.getElementById('hudHealth').textContent = hudStats.health;
             document.getElementById('hudArmor').textContent = hudStats.armor;
             document.getElementById('hudSecrets').textContent = hudStats.secrets;
         }
 
-        // Update HUD when clicking on zap cards
+        // Load kills from localStorage on page load
+        hudStats.kills = parseInt(localStorage.getItem('zaparena_total_kills') || '0');
+        updateHUD();
+
+        // Update HUD when clicking on zap cards (legacy - cards don't exist on index)
         document.querySelectorAll('.card').forEach((card, i) => {
             card.addEventListener('click', () => {
-                hudStats.ammo += 5;
-                updateHUD();
                 if (typeof playMenuSound === 'function') playMenuSound();
             });
         });
 
-        // Difficulty selector
-        const difficultyBtn = document.getElementById('difficultyBtn');
-        const difficultyMenu = document.getElementById('difficultyMenu');
-        const difficultyOptions = document.querySelectorAll('.difficulty-option');
-
-        difficultyBtn.addEventListener('click', () => {
-            difficultyMenu.classList.toggle('show');
-            if (typeof playMenuSound === 'function') playMenuSound();
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.difficulty-selector')) {
-                difficultyMenu.classList.remove('show');
-            }
-        });
-
-        // Handle difficulty selection
-        const vignette = document.querySelector('.vignette');
-        const crtOverlay = document.querySelector('.crt-overlay');
-        const painFlash = document.querySelector('.pain-flash');
-
-        difficultyOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                const difficulty = option.dataset.difficulty;
-                const armor = parseInt(option.dataset.armor);
-
-                // Update button text
-                difficultyBtn.textContent = difficulty.toUpperCase();
-
-                // Update armor in HUD
-                hudStats.armor = armor;
-                updateHUD();
-
-                // Update active state
-                difficultyOptions.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-
-                // Close menu
-                difficultyMenu.classList.remove('show');
-
-                // Reset all difficulty classes
-                vignette.classList.remove('nightmare');
-                crtOverlay.classList.remove('hard', 'nightmare');
-                vignette.style.opacity = '1';
-                vignette.style.background = '';
-
-                // Apply difficulty-specific visual effects
-                if (difficulty === 'easy') {
-                    // Easy mode - minimal effects, safe feeling
-                    vignette.style.opacity = '0.3';
-                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 50%, rgba(31, 23, 11, 0.3) 100%)';
-                    crtOverlay.style.opacity = '0.3';
-                } else if (difficulty === 'normal') {
-                    // Normal - standard brown vignette
-                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 40%, rgba(31, 23, 11, 0.5) 100%)';
-                    crtOverlay.style.opacity = '0.5';
-                } else if (difficulty === 'hard') {
-                    // Hard - add blood tinge to vignette, more scanlines
-                    vignette.style.background = 'radial-gradient(ellipse at center, transparent 30%, rgba(100, 20, 10, 0.45) 100%)';
-                    crtOverlay.classList.add('hard');
-                    crtOverlay.style.opacity = '';
-                    // Pain flash on selection
-                    painFlash.classList.add('active');
-                    setTimeout(() => painFlash.classList.remove('active'), 150);
-                } else if (difficulty === 'nightmare') {
-                    // NIGHTMARE - heavy blood vignette, pulsing, screen shake, intense scanlines
-                    vignette.classList.add('nightmare');
-                    crtOverlay.classList.add('nightmare');
-                    crtOverlay.style.opacity = '';
-
-                    // Screen shake effect
-                    document.body.classList.add('shake');
-                    setTimeout(() => document.body.classList.remove('shake'), 400);
-
-                    // Pain flash
-                    painFlash.classList.add('active');
-                    setTimeout(() => painFlash.classList.remove('active'), 200);
-                }
-
-                if (typeof playSelectSound === 'function') playSelectSound();
-            });
-        });
+        // Difficulty selector is now handled by js/difficulty.js
 
         // Music player with persistence across page navigation
         // Uses same localStorage keys as quake-hud.js for cross-page persistence
@@ -1492,8 +1416,6 @@
             });
             card.addEventListener('click', () => {
                 playSound('shotgun');
-                hudStats.zaps += 1;
-                updateHUD();
             });
         });
 

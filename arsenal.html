@@ -1090,8 +1090,8 @@
     <div class="quake-hud">
         <div class="hud-section">
             <div class="hud-stat">
-                <div class="hud-value hud-ammo" id="hudAmmo">25</div>
-                <div class="hud-label">AMMO</div>
+                <div class="hud-value hud-kills" id="hudKills">0</div>
+                <div class="hud-label">KILLS</div>
             </div>
         </div>
         <div class="hud-section">
@@ -1562,14 +1562,19 @@
         });
 
         // ===== HUD =====
-        let hudStats = { ammo: 25, health: 100, armor: 100, secrets: 0 };
+        let hudStats = { kills: 0, health: 100, armor: 100, secrets: 0 };
 
         function updateHUD() {
-            document.getElementById('hudAmmo').textContent = hudStats.ammo;
+            const killsEl = document.getElementById('hudKills');
+            if (killsEl) killsEl.textContent = hudStats.kills;
             document.getElementById('hudHealth').textContent = hudStats.health;
             document.getElementById('hudArmor').textContent = hudStats.armor;
             document.getElementById('hudSecrets').textContent = hudStats.secrets;
         }
+
+        // Load kills from localStorage on page load
+        hudStats.kills = parseInt(localStorage.getItem('zaparena_total_kills') || '0');
+        updateHUD();
 
         // Update secret count when n8n secret is found
         if (secret4Found) {

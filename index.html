@@ -139,6 +139,20 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
+        .splash-logo {
+            position: absolute;
+            width: 60%;
+            max-width: 500px;
+            height: auto;
+            opacity: 0.15;
+            z-index: 0;
+            filter: brightness(0.8) sepia(0.3);
+            animation: logoPulse 4s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.12; transform: scale(1); }
+            50% { opacity: 0.18; transform: scale(1.02); }
+        }
 
         /* ===== CRT SCANLINE OVERLAY ===== */
         .crt-overlay {
@@ -954,6 +968,7 @@
 <body>
     <!-- Quake Splash Screen -->
     <div class="quake-splash" id="splash">
+        <img src="images/quake-logo.png" alt="" class="splash-logo">
         <div class="splash-title">ZAP<br>ARSENAL</div>
         <div class="splash-subtitle">ZAPIER AUTOMATION TOOLS</div>
         <div class="splash-press">PRESS ANY KEY TO CONTINUE</div>
@@ -1179,8 +1194,8 @@
         </div>
         <div class="hud-section">
             <div class="hud-stat">
-                <div class="hud-value hud-zaps" id="hudZaps">0</div>
-                <div class="hud-label">ZAPS</div>
+                <div class="hud-value hud-secrets" id="hudSecrets">0</div>
+                <div class="hud-label">SECRETS</div>
             </div>
         </div>
     </div>
@@ -1197,19 +1212,18 @@
         document.addEventListener('click', dismissSplash, { once: true });
 
         // Dynamic HUD values - update these to change the HUD
-        let hudStats = { ammo: 25, health: 100, armor: 100, zaps: 0 };
+        let hudStats = { ammo: 25, health: 100, armor: 100, secrets: 0 };
 
         function updateHUD() {
             document.getElementById('hudAmmo').textContent = hudStats.ammo;
             document.getElementById('hudHealth').textContent = hudStats.health;
             document.getElementById('hudArmor').textContent = hudStats.armor;
-            document.getElementById('hudZaps').textContent = hudStats.zaps;
+            document.getElementById('hudSecrets').textContent = hudStats.secrets;
         }
 
         // Update HUD when clicking on zap cards
         document.querySelectorAll('.card').forEach((card, i) => {
             card.addEventListener('click', () => {
-                hudStats.zaps += 1;
                 hudStats.ammo += 5;
                 updateHUD();
                 if (typeof playMenuSound === 'function') playMenuSound();
@@ -1431,13 +1445,17 @@
         // Secret area clicks
         document.querySelectorAll('.secret-area').forEach(area => {
             area.addEventListener('click', () => {
-                playSound('secret');
-                area.classList.add('found');
-                const popup = document.getElementById('secret-popup');
-                const msg = area.dataset.secretMsg || 'You found a hidden area!';
-                document.getElementById('secret-message').textContent = msg;
-                popup.classList.add('show');
-                setTimeout(() => popup.classList.remove('show'), 2000);
+                if (!area.classList.contains('found')) {
+                    playSound('secret');
+                    area.classList.add('found');
+                    hudStats.secrets += 1;
+                    updateHUD();
+                    const popup = document.getElementById('secret-popup');
+                    const msg = area.dataset.secretMsg || 'You found a hidden area!';
+                    document.getElementById('secret-message').textContent = msg;
+                    popup.classList.add('show');
+                    setTimeout(() => popup.classList.remove('show'), 2000);
+                }
             });
         });
 

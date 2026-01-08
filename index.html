@@ -860,6 +860,56 @@
             50% { opacity: 0.4; transform: translateY(-50%) scale(0.8); }
         }
 
+        /* Peace Mode: Poo emoji projectiles that spin! */
+        .peace-mode .nail {
+            background: none !important;
+            box-shadow: none !important;
+            width: auto !important;
+            height: auto !important;
+            font-size: 28px !important;
+            line-height: 1 !important;
+            border-radius: 0 !important;
+        }
+        .peace-mode .nail::before,
+        .peace-mode .nail::after {
+            display: none !important;
+            content: none !important;
+        }
+        /* Override the default nail hover animation */
+        .peace-mode .nailgun-divider:hover .nail,
+        .peace-mode .nailgun-divider:hover .nail-1,
+        .peace-mode .nailgun-divider:hover .nail-2,
+        .peace-mode .nailgun-divider:hover .nail-3,
+        .peace-mode .nailgun-divider:hover .nail-4,
+        .peace-mode .nailgun-divider:hover .nail-5,
+        .peace-mode .nailgun-divider:hover .nail-6,
+        .peace-mode .nailgun-divider:hover .nail-7,
+        .peace-mode .nailgun-divider:hover .nail-8 {
+            animation: shootPoo 0.8s linear infinite !important;
+        }
+        .peace-mode .nailgun-divider:hover .nail-1 { animation-delay: 0s !important; }
+        .peace-mode .nailgun-divider:hover .nail-2 { animation-delay: 0.1s !important; }
+        .peace-mode .nailgun-divider:hover .nail-3 { animation-delay: 0.2s !important; }
+        .peace-mode .nailgun-divider:hover .nail-4 { animation-delay: 0.3s !important; }
+        .peace-mode .nailgun-divider:hover .nail-5 { animation-delay: 0.15s !important; }
+        .peace-mode .nailgun-divider:hover .nail-6 { animation-delay: 0.25s !important; }
+        .peace-mode .nailgun-divider:hover .nail-7 { animation-delay: 0.35s !important; }
+        .peace-mode .nailgun-divider:hover .nail-8 { animation-delay: 0.45s !important; }
+
+        @keyframes shootPoo {
+            0% {
+                opacity: 1;
+                transform: translateX(0) rotate(0deg);
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100vw) rotate(1440deg);
+            }
+        }
+
         /* Nailgun text label */
         .nailgun-label {
             position: absolute;
@@ -1557,6 +1607,56 @@
                 }
             });
         }
+    })();
+    </script>
+
+    <!-- Peace Mode: Poo Emoji Perforator -->
+    <script>
+    (function() {
+        'use strict';
+
+        // Check if all secrets found (Peace Mode)
+        function isPeaceMode() {
+            for (let i = 1; i <= 5; i++) {
+                if (localStorage.getItem('zaparena_secret' + i) !== 'true') {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Convert nails to poo emojis
+        function activatePooPerforator() {
+            if (!isPeaceMode()) return;
+
+            // Add peace-mode class to body for CSS targeting
+            document.body.classList.add('peace-mode');
+
+            // Replace nail content with poo emojis
+            const nails = document.querySelectorAll('.nail');
+            nails.forEach(nail => {
+                nail.textContent = '\uD83D\uDCA9'; // Unicode for poo emoji
+            });
+
+            // Change the label to something fun
+            const nailgunLabel = document.querySelector('.nailgun-label');
+            if (nailgunLabel) {
+                nailgunLabel.textContent = 'POO-FORATOR';
+                nailgunLabel.style.color = '#8B4513';
+            }
+
+            console.log('[Peace Mode] Poo-forator activated! Spinning poo emojis engaged!');
+        }
+
+        // Run on page load
+        activatePooPerforator();
+
+        // Also listen for storage changes (in case secrets found in another tab)
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.startsWith('zaparena_secret')) {
+                activatePooPerforator();
+            }
+        });
     })();
     </script>
 </body>

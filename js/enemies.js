@@ -821,8 +821,86 @@
                 font-size: 2rem;
                 margin: 15px 0;
             }
+
+            /* Glitter explosion animation */
+            @keyframes glitterBurst {
+                0% {
+                    opacity: 1;
+                    transform: translate(0, 0) rotate(0deg) scale(0.5);
+                }
+                50% {
+                    opacity: 1;
+                    transform: translate(calc(var(--end-x) * 0.6), calc(var(--end-y) * 0.6)) rotate(calc(var(--rotation) * 0.5)) scale(1.2);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translate(var(--end-x), var(--end-y)) rotate(var(--rotation)) scale(0.3);
+                }
+            }
+
+            .glitter-particle {
+                position: fixed;
+                pointer-events: none;
+                z-index: 10002;
+            }
+
+            /* Rainbow glow animation for HUD secrets when all found */
+            @keyframes rainbowGlow {
+                0%, 100% {
+                    text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
+                    filter: hue-rotate(0deg);
+                }
+                33% {
+                    text-shadow: 0 0 10px #87ceeb, 0 0 20px #87ceeb;
+                    filter: hue-rotate(120deg);
+                }
+                66% {
+                    text-shadow: 0 0 10px #98fb98, 0 0 20px #98fb98;
+                    filter: hue-rotate(240deg);
+                }
+            }
         `;
         document.head.appendChild(style);
+    }
+
+    // PEACE MODE: Create massive glitter explosion for celebration
+    function createGlitterExplosion() {
+        const glitters = ['✨', '⭐', '🌟', '💫', '🎀', '💖', '🦋', '🌸', '🎉', '🎊', '💝', '🌈'];
+        const particleCount = 80;
+
+        // Create particles from center of screen
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'glitter-particle';
+                particle.textContent = glitters[Math.floor(Math.random() * glitters.length)];
+
+                const size = 24 + Math.random() * 32;
+                particle.style.fontSize = size + 'px';
+                particle.style.position = 'fixed';
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                particle.style.zIndex = '10002';
+                particle.style.pointerEvents = 'none';
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 150 + Math.random() * 300;
+                const endX = Math.cos(angle) * velocity;
+                const endY = Math.sin(angle) * velocity;
+
+                particle.style.setProperty('--end-x', endX + 'px');
+                particle.style.setProperty('--end-y', endY + 'px');
+                particle.style.setProperty('--rotation', (Math.random() * 720 - 360) + 'deg');
+                particle.style.animation = 'glitterBurst 2s ease-out forwards';
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 2000);
+            }, i * 20);
+        }
     }
 
     // Show peace mode banner (once per session)
@@ -831,27 +909,36 @@
         if (sessionStorage.getItem('zaparena_peace_banner_shown')) return;
         sessionStorage.setItem('zaparena_peace_banner_shown', 'true');
 
-        playSound('secret');
+        // Play cute celebration sound (pickup is more cheerful than monster sounds)
+        playSound('pickup');
+        setTimeout(() => playSound('pickup'), 200);
+        setTimeout(() => playSound('pickup'), 400);
 
-        const banner = document.createElement('div');
-        banner.className = 'peace-mode-banner';
-        banner.innerHTML = `
-            <h2>PEACE MODE UNLOCKED!</h2>
-            <div class="emoji-row">🦄 🐕 🐱 🐰 🌈</div>
-            <p>All 5 secrets found!</p>
-            <p>Enemies are now friends!</p>
-        `;
-        document.body.appendChild(banner);
+        // GLITTER EXPLOSION FIRST!
+        createGlitterExplosion();
 
-        // Spawn a bunch of friendly creatures to celebrate
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => spawnFriendlyCreature(), i * 300);
-        }
-
+        // Then show banner after a brief moment
         setTimeout(() => {
-            banner.style.animation = 'peaceBannerFade 0.5s ease-out forwards';
-            setTimeout(() => banner.remove(), 500);
-        }, 4000);
+            const banner = document.createElement('div');
+            banner.className = 'peace-mode-banner';
+            banner.innerHTML = `
+                <h2>🌈 PEACE MODE UNLOCKED! 🌈</h2>
+                <div class="emoji-row">🦄 🐕 🐱 🐰 🦋</div>
+                <p>All 5 secrets found!</p>
+                <p>Enemies are now friends! ✨</p>
+            `;
+            document.body.appendChild(banner);
+
+            // Spawn a bunch of friendly creatures to celebrate
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => spawnFriendlyCreature(), i * 300);
+            }
+
+            setTimeout(() => {
+                banner.style.animation = 'peaceBannerFade 0.5s ease-out forwards';
+                setTimeout(() => banner.remove(), 500);
+            }, 4000);
+        }, 500);
     }
 
     // Initialize enemy spawning system

@@ -48,8 +48,10 @@
     document.addEventListener('keydown', function(e) {
         if (secret2Found) return;
 
-        // Check if key matches current position in sequence
-        if (e.key === konamiCode[konamiIndex] || e.key.toLowerCase() === konamiCode[konamiIndex]) {
+        // Check if key matches current position in sequence (case-insensitive for letters)
+        const keyLower = e.key.toLowerCase();
+        const expectedLower = konamiCode[konamiIndex].toLowerCase();
+        if (e.key === konamiCode[konamiIndex] || keyLower === expectedLower) {
             konamiIndex++;
 
             // Complete!

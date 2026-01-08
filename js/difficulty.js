@@ -40,12 +40,33 @@
         return count;
     }
 
-    // Update the HUD secrets display to show X/5 format
+    // Update the HUD secrets display to show X/5 format or cute emoji when all found
     function updateSecretsDisplay() {
         const hudSecrets = document.getElementById('hudSecrets');
         if (hudSecrets) {
             const found = countSecrets();
-            hudSecrets.textContent = found + '/' + TOTAL_SECRETS;
+            if (found === TOTAL_SECRETS) {
+                // All secrets found - show cute celebration!
+                hudSecrets.textContent = '🌈✨';
+                hudSecrets.title = 'All secrets found! Peace Mode active!';
+                hudSecrets.style.animation = 'rainbowGlow 2s ease-in-out infinite';
+            } else {
+                hudSecrets.textContent = found + '/' + TOTAL_SECRETS;
+                hudSecrets.title = 'Secrets found';
+                hudSecrets.style.animation = '';
+            }
+        }
+
+        // Update the label too if all secrets found
+        const hudSecretsLabel = hudSecrets ? hudSecrets.parentElement.querySelector('.hud-label') : null;
+        if (hudSecretsLabel) {
+            if (countSecrets() === TOTAL_SECRETS) {
+                hudSecretsLabel.textContent = 'ALL FOUND!';
+                hudSecretsLabel.style.color = '#ff69b4';
+            } else {
+                hudSecretsLabel.textContent = 'SECRETS';
+                hudSecretsLabel.style.color = '';
+            }
         }
     }
 

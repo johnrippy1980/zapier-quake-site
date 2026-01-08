@@ -51,7 +51,7 @@
             --ammo-yellow: #efdf17;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
-        html { scroll-behavior: smooth; cursor: crosshair; }
+        html { scroll-behavior: smooth; cursor: crosshair; overflow-x: hidden; }
         body {
             font-family: 'Space Grotesk', sans-serif;
             background: var(--bg-dark);
@@ -858,6 +858,17 @@
         @keyframes flashPulse {
             0%, 100% { opacity: 0.8; transform: translateY(-50%) scale(1); }
             50% { opacity: 0.4; transform: translateY(-50%) scale(0.8); }
+        }
+
+        /* Peace Mode: Ensure body layout isn't affected */
+        .peace-mode {
+            /* Prevent poo animation from affecting viewport width */
+            overflow-x: hidden !important;
+        }
+
+        /* Clip poo projectiles so they don't affect page width */
+        .peace-mode .nailgun-divider {
+            overflow: visible;
         }
 
         /* Peace Mode: Poo emoji projectiles that spin! */

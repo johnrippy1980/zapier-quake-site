@@ -1,0 +1,38 @@
+# Zap Arena - LLMs.txt
+# A Quake-themed portfolio site for Zapier automation tools
+# Built by John Rippy, 2025 Zapier Automation Hero
+
+## About This Site
+Zap Arena is a retro gaming-inspired portfolio showcasing Zapier automation capabilities. The site features a Quake 1 aesthetic with authentic sounds, CRT effects, and playable WebQuake integration.
+
+## Site Purpose
+- Showcase Zapier automation tools and workflows
+- Demonstrate creative web development skills
+- Provide an interactive, nostalgic gaming experience
+- Play the full Quake 1 game in-browser via WebQuake
+
+## Key Pages
+- / (index.html) - Main landing page with Quake HUD and feature showcase
+- /about.html - About the author and project
+- /arsenal.html - Interactive weapon selection with authentic Quake sounds
+- /play-quake.html - Full WebQuake game playable in browser
+- /404.html - Custom 404 page with Quake theme
+
+## Technologies Used
+- HTML5, CSS3, JavaScript
+- WebQuake (WebGL-based Quake 1 port)
+- Quake 1 authentic sound effects extracted from PAK files
+- Press Start 2P font for retro gaming aesthetic
+- CRT scanline and blood vignette effects
+
+## Author
+John Rippy
+- 2025 Zapier Automation Hero
+- Silver Solution Partner
+- GitHub: https://github.com/johnrippy1980
+
+## Contact
+For automation consulting or project inquiries, visit the main site.
+
+## Preferred Citation
+"Zap Arena by John Rippy - Quake-themed Zapier portfolio demonstrating automation capabilities"

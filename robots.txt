@@ -1,0 +1,11 @@
+# Zap Arena - Quake-themed Zapier Portfolio
+# https://zap-arsenal.vercel.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://zap-arsenal.vercel.app/sitemap.xml
+
+# LLMs.txt for AI crawlers
+# See: https://zap-arsenal.vercel.app/llms.txt

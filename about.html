@@ -105,6 +105,42 @@
             pointer-events: none;
             z-index: 9997;
             background: radial-gradient(ellipse at center, transparent 40%, rgba(80, 20, 10, 0.4) 100%);
+            transition: all 0.3s ease;
+        }
+
+        /* Nightmare vignette effect - intense blood red */
+        .vignette.nightmare {
+            background: radial-gradient(ellipse at center, transparent 20%, rgba(139, 0, 0, 0.6) 100%) !important;
+            animation: nightmareVignette 2s ease-in-out infinite;
+        }
+
+        @keyframes nightmareVignette {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Hard/Nightmare CRT effect */
+        .crt-overlay.hard {
+            opacity: 0.7;
+        }
+        .crt-overlay.nightmare {
+            opacity: 0.8;
+            animation: nightmareCRT 0.1s infinite;
+        }
+
+        @keyframes nightmareCRT {
+            0%, 100% { background-position: 0 0; }
+            50% { background-position: 0 1px; }
+        }
+
+        /* Screen shake for nightmare selection */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        body.shake {
+            animation: shake 0.1s ease-in-out 4;
         }
 
         /* Pain Flash */
@@ -478,63 +514,33 @@
         </button>
     </div>
 
-    <!-- Quake 1 Authentic Status Bar - Using actual game sprites -->
+    <!-- Quake HUD - Matching index.html and arsenal.html -->
     <div class="quake-hud">
-        <div class="sbar-wrapper">
-            <!-- Top row: Ammo counts (shells, nails, rockets, cells) -->
-            <div class="sbar-ammo-row">
-                <div class="sbar-ammo-count" title="Shells">
-                    <span class="sbar-num-small y2"></span>
-                    <span class="sbar-num-small y5"></span>
-                </div>
-                <div class="sbar-ammo-count" title="Nails">
-                    <span class="sbar-num-small y0"></span>
-                    <span class="sbar-num-small y0"></span>
-                </div>
-                <div class="sbar-ammo-count" title="Rockets">
-                    <span class="sbar-num-small y0"></span>
-                    <span class="sbar-num-small y0"></span>
-                </div>
-                <div class="sbar-ammo-count" title="Cells">
-                    <span class="sbar-num-small y0"></span>
-                    <span class="sbar-num-small y0"></span>
-                </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-kills" id="hudKills">0</div>
+                <div class="hud-label">KILLS</div>
             </div>
-
-            <!-- Main status bar -->
-            <div class="sbar-main">
-                <div class="sbar-inner">
-                    <!-- Armor (red numbers in dark inset) -->
-                    <div class="sbar-section sbar-armor-section">
-                        <div class="sbar-inset">
-                            <div class="sbar-num-group">
-                                <span class="sbar-num r0"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ranger Face (center) -->
-                    <div class="sbar-face-section">
-                        <span class="sbar-face healthy" id="ranger-face"></span>
-                    </div>
-
-                    <!-- Health (yellow numbers) -->
-                    <div class="sbar-section sbar-health-section">
-                        <div class="sbar-num-group" id="health-display">
-                            <span class="sbar-num y1"></span>
-                            <span class="sbar-num y0"></span>
-                            <span class="sbar-num y0"></span>
-                        </div>
-                    </div>
-
-                    <!-- Current ammo (yellow numbers) -->
-                    <div class="sbar-section sbar-ammo-section">
-                        <div class="sbar-num-group" id="ammo-display">
-                            <span class="sbar-num y2"></span>
-                            <span class="sbar-num y5"></span>
-                        </div>
-                    </div>
-                </div>
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-health" id="hudHealth">100</div>
+                <div class="hud-label">HEALTH</div>
+            </div>
+        </div>
+        <div class="hud-face-container">
+            <img src="images/quake-faces.jpg" alt="Ranger" class="hud-face" id="ranger-face" style="object-fit: none; object-position: 0 0; width: 48px; height: 48px;">
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-armor" id="hudArmor">100</div>
+                <div class="hud-label">ARMOR</div>
+            </div>
+        </div>
+        <div class="hud-section">
+            <div class="hud-stat">
+                <div class="hud-value hud-zaps" id="hudSecrets">0/5</div>
+                <div class="hud-label">SECRETS</div>
             </div>
         </div>
     </div>
@@ -544,7 +550,6 @@
         <p>Built with [ZAP] by <a href="https://github.com/johnrippy1980" target="_blank">John Rippy</a> | 2025 Zapier Automation Hero</p>
     </footer>
 
-    <script src="js/quake-hud.js"></script>
     <script src="js/difficulty.js"></script>
     <script src="js/enemies.js"></script>
 </body>

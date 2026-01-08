@@ -1205,8 +1205,11 @@
     <script>
         // Splash screen dismissal
         const splash = document.getElementById('splash');
+        const jumpSound = new Audio('audio/jump.wav');
+        jumpSound.volume = 0.7;
+
         function dismissSplash() {
-            if (typeof playSelectSound === 'function') playSelectSound();
+            jumpSound.play().catch(e => console.log('Audio play failed:', e));
             splash.classList.add('hidden');
         }
 
@@ -1370,7 +1373,8 @@
             shambler: new Audio('audio/shambler.wav'),
             death: new Audio('audio/death.wav'),
             gib: new Audio('audio/gib.wav'),
-            shotgun: new Audio('audio/shotgn2.wav')
+            shotgun: new Audio('audio/shotgn2.wav'),
+            jump: new Audio('audio/jump.wav')
         };
 
         // Set volumes

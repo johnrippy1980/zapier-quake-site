@@ -97,6 +97,20 @@
             color: #7f5f3b;
             font-style: italic;
         }
+
+        .nin-ammo {
+            width: 120px;
+            height: auto;
+            margin-top: 20px;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.4));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
     </style>
 </head>
 <body>
@@ -110,6 +124,7 @@
         </p>
         <a href="index.html" class="home-link">RESPAWN AT START</a>
         <p class="quake-quote">"Reznor was here"</p>
+        <img src="images/nin-ammo.png" alt="NIN Ammo Box" class="nin-ammo" title="Trent Reznor composed the Quake soundtrack">
     </div>
 
     <audio id="death-sound" autoplay>

@@ -841,17 +841,35 @@ void main(void)
             fullscreenBtn.textContent = document.fullscreenElement ? 'EXIT' : 'FULLSCREEN';
         });
 
-        // Music controls
+        // Music controls - auto-play on first user interaction
         let musicPlaying = false;
-        musicBtn.addEventListener('click', function() {
+        let musicStarted = false;
+
+        function startMusic() {
+            if (musicStarted) return;
+            quakeTheme.volume = 0.5; // 50% volume so it doesn't overpower game
+            quakeTheme.play().then(function() {
+                musicText.textContent = 'MUTE THEME';
+                musicPlaying = true;
+                musicStarted = true;
+            }).catch(function() {});
+        }
+
+        // Auto-start music on any user interaction (browser requirement)
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('keydown', startMusic, { once: true });
+
+        musicBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Don't trigger the auto-start
             if (musicPlaying) {
                 quakeTheme.pause();
                 musicText.textContent = 'PLAY THEME';
                 musicPlaying = false;
             } else {
                 quakeTheme.play().then(function() {
-                    musicText.textContent = 'STOP THEME';
+                    musicText.textContent = 'MUTE THEME';
                     musicPlaying = true;
+                    musicStarted = true;
                 }).catch(function() {});
             }
         });

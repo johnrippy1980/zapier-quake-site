@@ -896,28 +896,48 @@
         .peace-mode .nailgun-divider:hover .nail-6,
         .peace-mode .nailgun-divider:hover .nail-7,
         .peace-mode .nailgun-divider:hover .nail-8 {
-            animation: shootPoo 2s ease-out infinite !important;
+            animation: shootPoo 3.5s ease-out infinite !important;
         }
         .peace-mode .nailgun-divider:hover .nail-1 { animation-delay: 0s !important; }
-        .peace-mode .nailgun-divider:hover .nail-2 { animation-delay: 0.25s !important; }
-        .peace-mode .nailgun-divider:hover .nail-3 { animation-delay: 0.5s !important; }
-        .peace-mode .nailgun-divider:hover .nail-4 { animation-delay: 0.75s !important; }
-        .peace-mode .nailgun-divider:hover .nail-5 { animation-delay: 0.35s !important; }
-        .peace-mode .nailgun-divider:hover .nail-6 { animation-delay: 0.6s !important; }
-        .peace-mode .nailgun-divider:hover .nail-7 { animation-delay: 0.85s !important; }
-        .peace-mode .nailgun-divider:hover .nail-8 { animation-delay: 1.1s !important; }
+        .peace-mode .nailgun-divider:hover .nail-2 { animation-delay: 0.4s !important; }
+        .peace-mode .nailgun-divider:hover .nail-3 { animation-delay: 0.8s !important; }
+        .peace-mode .nailgun-divider:hover .nail-4 { animation-delay: 1.2s !important; }
+        .peace-mode .nailgun-divider:hover .nail-5 { animation-delay: 0.5s !important; }
+        .peace-mode .nailgun-divider:hover .nail-6 { animation-delay: 0.9s !important; }
+        .peace-mode .nailgun-divider:hover .nail-7 { animation-delay: 1.3s !important; }
+        .peace-mode .nailgun-divider:hover .nail-8 { animation-delay: 1.7s !important; }
 
         @keyframes shootPoo {
             0% {
                 opacity: 1;
                 transform: translateX(0) rotate(0deg);
             }
-            85% {
+            90% {
                 opacity: 1;
             }
             100% {
                 opacity: 0;
-                transform: translateX(100vw) rotate(720deg);
+                transform: translateX(100vw) rotate(540deg);
+            }
+        }
+
+        /* Poo splatter particles */
+        .poo-splatter {
+            position: fixed;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: pooSplat 0.8s ease-out forwards;
+        }
+
+        @keyframes pooSplat {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--splat-x), var(--splat-y)) scale(0.3);
             }
         }
 
@@ -1412,12 +1432,51 @@
             fart.play().catch(e => console.log('Fart failed:', e));
         }
 
-        // Use gib sound for splat (Quake's gib dropping sound)
+        // Use gib sound for splat (Quake's gib dropping sound) + create splatter particles
         function playSplatSound() {
-            console.log('[Poo Sound] Playing splat');
+            console.log('[Poo Sound] Playing splat with particles');
             const splat = new Audio('audio/gib.wav');
             splat.volume = 0.4;
             splat.play().catch(e => console.log('Splat failed:', e));
+            // Create splatter particles when poo hits the wall
+            createPooSplatter();
+        }
+
+        // Create poo splatter particles on the right edge
+        function createPooSplatter() {
+            const nailgunRect = nailgunDivider.getBoundingClientRect();
+            const baseY = nailgunRect.top + nailgunRect.height / 2;
+            const screenRight = window.innerWidth - 20;
+
+            // Brown poo colors
+            const pooColors = ['#8B4513', '#654321', '#5D3A1A', '#4A2C0D', '#3D2010'];
+            // Poo-like characters
+            const pooChars = ['💩', '●', '•', '◉', '○'];
+
+            // Create 8-12 splatter particles
+            const particleCount = 8 + Math.floor(Math.random() * 5);
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'poo-splatter';
+                particle.textContent = pooChars[Math.floor(Math.random() * pooChars.length)];
+                particle.style.color = pooColors[Math.floor(Math.random() * pooColors.length)];
+
+                // Random Y position around the nailgun center
+                const yOffset = (Math.random() - 0.5) * 200;
+                particle.style.left = screenRight + 'px';
+                particle.style.top = (baseY + yOffset) + 'px';
+
+                // Random splatter direction (mostly left and down/up)
+                const splatX = -30 - Math.random() * 80; // fly left
+                const splatY = (Math.random() - 0.5) * 150; // random up/down
+                particle.style.setProperty('--splat-x', splatX + 'px');
+                particle.style.setProperty('--splat-y', splatY + 'px');
+
+                document.body.appendChild(particle);
+
+                // Remove after animation
+                setTimeout(() => particle.remove(), 800);
+            }
         }
 
         nailgunDivider.addEventListener('mouseenter', () => {
@@ -1427,19 +1486,20 @@
                 // In Peace Mode, play poo sounds instead of nailgun
                 if (isPeaceModeActive()) {
                     console.log('[Poo-forator] Peace Mode active - playing poo sounds!');
-                    // Play ploop sounds periodically
+                    // Play fart sounds periodically (slower to match 3.5s animation)
                     playPloopSound();
                     ploopInterval = setInterval(() => {
                         if (nailgunPlaying) playPloopSound();
-                    }, 400);
+                    }, 700);
 
-                    // Play splat sounds after poos reach edge (2s animation)
+                    // Play splat sounds after poos reach edge (3.5s animation - first hits at ~3.1s)
                     setTimeout(() => {
                         if (nailgunPlaying) playSplatSound();
-                    }, 1800);
-                    splatInterval = setInterval(() => {
-                        if (nailgunPlaying) playSplatSound();
-                    }, 500);
+                        // Then continue with splats matching the staggered firing (every 400ms)
+                        splatInterval = setInterval(() => {
+                            if (nailgunPlaying) playSplatSound();
+                        }, 400);
+                    }, 3100);
                 } else {
                     nailgunSound.currentTime = 0;
                     nailgunSound.play().catch(e => console.log('Audio play failed:', e));

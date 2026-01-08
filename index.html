@@ -1244,14 +1244,15 @@
         document.addEventListener('click', dismissSplash, { once: true });
 
         // Dynamic HUD values - update these to change the HUD
-        let hudStats = { kills: 0, health: 100, armor: 100, secrets: 0 };
+        // Note: secrets are managed by difficulty.js which loads after this script
+        let hudStats = { kills: 0, health: 100, armor: 100 };
 
         function updateHUD() {
             const killsEl = document.getElementById('hudKills');
             if (killsEl) killsEl.textContent = hudStats.kills;
             document.getElementById('hudHealth').textContent = hudStats.health;
             document.getElementById('hudArmor').textContent = hudStats.armor;
-            document.getElementById('hudSecrets').textContent = hudStats.secrets;
+            // Don't update secrets here - difficulty.js handles it with localStorage
         }
 
         // Load kills from localStorage on page load

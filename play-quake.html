@@ -292,11 +292,22 @@
 
     <!-- Navigation -->
     <nav class="nav">
-        <a href="index.html" class="nav-logo"><img src="images/quake-logo.png" alt="Zap Arsenal"></a>
+        <a href="index.html" class="nav-logo"><img src="images/quake-logo.png" alt="Zap Arena"></a>
         <div class="nav-links">
-            <a href="index.html" class="nav-link">HOME</a>
-            <a href="about.html" class="nav-link">ABOUT</a>
             <a href="index.html#features" class="nav-link">FEATURES</a>
+            <a href="about.html" class="nav-link">ABOUT</a>
+            <a href="arsenal.html" class="nav-link">ARSENAL</a>
+            <a href="https://zapier.com" target="_blank" class="nav-link">ZAPIER</a>
+            <div class="difficulty-selector">
+                <button class="difficulty-btn" id="difficultyBtn">EASY</button>
+                <div class="difficulty-menu" id="difficultyMenu">
+                    <button class="difficulty-option active" data-difficulty="easy" data-armor="100">EASY - Full Armor</button>
+                    <button class="difficulty-option" data-difficulty="normal" data-armor="50">NORMAL - Half Armor</button>
+                    <button class="difficulty-option" data-difficulty="hard" data-armor="25">HARD - Quarter Armor</button>
+                    <button class="difficulty-option" data-difficulty="nightmare" data-armor="0">NIGHTMARE - No Armor</button>
+                </div>
+            </div>
+            <a href="play-quake.html" class="nav-link play-btn" style="color: var(--accent-orange);">PLAY QUAKE</a>
         </div>
     </nav>
 

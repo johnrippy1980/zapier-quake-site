@@ -1,8 +1,41 @@
 // Quake Enemy Spawning System
 // Spawns random enemies across all pages with authentic Quake sounds
+// Difficulty affects spawn rate: Easy=rare, Normal=occasional, Hard=frequent, Nightmare=swarm
 
 (function() {
     'use strict';
+
+    // Difficulty settings - spawn intervals in milliseconds
+    const DIFFICULTY_SETTINGS = {
+        easy: {
+            minDelay: 45000,      // 45 seconds minimum
+            maxDelay: 90000,      // 90 seconds maximum
+            initialMin: 20000,    // 20 second initial delay
+            initialMax: 40000,    // 40 second initial delay
+            maxActive: 1          // Max enemies on screen at once
+        },
+        normal: {
+            minDelay: 20000,      // 20 seconds minimum
+            maxDelay: 40000,      // 40 seconds maximum
+            initialMin: 10000,    // 10 second initial delay
+            initialMax: 20000,    // 20 second initial delay
+            maxActive: 2          // Max enemies on screen
+        },
+        hard: {
+            minDelay: 8000,       // 8 seconds minimum
+            maxDelay: 18000,      // 18 seconds maximum
+            initialMin: 3000,     // 3 second initial delay
+            initialMax: 8000,     // 8 second initial delay
+            maxActive: 4          // Max enemies on screen
+        },
+        nightmare: {
+            minDelay: 3000,       // 3 seconds minimum
+            maxDelay: 8000,       // 8 seconds maximum
+            initialMin: 1000,     // 1 second initial delay
+            initialMax: 3000,     // 3 second initial delay
+            maxActive: 8          // Max enemies on screen - SWARM MODE
+        }
+    };
 
     // Enemy types configuration
     const ENEMIES = [
@@ -45,6 +78,19 @@
 
     // Audio cache
     const audioCache = {};
+
+    // Track active enemies
+    let activeEnemies = 0;
+
+    // Get current difficulty from localStorage
+    function getDifficulty() {
+        return localStorage.getItem('zaparena_difficulty') || 'easy';
+    }
+
+    // Get difficulty settings
+    function getSettings() {
+        return DIFFICULTY_SETTINGS[getDifficulty()] || DIFFICULTY_SETTINGS.easy;
+    }
 
     // Preload sounds
     function preloadSound(name) {
@@ -98,6 +144,13 @@
 
     // Spawn an enemy
     function spawnEnemy() {
+        const settings = getSettings();
+
+        // Check if we've hit max active enemies for this difficulty
+        if (activeEnemies >= settings.maxActive) {
+            return;
+        }
+
         const enemy = ENEMIES[Math.floor(Math.random() * ENEMIES.length)];
 
         const el = document.createElement('div');
@@ -143,6 +196,9 @@
         // Play spawn sound
         playSound(enemy.spawnSound);
 
+        // Track active enemy count
+        activeEnemies++;
+
         // Click to kill
         el.addEventListener('click', function(e) {
             e.preventDefault();
@@ -160,6 +216,7 @@
 
             // Remove enemy with death animation
             el.style.animation = 'enemyDeath 0.2s ease-out forwards';
+            activeEnemies--;
             setTimeout(() => el.remove(), 200);
 
             // Update HUD kills if available
@@ -193,6 +250,7 @@
             clearInterval(wanderInterval);
             if (document.body.contains(el)) {
                 el.style.animation = 'enemyFadeOut 1s ease-out forwards';
+                activeEnemies--;
                 setTimeout(() => el.remove(), 1000);
             }
         }, lifespan);
@@ -295,10 +353,11 @@
         preloadSound('sgun1');
         preloadSound('gib');
 
-        // Spawn enemies at random intervals
+        // Spawn enemies at random intervals based on difficulty
         function scheduleNextSpawn() {
-            // Random interval between 15-45 seconds
-            const delay = 15000 + Math.random() * 30000;
+            const settings = getSettings();
+            const delay = settings.minDelay + Math.random() * (settings.maxDelay - settings.minDelay);
+
             setTimeout(() => {
                 // Only spawn if document is visible
                 if (!document.hidden) {
@@ -308,15 +367,27 @@
             }, delay);
         }
 
-        // Initial spawn after page load (5-15 seconds)
+        // Initial spawn after page load based on difficulty
+        const settings = getSettings();
+        const initialDelay = settings.initialMin + Math.random() * (settings.initialMax - settings.initialMin);
+
         setTimeout(() => {
             if (!document.hidden) {
                 spawnEnemy();
             }
             scheduleNextSpawn();
-        }, 5000 + Math.random() * 10000);
+        }, initialDelay);
 
-        console.log('[Quake Enemy System] Initialized');
+        // Listen for difficulty changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'zaparena_difficulty') {
+                console.log('[Quake Enemy System] Difficulty changed to:', e.newValue);
+            }
+        });
+
+        const difficulty = getDifficulty();
+        console.log('[Quake Enemy System] Initialized at difficulty:', difficulty);
+        console.log('[Quake Enemy System] Spawn interval:', settings.minDelay/1000 + '-' + settings.maxDelay/1000 + 's, Max enemies:', settings.maxActive);
     }
 
     // Start when DOM is ready

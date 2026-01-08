@@ -496,38 +496,53 @@
             transform: none;
         }
 
-        /* Damage Report */
+        /* Damage Report - Fixed position overlay */
         .damage-report {
-            margin-top: 30px;
-            padding: 20px;
-            background: var(--bg-card);
-            border: 2px solid var(--border);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px 50px;
+            background: rgba(15, 11, 7, 0.95);
+            border: 4px solid var(--accent-orange);
+            box-shadow: 0 0 50px rgba(143, 75, 35, 0.8), inset 0 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 9996;
             display: none;
+            text-align: center;
         }
         .damage-report.show {
             display: block;
-            animation: fadeIn 0.3s ease-out;
+            animation: damagePopIn 0.3s ease-out;
         }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
+        @keyframes damagePopIn {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
         .damage-title {
-            font-size: 0.8rem;
+            font-size: 1rem;
             color: #ff0000;
-            text-shadow: 2px 2px 0 #000;
+            text-shadow: 2px 2px 0 #000, 0 0 20px rgba(255, 0, 0, 0.5);
             margin-bottom: 10px;
         }
         .damage-text {
-            font-size: 0.5rem;
+            font-size: 0.6rem;
             color: var(--text-secondary);
             line-height: 2;
         }
         .damage-amount {
-            font-size: 2rem;
+            font-size: 3rem;
             color: #ffcc00;
-            text-shadow: 3px 3px 0 #000;
+            text-shadow: 3px 3px 0 #000, 0 0 30px rgba(255, 200, 0, 0.5);
             margin: 15px 0;
+        }
+        .damage-amount.critical {
+            color: #ff0000;
+            animation: criticalPulse 0.3s ease-out 3;
+        }
+        @keyframes criticalPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         /* Weapon Images */
@@ -536,6 +551,19 @@
             max-height: 100px;
             image-rendering: pixelated;
             filter: drop-shadow(0 0 10px rgba(143, 75, 35, 0.5));
+            border-radius: 4px;
+        }
+        .weapon-card:hover .weapon-img {
+            transform: scale(1.1);
+            transition: transform 0.2s;
+        }
+        .perforator-img {
+            filter: drop-shadow(0 0 15px rgba(255, 150, 50, 0.7)) brightness(1.1);
+        }
+        .thunderbolt-img {
+            filter: drop-shadow(0 0 15px rgba(0, 200, 255, 0.7)) brightness(1.1);
+            max-width: 180px;
+            max-height: 120px;
         }
 
         /* Responsive */
@@ -585,7 +613,7 @@
                     <span class="weapon-name">AXE</span>
                 </div>
                 <div class="weapon-visual">
-                    <span class="weapon-sprite">&#129683;</span>
+                    <img src="images/axe.png" alt="Axe" class="weapon-img">
                 </div>
                 <p class="weapon-desc">Emergency melee weapon. No ammo required. Gets the job done up close.</p>
                 <div class="weapon-stats">
@@ -602,7 +630,7 @@
                     <span class="weapon-name">SHOTGUN</span>
                 </div>
                 <div class="weapon-visual">
-                    <span class="weapon-sprite">&#128299;</span>
+                    <img src="images/shotgun.png" alt="Shotgun" class="weapon-img">
                 </div>
                 <p class="weapon-desc">Reliable pump-action. Good damage at close to medium range with shell spread.</p>
                 <div class="weapon-stats">
@@ -619,7 +647,7 @@
                     <span class="weapon-name">SUPER SHOTGUN</span>
                 </div>
                 <div class="weapon-visual">
-                    <span class="weapon-sprite">&#128299;&#128299;</span>
+                    <img src="images/sshotgun.png" alt="Super Shotgun" class="weapon-img">
                 </div>
                 <p class="weapon-desc">Double-barrel devastation. Fires both barrels for massive close-range damage.</p>
                 <div class="weapon-stats">
@@ -636,7 +664,7 @@
                     <span class="weapon-name">NAILGUN</span>
                 </div>
                 <div class="weapon-visual">
-                    <img src="images/nailgun.png" alt="Nailgun" class="weapon-img">
+                    <img src="images/nailgun-new.png" alt="Nailgun" class="weapon-img">
                 </div>
                 <p class="weapon-desc">Rapid-fire nail driver. Perfect for sustained damage against tough enemies.</p>
                 <div class="weapon-stats">
@@ -653,7 +681,7 @@
                     <span class="weapon-name">PERFORATOR</span>
                 </div>
                 <div class="weapon-visual">
-                    <img src="images/nailgun.png" alt="Perforator" class="weapon-img" style="filter: drop-shadow(0 0 10px rgba(143, 75, 35, 0.5)) hue-rotate(20deg) brightness(1.2);">
+                    <img src="images/super-nailgun.jpg" alt="Perforator" class="weapon-img perforator-img">
                 </div>
                 <p class="weapon-desc">Heavy-duty nail machine gun. Double fire rate, double the carnage.</p>
                 <div class="weapon-stats">
@@ -670,7 +698,7 @@
                     <span class="weapon-name">GRENADE LAUNCHER</span>
                 </div>
                 <div class="weapon-visual">
-                    <span class="weapon-sprite">&#128163;</span>
+                    <img src="images/grenade-launcher.png" alt="Grenade Launcher" class="weapon-img">
                 </div>
                 <p class="weapon-desc">Bouncing explosive death. Grenades detonate on contact with enemies or after delay.</p>
                 <div class="weapon-stats">
@@ -687,7 +715,7 @@
                     <span class="weapon-name">ROCKET LAUNCHER</span>
                 </div>
                 <div class="weapon-visual">
-                    <span class="weapon-sprite">&#128640;</span>
+                    <img src="images/rocket-launcher.png" alt="Rocket Launcher" class="weapon-img">
                 </div>
                 <p class="weapon-desc">The classic. Direct hit rockets with splash damage. Watch your back.</p>
                 <div class="weapon-stats">
@@ -704,7 +732,7 @@
                     <span class="weapon-name">THUNDERBOLT</span>
                 </div>
                 <div class="weapon-visual">
-                    <span class="weapon-sprite">&#9889;</span>
+                    <img src="images/thunderbolt.png" alt="Thunderbolt" class="weapon-img thunderbolt-img">
                 </div>
                 <p class="weapon-desc">Continuous lightning beam. Devastating DPS but drains cells fast. Don't use underwater.</p>
                 <div class="weapon-stats">
@@ -936,7 +964,7 @@
             const url = targetInput.value || 'your target';
 
             damageAmount.textContent = damage + (critical ? ' CRITICAL!' : '');
-            damageAmount.style.color = critical ? '#ff0000' : '#ffcc00';
+            damageAmount.className = 'damage-amount' + (critical ? ' critical' : '');
 
             const messages = [
                 `${url} took ${damage} damage!`,
@@ -950,7 +978,7 @@
 
             setTimeout(() => {
                 damageReport.classList.remove('show');
-            }, 3000);
+            }, 2000);
         }
 
         // Fire button

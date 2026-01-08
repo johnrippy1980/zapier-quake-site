@@ -1470,10 +1470,42 @@
             playSound('door');
         });
 
-        // Nav links - menu sounds
+        // Nav links - delay navigation to let sound play
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                playSound('pickup');
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                // Skip hash links (same page navigation)
+                if (href.startsWith('#')) {
+                    playSound('pickup');
+                    return;
+                }
+                e.preventDefault();
+                playSound('door');
+                // Delay navigation to let sound play
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 200);
+            });
+        });
+
+        // All other links with href - delay navigation
+        document.querySelectorAll('a[href]').forEach(link => {
+            // Skip nav links (already handled) and hash links
+            if (link.classList.contains('nav-link')) return;
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                playSound('door');
+                // Delay navigation to let sound play
+                setTimeout(() => {
+                    if (link.target === '_blank') {
+                        window.open(href, '_blank');
+                    } else {
+                        window.location.href = href;
+                    }
+                }, 200);
             });
         });
 

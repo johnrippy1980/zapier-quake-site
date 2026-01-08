@@ -1389,11 +1389,71 @@
             return true;
         }
 
+        // Web Audio context for poo sounds
+        let pooAudioCtx = null;
+        let ploopInterval = null;
+        let splatInterval = null;
+
+        // Create a fun "ploop" fart sound
+        function playPloopSound() {
+            if (!pooAudioCtx) pooAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = pooAudioCtx.createOscillator();
+            const gain = pooAudioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(pooAudioCtx.destination);
+            osc.frequency.setValueAtTime(150, pooAudioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, pooAudioCtx.currentTime + 0.15);
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.3, pooAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, pooAudioCtx.currentTime + 0.2);
+            osc.start(pooAudioCtx.currentTime);
+            osc.stop(pooAudioCtx.currentTime + 0.2);
+        }
+
+        // Create a "splat" sound
+        function playSplatSound() {
+            if (!pooAudioCtx) pooAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = pooAudioCtx.sampleRate * 0.15;
+            const buffer = pooAudioCtx.createBuffer(1, bufferSize, pooAudioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+            }
+            const noise = pooAudioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = pooAudioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, pooAudioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(200, pooAudioCtx.currentTime + 0.1);
+            const gain = pooAudioCtx.createGain();
+            gain.gain.setValueAtTime(0.4, pooAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, pooAudioCtx.currentTime + 0.15);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(pooAudioCtx.destination);
+            noise.start();
+        }
+
         nailgunDivider.addEventListener('mouseenter', () => {
             if (!nailgunPlaying) {
                 nailgunPlaying = true;
-                // In Peace Mode, don't play nailgun sound - let poo sounds play instead
-                if (!isPeaceModeActive()) {
+
+                // In Peace Mode, play poo sounds instead of nailgun
+                if (isPeaceModeActive()) {
+                    // Play ploop sounds periodically
+                    playPloopSound();
+                    ploopInterval = setInterval(() => {
+                        if (nailgunPlaying) playPloopSound();
+                    }, 400);
+
+                    // Play splat sounds after poos reach edge (2s animation)
+                    setTimeout(() => {
+                        if (nailgunPlaying) playSplatSound();
+                    }, 1800);
+                    splatInterval = setInterval(() => {
+                        if (nailgunPlaying) playSplatSound();
+                    }, 500);
+                } else {
                     nailgunSound.currentTime = 0;
                     nailgunSound.play().catch(e => console.log('Audio play failed:', e));
                 }
@@ -1418,11 +1478,23 @@
 
         nailgunDivider.addEventListener('mouseleave', () => {
             nailgunPlaying = false;
-            // Only stop nailgun sound if not in Peace Mode
-            if (!isPeaceModeActive()) {
+
+            // Clean up sounds based on mode
+            if (isPeaceModeActive()) {
+                // Stop poo sound intervals
+                if (ploopInterval) {
+                    clearInterval(ploopInterval);
+                    ploopInterval = null;
+                }
+                if (splatInterval) {
+                    clearInterval(splatInterval);
+                    splatInterval = null;
+                }
+            } else {
                 nailgunSound.pause();
                 nailgunSound.currentTime = 0;
             }
+
             // Stop checking for kills
             if (nailgunKillInterval) {
                 clearInterval(nailgunKillInterval);
@@ -1626,14 +1698,10 @@
     })();
     </script>
 
-    <!-- Peace Mode: Poo Emoji Perforator -->
+    <!-- Peace Mode: Poo Emoji Visual Setup (sounds handled in main nailgun script) -->
     <script>
     (function() {
         'use strict';
-
-        let audioCtx = null;
-        let pooSoundPlaying = false;
-        let splatInterval = null;
 
         // Check if all secrets found (Peace Mode)
         function isPeaceMode() {
@@ -1645,62 +1713,7 @@
             return true;
         }
 
-        // Create a fun "ploop" fart sound using Web Audio API
-        function playPloopSound() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            // Start with a low frequency and slide down for a "ploop" effect
-            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.15);
-
-            oscillator.type = 'sine';
-
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.2);
-        }
-
-        // Create a "splat" sound for when poo hits the edge
-        function playSplatSound() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-            // Create noise for splat
-            const bufferSize = audioCtx.sampleRate * 0.15;
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
-            }
-
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(800, audioCtx.currentTime);
-            filter.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
-
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-
-            noise.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            noise.start();
-        }
-
-        // Convert nails to poo emojis
+        // Convert nails to poo emojis (sounds are in the main nailgun handler)
         function activatePooPerforator() {
             if (!isPeaceMode()) return;
 
@@ -1710,7 +1723,7 @@
             // Replace nail content with poo emojis
             const nails = document.querySelectorAll('.nail');
             nails.forEach(nail => {
-                nail.textContent = '\uD83D\uDCA9'; // Unicode for poo emoji
+                nail.textContent = '\uD83D\uDCA9'; // Poo emoji
             });
 
             // Change the label to something fun
@@ -1718,45 +1731,6 @@
             if (nailgunLabel) {
                 nailgunLabel.textContent = 'POO-FORATOR';
                 nailgunLabel.style.color = '#8B4513';
-            }
-
-            // Set up poo sound effects on hover
-            const nailgunDivider = document.getElementById('nailgunDivider');
-            if (nailgunDivider) {
-                nailgunDivider.addEventListener('mouseenter', () => {
-                    if (!isPeaceMode()) return;
-                    pooSoundPlaying = true;
-
-                    // Play ploop sounds periodically while hovering
-                    playPloopSound();
-                    const ploopInterval = setInterval(() => {
-                        if (pooSoundPlaying) {
-                            playPloopSound();
-                        } else {
-                            clearInterval(ploopInterval);
-                        }
-                    }, 400);
-
-                    // Play splat sounds for when poos reach the edge (2 second animation)
-                    setTimeout(() => {
-                        if (pooSoundPlaying) playSplatSound();
-                    }, 1800);
-                    splatInterval = setInterval(() => {
-                        if (pooSoundPlaying) {
-                            playSplatSound();
-                        } else {
-                            clearInterval(splatInterval);
-                        }
-                    }, 500);
-                });
-
-                nailgunDivider.addEventListener('mouseleave', () => {
-                    pooSoundPlaying = false;
-                    if (splatInterval) {
-                        clearInterval(splatInterval);
-                        splatInterval = null;
-                    }
-                });
             }
 
             console.log('[Peace Mode] Poo-forator activated! Spinning poo emojis engaged!');

@@ -566,6 +566,98 @@
             max-height: 120px;
         }
 
+        /* SECRET #4: n8n Gib Shower */
+        .gib {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 2rem;
+            animation: gibFall linear forwards;
+        }
+        @keyframes gibFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg) scale(0.5);
+            }
+        }
+        .gib-splat {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9990;
+            width: 30px;
+            height: 10px;
+            background: radial-gradient(ellipse, #8B0000 0%, #5a0000 50%, transparent 70%);
+            border-radius: 50%;
+            animation: splatFade 2s ease-out forwards;
+        }
+        @keyframes splatFade {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.5); }
+        }
+        .secret-banner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(139, 0, 0, 0.95);
+            border: 4px solid #ffcc00;
+            padding: 30px 60px;
+            z-index: 10001;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(255, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.5);
+            animation: secretReveal 0.5s ease-out;
+            display: none;
+        }
+        .secret-banner.show {
+            display: block;
+        }
+        @keyframes secretReveal {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .secret-banner h2 {
+            font-size: 1.5rem;
+            color: #ffcc00;
+            text-shadow: 3px 3px 0 #000, 0 0 30px rgba(255, 200, 0, 0.8);
+            margin-bottom: 10px;
+        }
+        .secret-banner p {
+            font-size: 0.6rem;
+            color: #ff6666;
+            margin-bottom: 5px;
+        }
+        .secret-banner .secret-count {
+            font-size: 0.8rem;
+            color: #ffffff;
+            margin-top: 15px;
+        }
+        .barrel-explosion {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ffff00 0%, #ff6600 20%, #ff0000 40%, #8B0000 60%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: barrelExplode 0.6s ease-out forwards;
+        }
+        @keyframes barrelExplode {
+            0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+        }
+        .screen-flash.red {
+            background: rgba(139, 0, 0, 0.5);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .nav-links { display: none; }
@@ -754,6 +846,14 @@
             <div class="damage-amount" id="damageAmount">0</div>
             <p class="damage-text" id="damageText">Loading...</p>
         </div>
+
+        <!-- Secret #4 Banner -->
+        <div class="secret-banner" id="secretBanner">
+            <h2>SECRET FOUND!</h2>
+            <p>You discovered the n8n barrel!</p>
+            <p>The automation competitor has been GIBBED!</p>
+            <div class="secret-count">SECRET 4 OF 4</div>
+        </div>
     </main>
 
     <!-- Sound Effects -->
@@ -770,6 +870,9 @@
     <audio id="snd-ric" src="audio/ric1.wav" preload="auto"></audio>
     <audio id="snd-tink" src="audio/tink1.wav" preload="auto"></audio>
     <audio id="snd-pickup" src="audio/pickup.wav" preload="auto"></audio>
+    <audio id="snd-gib" src="audio/gib.wav" preload="auto"></audio>
+    <audio id="snd-secret" src="audio/secret.wav" preload="auto"></audio>
+    <audio id="snd-barrel" src="audio/r_exp3.wav" preload="auto"></audio>
 
     <script>
         // State
@@ -981,17 +1084,138 @@
             }, 2000);
         }
 
-        // Fire button
-        fireButton.addEventListener('click', () => {
-            fireWeapon();
-            setTimeout(showDamageReport, 500);
-        });
-
         // Spacebar to fire
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' && e.target !== targetInput) {
                 e.preventDefault();
                 fireButton.click();
+            }
+        });
+
+        // SECRET #4: n8n.io Gib Shower Easter Egg
+        const secretBanner = document.getElementById('secretBanner');
+        let secret4Found = localStorage.getItem('zaparena_secret4') === 'true';
+
+        // Quake gib types - body parts!
+        const gibTypes = ['🦴', '🫀', '🧠', '👁️', '🦷', '🫁', '💀', '🦵', '🦶', '✋'];
+
+        // Check if URL targets n8n.io
+        function isN8nTarget(url) {
+            const lowerUrl = url.toLowerCase();
+            return lowerUrl.includes('n8n.io') ||
+                   lowerUrl.includes('n8n.cloud') ||
+                   lowerUrl.includes('n8n.') ||
+                   lowerUrl.includes('/n8n');
+        }
+
+        // Create a single gib
+        function createGib(startX, startY) {
+            const gib = document.createElement('div');
+            gib.className = 'gib';
+            gib.textContent = gibTypes[Math.floor(Math.random() * gibTypes.length)];
+            gib.style.left = startX + 'px';
+            gib.style.top = startY + 'px';
+
+            // Random trajectory
+            const angle = Math.random() * 360;
+            const distance = 100 + Math.random() * 300;
+            const duration = 1 + Math.random() * 1.5;
+            const endX = startX + Math.cos(angle * Math.PI / 180) * distance;
+
+            gib.style.setProperty('--end-x', `${endX - startX}px`);
+            gib.style.animationDuration = duration + 's';
+
+            document.body.appendChild(gib);
+
+            // Create splat when gib lands
+            setTimeout(() => {
+                createGibSplat(endX, window.innerHeight - 50 + Math.random() * 30);
+                gib.remove();
+            }, duration * 700);
+
+            setTimeout(() => gib.remove(), duration * 1000);
+        }
+
+        // Create blood splat on floor
+        function createGibSplat(x, y) {
+            const splat = document.createElement('div');
+            splat.className = 'gib-splat';
+            splat.style.left = x + 'px';
+            splat.style.top = y + 'px';
+            splat.style.width = (20 + Math.random() * 30) + 'px';
+            splat.style.height = (8 + Math.random() * 12) + 'px';
+            document.body.appendChild(splat);
+            setTimeout(() => splat.remove(), 2000);
+        }
+
+        // Create barrel explosion
+        function createBarrelExplosion(x, y) {
+            const explosion = document.createElement('div');
+            explosion.className = 'barrel-explosion';
+            explosion.style.left = x + 'px';
+            explosion.style.top = y + 'px';
+            document.body.appendChild(explosion);
+            setTimeout(() => explosion.remove(), 600);
+        }
+
+        // Unleash the gib shower!
+        function triggerGibShower() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            // Play barrel explosion sound
+            playSound('barrel');
+
+            // Create barrel explosion
+            createBarrelExplosion(centerX, centerY);
+
+            // Red screen flash
+            flashScreen('red', 300);
+
+            // Play gib sound after small delay
+            setTimeout(() => playSound('gib'), 200);
+
+            // Spawn gibs from center explosion
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    createGib(
+                        centerX + (Math.random() - 0.5) * 100,
+                        centerY + (Math.random() - 0.5) * 100
+                    );
+                }, i * 30);
+            }
+
+            // Play additional gib sounds
+            setTimeout(() => playSound('gib'), 400);
+            setTimeout(() => playSound('gib'), 700);
+
+            // Show secret banner
+            if (!secret4Found) {
+                setTimeout(() => {
+                    playSound('secret');
+                    secretBanner.classList.add('show');
+                    localStorage.setItem('zaparena_secret4', 'true');
+                    secret4Found = true;
+
+                    setTimeout(() => {
+                        secretBanner.classList.remove('show');
+                    }, 4000);
+                }, 1000);
+            }
+        }
+
+        // Override fire button to check for n8n
+        const originalFireHandler = fireButton.onclick;
+        fireButton.onclick = null;
+        fireButton.addEventListener('click', () => {
+            const url = targetInput.value;
+            fireWeapon();
+
+            if (isN8nTarget(url)) {
+                // n8n detected - trigger gib shower!
+                setTimeout(triggerGibShower, 300);
+            } else {
+                setTimeout(showDamageReport, 500);
             }
         });
     </script>

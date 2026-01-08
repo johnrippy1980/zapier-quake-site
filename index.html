@@ -1515,5 +1515,49 @@
     </script>
     <script src="js/difficulty.js"></script>
     <script src="js/enemies.js"></script>
+    <script src="js/secrets.js"></script>
+
+    <!-- Secret 1: Quake Logo Click (index.html only) -->
+    <script>
+    (function() {
+        'use strict';
+
+        let secret1Found = localStorage.getItem('zaparena_secret1') === 'true';
+        const splashLogo = document.querySelector('.splash-logo');
+        const navLogo = document.querySelector('.nav-logo img');
+
+        function triggerSecret1(e) {
+            if (secret1Found) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            localStorage.setItem('zaparena_secret1', 'true');
+            secret1Found = true;
+
+            // Make logo glow
+            const logo = e.target;
+            logo.style.filter = 'drop-shadow(0 0 30px #cf6b2f) drop-shadow(0 0 60px #cf6b2f)';
+
+            // Use shared banner
+            if (window.ZapArenaSecrets && window.ZapArenaSecrets.showSecretBanner) {
+                window.ZapArenaSecrets.showSecretBanner('The Quake symbol holds power');
+            }
+            console.log('[Secret 1] Quake Logo discovered!');
+        }
+
+        if (splashLogo) {
+            splashLogo.style.cursor = 'pointer';
+            splashLogo.addEventListener('click', triggerSecret1);
+        }
+        if (navLogo) {
+            navLogo.addEventListener('click', function(e) {
+                if (!secret1Found) {
+                    triggerSecret1(e);
+                }
+            });
+        }
+    })();
+    </script>
 </body>
 </html>

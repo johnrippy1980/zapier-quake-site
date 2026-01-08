@@ -164,7 +164,70 @@
     <audio id="death-sound" autoplay>
         <source src="audio/death.wav" type="audio/wav">
     </audio>
+
+    <!-- Secret Banner -->
+    <div id="secretBanner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10001; background: rgba(0,0,0,0.95); border: 3px solid #cf6b2f; padding: 2rem 3rem; text-align: center; font-family: 'Press Start 2P', cursive;">
+        <div style="color: #cf6b2f; font-size: 1.5rem; text-shadow: 0 0 20px #cf6b2f; animation: pulse 0.5s ease-in-out infinite;">SECRET FOUND!</div>
+        <div id="secretCount" style="color: #ffcc00; font-size: 0.8rem; margin-top: 1rem;">SECRET 3 OF 5</div>
+        <div style="color: #888; font-size: 0.5rem; margin-top: 0.5rem;">Trent Reznor's signature</div>
+    </div>
+
     <script src="js/difficulty.js"></script>
     <script src="js/enemies.js"></script>
+    <script src="js/secrets.js"></script>
+    <script>
+        // Secret 3: NIN Ammo Box Easter Egg
+        (function() {
+            const ninAmmo = document.querySelector('.nin-ammo');
+            const secretBanner = document.getElementById('secretBanner');
+            let secret3Found = localStorage.getItem('zaparena_secret3') === 'true';
+
+            if (!ninAmmo) return;
+
+            // Make it clickable
+            ninAmmo.style.cursor = 'pointer';
+
+            ninAmmo.addEventListener('click', function(e) {
+                if (secret3Found) return;
+
+                // Mark as found
+                localStorage.setItem('zaparena_secret3', 'true');
+                secret3Found = true;
+
+                // Update HUD
+                if (window.ZapArena && window.ZapArena.updateSecretsDisplay) {
+                    window.ZapArena.updateSecretsDisplay();
+                }
+
+                // Count total secrets for banner
+                let count = 0;
+                for (let i = 1; i <= 5; i++) {
+                    if (localStorage.getItem('zaparena_secret' + i) === 'true') count++;
+                }
+                document.getElementById('secretCount').textContent = 'SECRET ' + count + ' OF 5';
+
+                // Show banner
+                secretBanner.style.display = 'block';
+
+                // Play sound
+                try {
+                    const sound = new Audio('audio/pickup.wav');
+                    sound.volume = 0.5;
+                    sound.play().catch(() => {});
+                } catch(e) {}
+
+                // Make ammo box glow
+                ninAmmo.style.filter = 'drop-shadow(0 0 30px #cf6b2f) drop-shadow(0 0 60px #cf6b2f)';
+                ninAmmo.style.animation = 'none';
+
+                // Hide banner after 3 seconds
+                setTimeout(() => {
+                    secretBanner.style.display = 'none';
+                }, 3000);
+
+                console.log('[Secret 3] NIN Ammo Box discovered!');
+            });
+        })();
+    </script>
 </body>
 </html>
